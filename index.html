@@ -1,135 +1,206 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estudo Bíblico ARC + Groq AI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #f1f5f9; }
-        .bible-text { font-family: 'Merriweather', serif; line-height: 1.8; }
-        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bíblia ARC • Estudo Completo com Imagens</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .titulo-biblia { font-family: 'Playfair Display', serif; }
+    .verso { line-height: 1.8; }
+    .numero-verso { color: #b91c1c; font-weight: 700; }
+  </style>
 </head>
-<body class="min-h-screen">
+<body class="bg-gray-100 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
 
-    <div id="setup" class="fixed inset-0 bg-slate-900 z-50 flex items-center justify-center p-4">
-        <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-md w-full text-center">
-            <h2 class="text-2xl font-bold mb-4 text-slate-800">Chave da API Groq</h2>
-            <p class="text-sm text-slate-500 mb-6">Insira sua chave externa para carregar os estudos bíblicos em tempo real.</p>
-            <input type="password" id="apiKey" placeholder="gsk_..." class="w-full border-2 border-slate-200 rounded-xl px-4 py-3 mb-4 focus:border-indigo-500 outline-none transition">
-            <button onclick="salvarChave()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition">Acessar Bíblia</button>
-            <p class="mt-4 text-[10px] text-slate-400 italic">Sua chave é salva apenas no seu navegador.</p>
-        </div>
+  <!-- Navbar -->
+  <nav class="bg-gradient-to-r from-indigo-700 to-red-700 text-white p-4 shadow-lg">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <i class="fa-solid fa-book-bible text-3xl"></i>
+        <h1 class="text-2xl font-bold titulo-biblia">Bíblia ARC</h1>
+        <span class="text-sm opacity-75">Estudo • Imagens • Revelações</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <input id="busca" type="text" placeholder="Buscar livro ou versículo..." 
+               class="px-4 py-2 rounded-full bg-white/20 text-white placeholder-white/70 focus:outline-none w-80">
+        <button onclick="toggleDarkMode()" class="p-3 hover:bg-white/20 rounded-xl">
+          <i id="icon-dark" class="fa-solid fa-moon text-xl"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-7xl mx-auto flex flex-col md:flex-row gap-6 p-6">
+
+    <!-- Sidebar - Livros -->
+    <div class="md:w-72 bg-white dark:bg-zinc-900 rounded-3xl shadow-xl p-5 h-fit">
+      <h2 class="font-semibold text-lg mb-4 flex items-center gap-2"><i class="fa-solid fa-book"></i> Livros</h2>
+      <div id="lista-livros" class="max-h-[70vh] overflow-y-auto pr-2 space-y-1 text-sm"></div>
     </div>
 
-    <header class="bg-indigo-900 text-white p-6 shadow-lg sticky top-0 z-40">
-        <div class="max-w-6xl mx-auto flex flex-col md:row justify-between items-center gap-4">
-            <h1 class="text-2xl font-bold italic tracking-wider">ESTUDO BÍBLICO ARC</h1>
-            <div class="flex flex-wrap justify-center gap-3">
-                <input type="text" id="livroInput" placeholder="Livro (Ex: Gênesis)" class="bg-indigo-800 border border-indigo-700 rounded-lg px-4 py-2 text-sm outline-none w-32">
-                <input type="number" id="capInput" placeholder="Cap" class="bg-indigo-800 border border-indigo-700 rounded-lg px-4 py-2 text-sm outline-none w-20">
-                <button onclick="carregarEstudoIA()" class="bg-amber-500 hover:bg-amber-600 px-6 py-2 rounded-lg font-bold text-indigo-900 transition shadow-md">ESTUDAR AGORA</button>
-            </div>
+    <!-- Conteúdo Principal -->
+    <div class="flex-1">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 id="titulo-capitulo" class="text-3xl font-bold titulo-biblia"></h1>
+          <p id="subtitulo" class="text-zinc-500 dark:text-zinc-400"></p>
         </div>
-    </header>
+        <div class="flex gap-2" id="navegacao-capitulos"></div>
+      </div>
 
-    <main id="mainContent" class="max-w-7xl mx-auto p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 hidden">
-        
-        <div class="lg:col-span-7">
-            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 md:p-12">
-                <div id="loader" class="hidden animate-pulse text-indigo-600 font-bold mb-4 italic">Consultando revelações...</div>
-                <h2 id="displayTitulo" class="text-4xl font-bold text-slate-800 mb-8 border-l-8 border-amber-500 pl-6">Bem-vindo</h2>
-                <div id="textoBiblico" class="bible-text text-lg text-slate-700 space-y-6">
-                    Selecione um livro e capítulo para iniciar seu estudo profundo.
-                </div>
-            </div>
-        </div>
+      <!-- Abas -->
+      <div class="flex border-b mb-6">
+        <button onclick="mudarAba(0)" id="aba-0" class="aba-ativa px-6 py-3 font-medium">📖 Texto Bíblico</button>
+        <button onclick="mudarAba(1)" id="aba-1" class="px-6 py-3 font-medium">📝 Estudos & Revelações</button>
+        <button onclick="mudarAba(2)" id="aba-2" class="px-6 py-3 font-medium">🖼️ Imagens Ilustrativas</button>
+        <button onclick="mudarAba(3)" id="aba-3" class="px-6 py-3 font-medium">🎤 Pregações</button>
+      </div>
 
-        <div class="lg:col-span-5 space-y-6">
-            <div class="rounded-2xl overflow-hidden shadow-xl h-60 bg-slate-200 relative">
-                <img id="capImagem" src="https://images.unsplash.com/photo-1504052434139-1838dfab3d14?q=80&w=1000" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
-                    <p id="legendaImagem" class="text-white text-xs italic"></p>
-                </div>
-            </div>
+      <!-- ABA 0: Texto -->
+      <div id="conteudo-0" class="aba-conteudo">
+        <div id="texto-biblia" class="space-y-6 text-lg"></div>
+      </div>
 
-            <div class="bg-amber-50 rounded-3xl p-8 border border-amber-200 shadow-inner">
-                <h3 class="font-bold text-amber-900 mb-4 flex items-center gap-2 text-lg">
-                    ✨ Revelação dos Pastores & Estudos
-                </h3>
-                <div id="estudoIA" class="text-amber-900 leading-relaxed space-y-4 text-sm whitespace-pre-line">
-                    As revelações teológicas aparecerão aqui.
-                </div>
-            </div>
-        </div>
-    </main>
+      <!-- ABA 1: Estudos (exemplo - você edita depois) -->
+      <div id="conteudo-1" class="aba-conteudo hidden">
+        <div id="estudo-texto" class="prose dark:prose-invert max-w-none"></div>
+      </div>
 
-    <script>
-        let GROQ_KEY = "";
+      <!-- ABA 2: Imagens -->
+      <div id="conteudo-2" class="aba-conteudo hidden grid grid-cols-1 md:grid-cols-2 gap-6" id="galeria-imagens"></div>
 
-        function salvarChave() {
-            const key = document.getElementById('apiKey').value;
-            if (key) {
-                GROQ_KEY = key;
-                document.getElementById('setup').classList.add('hidden');
-                document.getElementById('mainContent').classList.remove('hidden');
-            }
-        }
+      <!-- ABA 3: Pregações -->
+      <div id="conteudo-3" class="aba-conteudo hidden" id="pregações"></div>
+    </div>
+  </div>
 
-        async function carregarEstudoIA() {
-            const livro = document.getElementById('livroInput').value;
-            const cap = document.getElementById('capInput').value;
-            
-            if (!livro || !cap) return alert("Digite o livro e o capítulo.");
+  <script>
+    let bibliaCompleta = null;
+    let livroAtual = null;
+    let capituloAtual = 1;
 
-            document.getElementById('loader').classList.remove('hidden');
-            document.getElementById('displayTitulo').innerText = `${livro} ${cap}`;
+    // Carrega a Bíblia ARC completa
+    async function carregarBiblia() {
+      const url = "https://raw.githubusercontent.com/maatheusgois/bible/main/versions/pt-br/arc.json";
+      const res = await fetch(url);
+      bibliaCompleta = await res.json();
+      renderizarListaLivros();
+      // Carrega Gênesis 1 por padrão
+      carregarCapitulo(0, 1);
+    }
 
-            const prompt = `Aja como um renomado professor de teologia evangélica. 
-            Forneça o estudo do capítulo ${cap} do livro de ${livro} na versão Almeida Revista e Corrigida (ARC).
-            Formate sua resposta rigorosamente assim:
-            TEXTO: (Escreva os principais versículos desse capítulo)
-            ESTUDO: (Forneça um estudo profundo, contexto histórico e significado das palavras originais)
-            REVELACAO: (Quais são as revelações proféticas e pregações comuns de pastores sobre este capítulo?)
-            IMAGEM: (Dê uma descrição curta de uma imagem bíblica para este capítulo)`;
+    function renderizarListaLivros() {
+      const container = document.getElementById('lista-livros');
+      container.innerHTML = '';
+      
+      bibliaCompleta.forEach((livro, index) => {
+        const div = document.createElement('div');
+        div.className = `p-3 rounded-2xl hover:bg-indigo-50 dark:hover:bg-zinc-800 cursor-pointer flex justify-between items-center ${livroAtual === index ? 'bg-indigo-100 dark:bg-zinc-700' : ''}`;
+        div.innerHTML = `
+          <span class="font-medium">${livro.name}</span>
+          <span class="text-xs bg-zinc-200 dark:bg-zinc-700 px-2 py-1 rounded-lg">${livro.chapters.length} cap.</span>
+        `;
+        div.onclick = () => carregarCapitulo(index, 1);
+        container.appendChild(div);
+      });
+    }
 
-            try {
-                const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${GROQ_KEY}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        model: "llama-3.3-70b-versatile",
-                        messages: [{ role: "user", content: prompt }]
-                    })
-                });
+    function carregarCapitulo(livroIndex, capitulo) {
+      livroAtual = livroIndex;
+      capituloAtual = capitulo;
+      const livro = bibliaCompleta[livroIndex];
+      
+      document.getElementById('titulo-capitulo').innerHTML = `${livro.name} <span class="text-xl font-normal text-zinc-400">${capitulo}</span>`;
+      document.getElementById('subtitulo').textContent = 'Almeida Revista e Corrigida (ARC)';
 
-                const data = await response.json();
-                const content = data.choices[0].message.content;
+      // Renderiza versículos
+      let html = '';
+      const versos = livro.chapters[capitulo - 1];
+      versos.forEach((verso, i) => {
+        html += `
+          <div class="verso flex gap-4">
+            <span class="numero-verso text-xl w-8 text-right">${i+1}</span>
+            <p class="flex-1">${verso}</p>
+          </div>`;
+      });
+      document.getElementById('texto-biblia').innerHTML = html;
 
-                // Processar a resposta da IA
-                const texto = content.split("TEXTO:")[1].split("ESTUDO:")[0];
-                const estudo = content.split("ESTUDO:")[1].split("REVELACAO:")[0];
-                const revelacao = content.split("REVELACAO:")[1].split("IMAGEM:")[0];
-                const imagemDesc = content.split("IMAGEM:")[1];
+      // Navegação de capítulos
+      renderizarNavegacao(livro, capitulo);
 
-                document.getElementById('textoBiblico').innerHTML = texto;
-                document.getElementById('estudoIA').innerHTML = `<strong>Estudo Teológico:</strong><br>${estudo}<br><br><strong>Revelação Profética:</strong><br>${revelacao}`;
-                document.getElementById('legendaImagem').innerText = imagemDesc;
-                
-                // Trocar imagem aleatória para dar sensação de novidade
-                document.getElementById('capImagem').src = `https://loremflickr.com/800/600/bible,israel?random=${Math.random()}`;
+      // Exemplo de conteúdo extra (você pode expandir depois)
+      mostrarConteudoExtra(livro.abbrev || livro.name.toLowerCase().substring(0,2), capitulo);
+    }
 
-            } catch (error) {
-                alert("Erro ao consultar a IA. Verifique sua chave.");
-            } finally {
-                document.getElementById('loader').classList.add('hidden');
-            }
-        }
-    </script>
+    function renderizarNavegacao(livro, capituloAtual) {
+      const nav = document.getElementById('navegacao-capitulos');
+      let html = `<button onclick="anteriorCapitulo()" class="px-5 py-2 bg-white dark:bg-zinc-800 rounded-2xl shadow flex items-center gap-2 hover:bg-gray-100"><i class="fa-solid fa-chevron-left"></i> Anterior</button>`;
+      
+      html += `<div class="flex gap-1 overflow-x-auto max-w-[300px]">`;
+      for (let i = 1; i <= livro.chapters.length; i++) {
+        html += `<button onclick="carregarCapitulo(${bibliaCompleta.indexOf(livro)}, ${i})" 
+                  class="px-4 py-2 rounded-2xl ${i === capituloAtual ? 'bg-red-600 text-white' : 'bg-white dark:bg-zinc-800 hover:bg-gray-100'}">${i}</button>`;
+      }
+      html += `</div>`;
+      html += `<button onclick="proximoCapitulo()" class="px-5 py-2 bg-white dark:bg-zinc-800 rounded-2xl shadow flex items-center gap-2 hover:bg-gray-100">Próximo <i class="fa-solid fa-chevron-right"></i></button>`;
+      nav.innerHTML = html;
+    }
+
+    function anteriorCapitulo() {
+      if (capituloAtual > 1) carregarCapitulo(livroAtual, capituloAtual - 1);
+    }
+    function proximoCapitulo() {
+      const total = bibliaCompleta[livroAtual].chapters.length;
+      if (capituloAtual < total) carregarCapitulo(livroAtual, capituloAtual + 1);
+    }
+
+    // Conteúdo extra (estudos, imagens, pregações) - exemplo
+    function mostrarConteudoExtra(abbrev, capitulo) {
+      const key = `${abbrev}-${capitulo}`;
+
+      // ABA Estudos
+      document.getElementById('estudo-texto').innerHTML = `
+        <div class="bg-amber-50 dark:bg-zinc-800 p-6 rounded-3xl">
+          <h3 class="font-semibold text-xl mb-3">🔥 Revelação do dia</h3>
+          <p class="text-zinc-700 dark:text-zinc-300">Aqui você coloca seu próprio estudo, comentário ou revelação do Espírito Santo sobre este capítulo.</p>
+          <p class="mt-6 text-sm opacity-70">Exemplo para Gênesis 1: "No princípio Deus criou... A revelação é que Deus não precisa de nada para criar. Ele é o Criador absoluto!"</p>
+        </div>`;
+
+      // ABA Imagens
+      const galeria = document.getElementById('galeria-imagens');
+      galeria.innerHTML = `
+        <div class="rounded-3xl overflow-hidden shadow-xl"><img src="https://picsum.photos/id/1015/800/600" class="w-full" alt="Criação"></div>
+        <div class="rounded-3xl overflow-hidden shadow-xl"><img src="https://picsum.photos/id/133/800/600" class="w-full" alt="Luz"></div>
+        <p class="col-span-full text-xs text-center mt-2 opacity-70">Imagens ilustrativas (substitua por links do Unsplash ou Pixabay com tema bíblico)</p>`;
+
+      // ABA Pregações
+      document.getElementById('pregações').innerHTML = `
+        <iframe width="100%" height="415" src="https://www.youtube.com/embed/dQw4w9wgxcQ" 
+                frameborder="0" allowfullscreen class="rounded-3xl shadow-2xl"></iframe>
+        <p class="text-center mt-4 text-sm opacity-70">Coloque aqui links de pregações do Pr. Antônio Júnior, Silas Malafaia, Hernandes Dias Lopes etc.</p>`;
+    }
+
+    function mudarAba(n) {
+      document.querySelectorAll('.aba-conteudo').forEach(el => el.classList.add('hidden'));
+      document.getElementById('conteudo-' + n).classList.remove('hidden');
+      
+      document.querySelectorAll('button[id^="aba-"]').forEach(b => b.classList.remove('aba-ativa', 'border-b-4', 'border-red-600'));
+      document.getElementById('aba-' + n).classList.add('aba-ativa', 'border-b-4', 'border-red-600');
+    }
+
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+      const icon = document.getElementById('icon-dark');
+      icon.classList.toggle('fa-moon');
+      icon.classList.toggle('fa-sun');
+    }
+
+    // Inicia tudo
+    carregarBiblia();
+  </script>
 </body>
 </html>
