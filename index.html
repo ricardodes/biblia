@@ -1,222 +1,265 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BibliaEstudo Premium | Seu Portal de Reflexão e Palavra</title>
-    
-    <!-- Importação de fontes elegantes do Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-
-    <!-- 🎨 ESTILIZAÇÃO COMPLETA (CSS) -->
+    <title>Consultoria Digital | Tecnologia e Estratégia</title>
     <style>
-        /* ------------------- BASE E RESET ------------------- */
+        /* Reset básico e variáveis de cor */
         :root {
-            --cor-primaria: #2c3e50; /* Azul Marinho Escuro */
-            --cor-secundaria: #f39c12; /* Dourado/Âmbar */
-            --cor-fundo: #f9f9f9;
-            --cor-texto: #333;
-            --fonte-titulo: 'Playfair Display', serif;
-            --fonte-corpo: 'Roboto', sans-serif;
-        }
-        body {
-            font-family: var(--fonte-corpo);
-            line-height: 1.6;
-            color: var(--cor-texto);
-            margin: 0;
-            background-color: var(--cor-fundo);
-        }
-        .container {
-            width: 85%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        h1, h2, h3 {
-            font-family: var(--fonte-titulo);
-            color: var(--cor-primaria);
-        }
-        a {
-            text-decoration: none;
-            color: var(--cor-secundaria);
-            transition: color 0.3s;
-        }
-        a:hover {
-            color: #e67e22;
+            --primary-color: #0056b3; /* Azul principal */
+            --secondary-color: #f8f9fa; /* Fundo claro */
+            --text-color: #333;
+            --hover-color: #004085; /* Azul mais escuro ao passar o mouse */
         }
 
-        /* ------------------- HEADER E NAVEGAÇÃO ------------------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--secondary-color);
+        }
+
+        /* --- Cabeçalho e Navegação --- */
         .header {
             background-color: white;
-            border-bottom: 1px solid #eee;
-            padding: 15px 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-        .nav-content {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 15px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
+
         .logo {
-            font-size: 28px;
-            font-weight: 700;
-            color: #2c3e50;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--primary-color);
         }
-        .nav-links a {
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+        }
+
+        .nav-menu li {
             margin-left: 25px;
-            color: #34495e;
-            text-transform: uppercase;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-        .nav-links a:hover {
-            color: #e67e22;
         }
 
-        /* ------------------- SEÇÃO HERO (Principal) ------------------- */
-        .hero-section {
-            background-color: #ecf0f3;
-            padding: 80px 0;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
+        .nav-menu a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            padding: 5px 0;
+            transition: color 0.3s ease;
+            cursor: pointer; /* Indica que é clicável */
         }
-        .hero-content {
-            max-width: 800px;
-            margin: 0 auto;
+
+        .nav-menu a:hover {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
         }
-        .hero-content h1 {
-            font-size: 48px;
-            color: #2c3e50;
-            margin-bottom: 15px;
-            line-height: 1.2;
-        }
-        .hero-content p {
-            font-size: 18px;
-            color: #7f8c8d;
-            margin-bottom: 30px;
-        }
-        .btn-primary {
-            background-color: #e67e22;
+
+        /* --- Seção Hero (Banner Principal) --- */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                    url('https://via.placeholder.com/1600x600?text=Imagem+de+Tecnologia+e+Conexão');
+            background-size: cover;
+            background-position: center;
             color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .btn-primary:hover {
-            background-color: #d35400;
+            text-align: center;
+            padding: 100px 20px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
-        /* ------------------- SEÇÃO CONTEÚDO (Grid) ------------------- */
-        .section-padding {
-            padding: 60px 0;
+        .hero h1 {
+            font-size: 3.5em;
+            margin-bottom: 15px;
+            animation: fadeInDown 1s ease-out;
         }
+
+        .hero p {
+            font-size: 1.4em;
+            margin-bottom: 40px;
+            max-width: 700px;
+            animation: fadeInUp 1.2s ease-out;
+        }
+
+        .btn-principal {
+            background-color: #28a745; /* Cor de sucesso verde */
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s;
+            animation: fadeInUp 1.4s ease-out;
+        }
+
+        .btn-principal:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        /* --- Seção de Serviços --- */
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
+            padding: 60px 5%;
         }
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5em;
+            color: var(--primary-color);
+            margin-bottom: 40px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        .section-title::after {
+            content: '';
+            width: 60px;
+            height: 3px;
+            background-color: #ffc107; /* Amarelo de destaque */
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .servicos-grid {
+            display: flex;
             gap: 30px;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .servico-card {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            flex: 1;
+            min-width: 280px;
+            max-width: 350px;
+            transition: transform 0.3s ease;
+        }
+
+        .servico-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .servico-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .servico-card p {
+            color: var(--text-color);
+        }
+
+        /* --- Seção de Contato --- */
+        .contato-cta {
+            text-align: center;
+            padding: 60px 5%;
+            background-color: #e9ecef;
+            border-radius: 10px;
             margin-top: 40px;
         }
-        .feature-card {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            text-align: center;
-            transition: transform 0.3s;
-        }
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        }
-        .feature-card h3 {
-            color: #2c3e50;
-            margin-top: 15px;
-        }
-        .feature-card p {
-            color: #7f8c8d;
+        
+        .contato-cta h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: var(--primary-color);
         }
 
-        /* ------------------- FOOTER ------------------- */
-        .footer-section {
-            background-color: #2c3e50;
+        /* --- Rodapé --- */
+        .footer {
+            background-color: var(--text-color);
             color: white;
-            padding: 40px 0;
             text-align: center;
+            padding: 25px 20px;
+            font-size: 0.9em;
         }
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
+
+        /* --- Keyframes (Animações) --- */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .footer-content p {
-            margin-top: 20px;
-            font-size: 14px;
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
-    <header class="hero-section">
-        <div class="hero-content">
-            <h1>A Fonte de Sabedoria que Ilumina Sua Vida.</h1>
-            <p>Conecte-se com milênios de conhecimento, ferramentas práticas e reflexões profundas para transformar sua jornada.</p>
-            <button class="btn-primary">Começar a Jornada de Aprendizado</button>
-        </div>
-    </header>
+    <!-- Conteúdo HTML aqui permanece o mesmo -->
 
-    <main>
-        <!-- Bloco de Funcionalidades/Destaques -->
-        <section class="section-padding" style="background-color: white;">
-            <div class="container">
-                <h2 style="text-align: center; color: #2c3e50; font-size: 32px; margin-bottom: 40px;">Por que nos escolher?</h2>
-                <div class="feature-grid">
-                    <div class="feature-card">
-                        <h3 style="color: #e67e22;">📚 Conteúdo Profundo</h3>
-                        <p>Artigos revisados por especialistas em diversas áreas do saber humano, garantindo credibilidade e profundidade.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3 style="color: #27ae60;">✨ Ferramentas Práticas</h3>
-                        <p>Oferecemos guias e exercícios práticos para aplicar o conhecimento imediatamente em seu dia a dia.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3 style="color: #3498db;">🤝 Comunidade Ativa</h3>
-                        <p>Faça parte de milhares de aprendizes e compartilhe experiências em nosso fórum exclusivo de discussão.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+    <script>
+        // O script JavaScript para tratar os cliques deve ser colocado aqui,
+        // pois ele precisa estar no corpo do documento.
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Selecionar todos os botões que devem acionar a seção de contato
+            const contactButtons = document.querySelectorAll('.contact-btn');
 
-        <!-- Bloco de Destaque de Conteúdo (Simulação de Bloco de Texto) -->
-        <section class="section-padding" style="background-color: #ecf0f3;">
-            <div class="container" style="max-width: 900px;">
-                <h2 style="text-align: center; color: #2c3e50; font-size: 32px; margin-bottom: 30px;">Destaque do Mês: O Poder da Atenção Plena</h2>
-                <div style="background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
-                    <p style="font-size: 1.1em; color: #333;">A atenção plena não é apenas uma tendência, mas uma necessidade moderna. Aprenda técnicas testadas por neurociência para reduzir a ansiedade e aumentar o foco em um mundo caótico.</p>
-                    <div style="margin-top: 25px; text-align: right;">
-                        <a href="#" class="btn-primary" style="background-color: #27ae60; padding: 10px 25px;">Leia o Artigo Completo</a>
-                    </div>
-                </div>
-            </div>
-        </section>
+            // 2. Adicionar um event listener a cada um desses botões
+            contactButtons.forEach(button => {
+                button.addEventListener('click', function(event) {
+                    // Prevenir o comportamento padrão do link (se for um <a href="#contato">)
+                    event.preventDefault(); 
+                    
+                    // 3. Rolar suavemente para a seção com id="contato"
+                    const targetSection = document.getElementById('contato');
+                    if (targetSection) {
+                        targetSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
 
-    </main>
+            // 4. Opcional: Adicionar funcionalidade de validação de formulário
+            const contactForm = document.getElementById('contactForm');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(event) {
+                    // Prevenir o envio padrão do formulário
+                    event.preventDefault(); 
+                    
+                    // Simulação de validação de campos
+                    const nameInput = document.getElementById('name');
+                    const emailInput = document.getElementById('email');
+                    const messageInput = document.getElementById('message');
 
-    <footer class="footer-section">
-        <div class="footer-content">
-            <p>&copy; 2024 Fonte de Sabedoria. Todos os direitos reservados.</p>
-            <p>Desenvolvido com dedicação ao conhecimento humano. | <a href="#" style="color: #3498db; text-decoration: none;">Política de Privacidade</a></p>
-        </div>
-    </footer>
+                    if (nameInput.value.trim() === "" || emailInput.value.trim() === "" || messageInput.value.trim() === "") {
+                        alert("Por favor, preencha todos os campos obrigatórios (Nome, Email e Mensagem).");
+                        return;
+                    }
 
+                    // *** Nesta linha, seria o código real de envio de dados (ex: fetch() para API) ***
+                    alert("Mensagem enviada com sucesso! (Simulação de envio)");
+                    
+                    // Limpar o formulário após o envio bem-sucedido
+                    contactForm.reset(); 
+                });
+            }
+        });
+    </script>
 </body>
 </html>
