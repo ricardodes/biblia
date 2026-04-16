@@ -3,263 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consultoria Digital | Tecnologia e Estratégia</title>
+    <title>Estudo Bíblico ARC + Groq AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        /* Reset básico e variáveis de cor */
-        :root {
-            --primary-color: #0056b3; /* Azul principal */
-            --secondary-color: #f8f9fa; /* Fundo claro */
-            --text-color: #333;
-            --hover-color: #004085; /* Azul mais escuro ao passar o mouse */
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--secondary-color);
-        }
-
-        /* --- Cabeçalho e Navegação --- */
-        .header {
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 15px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .logo {
-            font-size: 1.8em;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-
-        .nav-menu {
-            list-style: none;
-            display: flex;
-        }
-
-        .nav-menu li {
-            margin-left: 25px;
-        }
-
-        .nav-menu a {
-            text-decoration: none;
-            color: var(--text-color);
-            font-weight: 600;
-            padding: 5px 0;
-            transition: color 0.3s ease;
-            cursor: pointer; /* Indica que é clicável */
-        }
-
-        .nav-menu a:hover {
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--primary-color);
-        }
-
-        /* --- Seção Hero (Banner Principal) --- */
-        .hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
-                    url('https://via.placeholder.com/1600x600?text=Imagem+de+Tecnologia+e+Conexão');
-            background-size: cover;
-            background-position: center;
-            color: white;
-            text-align: center;
-            padding: 100px 20px;
-            height: 500px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .hero h1 {
-            font-size: 3.5em;
-            margin-bottom: 15px;
-            animation: fadeInDown 1s ease-out;
-        }
-
-        .hero p {
-            font-size: 1.4em;
-            margin-bottom: 40px;
-            max-width: 700px;
-            animation: fadeInUp 1.2s ease-out;
-        }
-
-        .btn-principal {
-            background-color: #28a745; /* Cor de sucesso verde */
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            font-size: 1.1em;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            transition: background-color 0.3s ease, transform 0.2s;
-            animation: fadeInUp 1.4s ease-out;
-        }
-
-        .btn-principal:hover {
-            background-color: #218838;
-            transform: translateY(-2px);
-        }
-
-        /* --- Seção de Serviços --- */
-        .container {
-            padding: 60px 5%;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 2.5em;
-            color: var(--primary-color);
-            margin-bottom: 40px;
-            position: relative;
-            padding-bottom: 10px;
-        }
-        .section-title::after {
-            content: '';
-            width: 60px;
-            height: 3px;
-            background-color: #ffc107; /* Amarelo de destaque */
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .servicos-grid {
-            display: flex;
-            gap: 30px;
-            justify-content: center;
-            margin-top: 40px;
-            flex-wrap: wrap;
-        }
-
-        .servico-card {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            flex: 1;
-            min-width: 280px;
-            max-width: 350px;
-            transition: transform 0.3s ease;
-        }
-
-        .servico-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .servico-card h3 {
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            font-size: 1.5em;
-        }
-
-        .servico-card p {
-            color: var(--text-color);
-        }
-
-        /* --- Seção de Contato --- */
-        .contato-cta {
-            text-align: center;
-            padding: 60px 5%;
-            background-color: #e9ecef;
-            border-radius: 10px;
-            margin-top: 40px;
-        }
-        
-        .contato-cta h2 {
-            font-size: 2em;
-            margin-bottom: 20px;
-            color: var(--primary-color);
-        }
-
-        /* --- Rodapé --- */
-        .footer {
-            background-color: var(--text-color);
-            color: white;
-            text-align: center;
-            padding: 25px 20px;
-            font-size: 0.9em;
-        }
-
-        /* --- Keyframes (Animações) --- */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-50px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(50px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        body { font-family: 'Poppins', sans-serif; background-color: #f1f5f9; }
+        .bible-text { font-family: 'Merriweather', serif; line-height: 1.8; }
+        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
     </style>
 </head>
-<body>
+<body class="min-h-screen">
 
-    <!-- Conteúdo HTML aqui permanece o mesmo -->
+    <div id="setup" class="fixed inset-0 bg-slate-900 z-50 flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-md w-full text-center">
+            <h2 class="text-2xl font-bold mb-4 text-slate-800">Chave da API Groq</h2>
+            <p class="text-sm text-slate-500 mb-6">Insira sua chave externa para carregar os estudos bíblicos em tempo real.</p>
+            <input type="password" id="apiKey" placeholder="gsk_..." class="w-full border-2 border-slate-200 rounded-xl px-4 py-3 mb-4 focus:border-indigo-500 outline-none transition">
+            <button onclick="salvarChave()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition">Acessar Bíblia</button>
+            <p class="mt-4 text-[10px] text-slate-400 italic">Sua chave é salva apenas no seu navegador.</p>
+        </div>
+    </div>
+
+    <header class="bg-indigo-900 text-white p-6 shadow-lg sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto flex flex-col md:row justify-between items-center gap-4">
+            <h1 class="text-2xl font-bold italic tracking-wider">ESTUDO BÍBLICO ARC</h1>
+            <div class="flex flex-wrap justify-center gap-3">
+                <input type="text" id="livroInput" placeholder="Livro (Ex: Gênesis)" class="bg-indigo-800 border border-indigo-700 rounded-lg px-4 py-2 text-sm outline-none w-32">
+                <input type="number" id="capInput" placeholder="Cap" class="bg-indigo-800 border border-indigo-700 rounded-lg px-4 py-2 text-sm outline-none w-20">
+                <button onclick="carregarEstudoIA()" class="bg-amber-500 hover:bg-amber-600 px-6 py-2 rounded-lg font-bold text-indigo-900 transition shadow-md">ESTUDAR AGORA</button>
+            </div>
+        </div>
+    </header>
+
+    <main id="mainContent" class="max-w-7xl mx-auto p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 hidden">
+        
+        <div class="lg:col-span-7">
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 md:p-12">
+                <div id="loader" class="hidden animate-pulse text-indigo-600 font-bold mb-4 italic">Consultando revelações...</div>
+                <h2 id="displayTitulo" class="text-4xl font-bold text-slate-800 mb-8 border-l-8 border-amber-500 pl-6">Bem-vindo</h2>
+                <div id="textoBiblico" class="bible-text text-lg text-slate-700 space-y-6">
+                    Selecione um livro e capítulo para iniciar seu estudo profundo.
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-5 space-y-6">
+            <div class="rounded-2xl overflow-hidden shadow-xl h-60 bg-slate-200 relative">
+                <img id="capImagem" src="https://images.unsplash.com/photo-1504052434139-1838dfab3d14?q=80&w=1000" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
+                    <p id="legendaImagem" class="text-white text-xs italic"></p>
+                </div>
+            </div>
+
+            <div class="bg-amber-50 rounded-3xl p-8 border border-amber-200 shadow-inner">
+                <h3 class="font-bold text-amber-900 mb-4 flex items-center gap-2 text-lg">
+                    ✨ Revelação dos Pastores & Estudos
+                </h3>
+                <div id="estudoIA" class="text-amber-900 leading-relaxed space-y-4 text-sm whitespace-pre-line">
+                    As revelações teológicas aparecerão aqui.
+                </div>
+            </div>
+        </div>
+    </main>
 
     <script>
-        // O script JavaScript para tratar os cliques deve ser colocado aqui,
-        // pois ele precisa estar no corpo do documento.
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            // 1. Selecionar todos os botões que devem acionar a seção de contato
-            const contactButtons = document.querySelectorAll('.contact-btn');
+        let GROQ_KEY = "";
 
-            // 2. Adicionar um event listener a cada um desses botões
-            contactButtons.forEach(button => {
-                button.addEventListener('click', function(event) {
-                    // Prevenir o comportamento padrão do link (se for um <a href="#contato">)
-                    event.preventDefault(); 
-                    
-                    // 3. Rolar suavemente para a seção com id="contato"
-                    const targetSection = document.getElementById('contato');
-                    if (targetSection) {
-                        targetSection.scrollIntoView({ behavior: 'smooth' });
-                    }
-                });
-            });
-
-            // 4. Opcional: Adicionar funcionalidade de validação de formulário
-            const contactForm = document.getElementById('contactForm');
-            if (contactForm) {
-                contactForm.addEventListener('submit', function(event) {
-                    // Prevenir o envio padrão do formulário
-                    event.preventDefault(); 
-                    
-                    // Simulação de validação de campos
-                    const nameInput = document.getElementById('name');
-                    const emailInput = document.getElementById('email');
-                    const messageInput = document.getElementById('message');
-
-                    if (nameInput.value.trim() === "" || emailInput.value.trim() === "" || messageInput.value.trim() === "") {
-                        alert("Por favor, preencha todos os campos obrigatórios (Nome, Email e Mensagem).");
-                        return;
-                    }
-
-                    // *** Nesta linha, seria o código real de envio de dados (ex: fetch() para API) ***
-                    alert("Mensagem enviada com sucesso! (Simulação de envio)");
-                    
-                    // Limpar o formulário após o envio bem-sucedido
-                    contactForm.reset(); 
-                });
+        function salvarChave() {
+            const key = document.getElementById('apiKey').value;
+            if (key) {
+                GROQ_KEY = key;
+                document.getElementById('setup').classList.add('hidden');
+                document.getElementById('mainContent').classList.remove('hidden');
             }
-        });
+        }
+
+        async function carregarEstudoIA() {
+            const livro = document.getElementById('livroInput').value;
+            const cap = document.getElementById('capInput').value;
+            
+            if (!livro || !cap) return alert("Digite o livro e o capítulo.");
+
+            document.getElementById('loader').classList.remove('hidden');
+            document.getElementById('displayTitulo').innerText = `${livro} ${cap}`;
+
+            const prompt = `Aja como um renomado professor de teologia evangélica. 
+            Forneça o estudo do capítulo ${cap} do livro de ${livro} na versão Almeida Revista e Corrigida (ARC).
+            Formate sua resposta rigorosamente assim:
+            TEXTO: (Escreva os principais versículos desse capítulo)
+            ESTUDO: (Forneça um estudo profundo, contexto histórico e significado das palavras originais)
+            REVELACAO: (Quais são as revelações proféticas e pregações comuns de pastores sobre este capítulo?)
+            IMAGEM: (Dê uma descrição curta de uma imagem bíblica para este capítulo)`;
+
+            try {
+                const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${GROQ_KEY}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        model: "llama-3.3-70b-versatile",
+                        messages: [{ role: "user", content: prompt }]
+                    })
+                });
+
+                const data = await response.json();
+                const content = data.choices[0].message.content;
+
+                // Processar a resposta da IA
+                const texto = content.split("TEXTO:")[1].split("ESTUDO:")[0];
+                const estudo = content.split("ESTUDO:")[1].split("REVELACAO:")[0];
+                const revelacao = content.split("REVELACAO:")[1].split("IMAGEM:")[0];
+                const imagemDesc = content.split("IMAGEM:")[1];
+
+                document.getElementById('textoBiblico').innerHTML = texto;
+                document.getElementById('estudoIA').innerHTML = `<strong>Estudo Teológico:</strong><br>${estudo}<br><br><strong>Revelação Profética:</strong><br>${revelacao}`;
+                document.getElementById('legendaImagem').innerText = imagemDesc;
+                
+                // Trocar imagem aleatória para dar sensação de novidade
+                document.getElementById('capImagem').src = `https://loremflickr.com/800/600/bible,israel?random=${Math.random()}`;
+
+            } catch (error) {
+                alert("Erro ao consultar a IA. Verifique sua chave.");
+            } finally {
+                document.getElementById('loader').classList.add('hidden');
+            }
+        }
     </script>
 </body>
 </html>
