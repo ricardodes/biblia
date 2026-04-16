@@ -1,381 +1,404 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Palavra Sagrada — Bíblia ARC com IA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
+    :root {
+      --gold: #C9A84C;
+      --gold-light: #E8CC7A;
+      --gold-dark: #8B6914;
+      --parch: #FBF6EC;
+      --parch2: #F5EDDA;
+      --brown: #3B2507;
+      --brown2: #5C3A0E;
+      --red-accent: #8B1A1A;
+      --cream: #FAF7F0;
+    }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'EB Garamond', Georgia, serif; background: var(--cream); color: var(--brown); min-height: 100vh; }
 
-  :root {
-    --gold: #C9A84C;
-    --gold-light: #E8CC7A;
-    --gold-dark: #8B6914;
-    --parch: #FBF6EC;
-    --parch2: #F5EDDA;
-    --brown: #3B2507;
-    --brown2: #5C3A0E;
-    --red-accent: #8B1A1A;
-    --cream: #FAF7F0;
-  }
+    /* HEADER */
+    .site-header {
+      background: linear-gradient(135deg, #1A0A00 0%, #2D1200 50%, #1A0A00 100%);
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 3px solid var(--gold);
+    }
+    .header-bg {
+      position: absolute; inset: 0;
+      background-image: repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(201,168,76,0.03) 35px, rgba(201,168,76,0.03) 70px);
+    }
+    .header-content {
+      position: relative; z-index: 1;
+      display: flex; align-items: center; gap: 16px;
+      padding: 18px 24px 14px;
+    }
+    .cross-icon {
+      width: 44px; height: 44px; position: relative; flex-shrink: 0;
+      font-size: 38px; color: var(--gold); line-height: 44px;
+    }
+    .header-titles { flex: 1; }
+    .site-title {
+      font-family: 'Cinzel', serif;
+      font-size: 22px; font-weight: 700;
+      color: var(--gold-light);
+      letter-spacing: 1px;
+      line-height: 1.1;
+    }
+    .site-subtitle {
+      font-size: 12px; color: rgba(201,168,76,0.65);
+      letter-spacing: 2px; text-transform: uppercase;
+      margin-top: 2px;
+    }
+    .verse-of-day {
+      font-size: 11px; color: rgba(201,168,76,0.5);
+      font-style: italic; max-width: 220px; text-align: right;
+      line-height: 1.4;
+    }
 
-  body { font-family: 'EB Garamond', Georgia, serif; background: var(--cream); color: var(--brown); min-height: 100vh; }
+    /* API KEY BAR */
+    .api-key-bar {
+      background: #0F0600;
+      padding: 6px 24px;
+      display: flex; align-items: center; gap: 10px;
+      border-bottom: 1px solid rgba(201,168,76,0.15);
+      flex-wrap: wrap;
+    }
+    .api-key-label {
+      font-family: 'Cinzel', serif; font-size: 11px;
+      color: rgba(201,168,76,0.6); letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+    .api-key-input {
+      flex: 1; min-width: 200px; max-width: 340px;
+      padding: 4px 10px; border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 4px; background: rgba(255,255,255,0.05);
+      color: var(--gold-light); font-size: 12px; outline: none;
+      font-family: monospace;
+    }
+    .api-key-input:focus { border-color: var(--gold); }
+    .api-key-save {
+      padding: 4px 12px; background: var(--gold-dark);
+      color: var(--parch); border: none; border-radius: 4px;
+      font-family: 'Cinzel', serif; font-size: 11px;
+      cursor: pointer;
+    }
+    .api-key-save:hover { background: var(--brown2); }
+    .api-status {
+      font-size: 11px; color: rgba(201,168,76,0.5);
+      font-style: italic;
+    }
 
-  /* HEADER */
-  .site-header {
-    background: linear-gradient(135deg, #1A0A00 0%, #2D1200 50%, #1A0A00 100%);
-    padding: 0;
-    position: relative;
-    overflow: hidden;
-    border-bottom: 3px solid var(--gold);
-  }
-  .header-bg {
-    position: absolute; inset: 0;
-    background-image: repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(201,168,76,0.03) 35px, rgba(201,168,76,0.03) 70px);
-  }
-  .header-content {
-    position: relative; z-index: 1;
-    display: flex; align-items: center; gap: 16px;
-    padding: 18px 24px 14px;
-  }
-  .cross-icon {
-    width: 44px; height: 44px; position: relative; flex-shrink: 0;
-  }
-  .cross-icon::before {
-    content: '✝'; font-size: 38px; color: var(--gold); position: absolute; top: 0; left: 0; line-height: 44px;
-  }
-  .header-titles { flex: 1; }
-  .site-title {
-    font-family: 'Cinzel', serif;
-    font-size: 22px; font-weight: 700;
-    color: var(--gold-light);
-    letter-spacing: 1px;
-    line-height: 1.1;
-  }
-  .site-subtitle {
-    font-size: 12px; color: rgba(201,168,76,0.65);
-    letter-spacing: 2px; text-transform: uppercase;
-    margin-top: 2px;
-  }
-  .verse-of-day {
-    font-size: 11px; color: rgba(201,168,76,0.5);
-    font-style: italic; max-width: 220px; text-align: right;
-    line-height: 1.4;
-  }
+    /* NAV TABS */
+    .nav-tabs {
+      display: flex; background: #0F0600;
+      border-bottom: 1px solid rgba(201,168,76,0.2);
+      overflow-x: auto;
+    }
+    .nav-tab {
+      padding: 10px 18px; font-family: 'Cinzel', serif;
+      font-size: 12px; letter-spacing: 0.5px;
+      color: rgba(201,168,76,0.5); cursor: pointer;
+      border: none; background: transparent;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap; transition: color 0.2s, border-color 0.2s;
+    }
+    .nav-tab:hover { color: var(--gold-light); }
+    .nav-tab.active { color: var(--gold-light); border-bottom-color: var(--gold); }
 
-  /* NAV TABS */
-  .nav-tabs {
-    display: flex; background: #0F0600;
-    border-bottom: 1px solid rgba(201,168,76,0.2);
-    overflow-x: auto;
-  }
-  .nav-tab {
-    padding: 10px 18px; font-family: 'Cinzel', serif;
-    font-size: 12px; letter-spacing: 0.5px;
-    color: rgba(201,168,76,0.5); cursor: pointer;
-    border: none; background: transparent;
-    border-bottom: 2px solid transparent;
-    white-space: nowrap; transition: color 0.2s, border-color 0.2s;
-  }
-  .nav-tab:hover { color: var(--gold-light); }
-  .nav-tab.active { color: var(--gold-light); border-bottom-color: var(--gold); }
+    /* LAYOUT */
+    .app-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: calc(100vh - 140px);
+    }
 
-  /* LAYOUT */
-  .app-layout {
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    min-height: calc(100vh - 120px);
-  }
+    /* SIDEBAR */
+    .sidebar {
+      background: var(--parch2);
+      border-right: 1px solid rgba(139,105,20,0.3);
+      overflow-y: auto;
+      max-height: calc(100vh - 140px);
+    }
+    .sidebar-section { border-bottom: 1px solid rgba(139,105,20,0.2); }
+    .sidebar-title {
+      font-family: 'Cinzel', serif; font-size: 11px;
+      font-weight: 600; letter-spacing: 1.5px;
+      color: var(--brown2); text-transform: uppercase;
+      padding: 10px 14px 8px;
+      background: rgba(201,168,76,0.1);
+    }
+    .testament-btn {
+      width: 100%; padding: 6px 14px;
+      background: transparent; border: none;
+      text-align: left; font-family: 'Cinzel', serif;
+      font-size: 12px; color: var(--brown); cursor: pointer;
+      transition: background 0.15s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .testament-btn:hover, .testament-btn.active {
+      background: rgba(201,168,76,0.15); color: var(--gold-dark);
+    }
+    .testament-btn .arrow { font-size: 9px; transition: transform 0.2s; }
+    .testament-btn.open .arrow { transform: rotate(90deg); }
 
-  /* SIDEBAR */
-  .sidebar {
-    background: var(--parch2);
-    border-right: 1px solid rgba(139,105,20,0.3);
-    overflow-y: auto;
-    max-height: calc(100vh - 120px);
-  }
-  .sidebar-section { border-bottom: 1px solid rgba(139,105,20,0.2); }
-  .sidebar-title {
-    font-family: 'Cinzel', serif; font-size: 11px;
-    font-weight: 600; letter-spacing: 1.5px;
-    color: var(--brown2); text-transform: uppercase;
-    padding: 10px 14px 8px;
-    background: rgba(201,168,76,0.1);
-  }
-  .testament-btn {
-    width: 100%; padding: 6px 14px;
-    background: transparent; border: none;
-    text-align: left; font-family: 'Cinzel', serif;
-    font-size: 12px; color: var(--brown); cursor: pointer;
-    transition: background 0.15s;
-    display: flex; align-items: center; gap: 6px;
-  }
-  .testament-btn:hover, .testament-btn.active {
-    background: rgba(201,168,76,0.15); color: var(--gold-dark);
-  }
-  .testament-btn .arrow { font-size: 9px; transition: transform 0.2s; }
-  .testament-btn.open .arrow { transform: rotate(90deg); }
+    .books-list { display: none; padding: 2px 0; }
+    .books-list.open { display: block; }
+    .book-btn {
+      width: 100%; padding: 5px 14px 5px 28px;
+      background: transparent; border: none;
+      text-align: left; font-size: 13px;
+      color: var(--brown2); cursor: pointer;
+      transition: background 0.15s; line-height: 1.4;
+    }
+    .book-btn:hover { background: rgba(201,168,76,0.1); }
+    .book-btn.active {
+      background: rgba(201,168,76,0.2); color: var(--red-accent);
+      font-weight: 500;
+    }
 
-  .books-list { display: none; padding: 2px 0; }
-  .books-list.open { display: block; }
-  .book-btn {
-    width: 100%; padding: 5px 14px 5px 28px;
-    background: transparent; border: none;
-    text-align: left; font-size: 13px;
-    color: var(--brown2); cursor: pointer;
-    transition: background 0.15s; line-height: 1.4;
-  }
-  .book-btn:hover { background: rgba(201,168,76,0.1); }
-  .book-btn.active {
-    background: rgba(201,168,76,0.2); color: var(--red-accent);
-    font-weight: 500;
-  }
+    .search-box { padding: 10px 12px; }
+    .search-input {
+      width: 100%; padding: 7px 10px;
+      border: 1px solid rgba(139,105,20,0.4);
+      border-radius: 4px; font-size: 13px;
+      background: var(--parch); color: var(--brown);
+      font-family: 'EB Garamond', serif;
+      outline: none;
+    }
+    .search-input:focus { border-color: var(--gold); }
+    .search-results { padding: 4px 12px; }
+    .search-result-item {
+      padding: 6px 0; border-bottom: 1px solid rgba(139,105,20,0.1);
+      cursor: pointer; font-size: 13px;
+    }
+    .search-result-item:hover { color: var(--red-accent); }
+    .search-result-ref { font-size: 11px; color: var(--gold-dark); font-family: 'Cinzel', serif; }
 
-  .search-box {
-    padding: 10px 12px;
-  }
-  .search-input {
-    width: 100%; padding: 7px 10px;
-    border: 1px solid rgba(139,105,20,0.4);
-    border-radius: 4px; font-size: 13px;
-    background: var(--parch); color: var(--brown);
-    font-family: 'EB Garamond', serif;
-    outline: none;
-  }
-  .search-input:focus { border-color: var(--gold); }
-  .search-results { padding: 4px 12px; }
-  .search-result-item {
-    padding: 6px 0; border-bottom: 1px solid rgba(139,105,20,0.1);
-    cursor: pointer; font-size: 13px;
-  }
-  .search-result-item:hover { color: var(--red-accent); }
-  .search-result-ref { font-size: 11px; color: var(--gold-dark); font-family: 'Cinzel', serif; }
+    /* MAIN CONTENT */
+    .main-content {
+      background: var(--parch);
+      overflow-y: auto;
+      max-height: calc(100vh - 140px);
+    }
 
-  /* MAIN CONTENT */
-  .main-content {
-    background: var(--parch);
-    overflow-y: auto;
-    max-height: calc(100vh - 120px);
-  }
+    /* BIBLE PANEL */
+    .panel { padding: 0; }
+    .panel.hidden { display: none; }
 
-  /* BIBLE PANEL */
-  .panel { padding: 0; }
-  .panel.hidden { display: none; }
+    .chapter-nav {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 20px; background: var(--parch2);
+      border-bottom: 1px solid rgba(139,105,20,0.2);
+      flex-wrap: wrap;
+    }
+    .book-title {
+      font-family: 'Cinzel', serif; font-size: 18px;
+      font-weight: 600; color: var(--brown); flex: 1;
+      min-width: 140px;
+    }
+    .chapter-select, .chapter-nav-btn {
+      padding: 5px 10px; border: 1px solid rgba(139,105,20,0.4);
+      border-radius: 4px; font-family: 'Cinzel', serif;
+      font-size: 12px; background: var(--parch);
+      color: var(--brown); cursor: pointer;
+    }
+    .chapter-nav-btn:hover { background: rgba(201,168,76,0.2); }
+    .study-btn {
+      padding: 6px 12px; background: var(--gold-dark);
+      color: var(--parch); border: none; border-radius: 4px;
+      font-family: 'Cinzel', serif; font-size: 11px;
+      letter-spacing: 0.5px; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .study-btn:hover { background: var(--brown2); }
 
-  .chapter-nav {
-    display: flex; align-items: center; gap: 8px;
-    padding: 12px 20px; background: var(--parch2);
-    border-bottom: 1px solid rgba(139,105,20,0.2);
-    flex-wrap: wrap;
-  }
-  .book-title {
-    font-family: 'Cinzel', serif; font-size: 18px;
-    font-weight: 600; color: var(--brown); flex: 1;
-    min-width: 140px;
-  }
-  .chapter-select, .chapter-nav-btn {
-    padding: 5px 10px; border: 1px solid rgba(139,105,20,0.4);
-    border-radius: 4px; font-family: 'Cinzel', serif;
-    font-size: 12px; background: var(--parch);
-    color: var(--brown); cursor: pointer;
-  }
-  .chapter-nav-btn:hover { background: rgba(201,168,76,0.2); }
-  .study-btn {
-    padding: 6px 12px; background: var(--gold-dark);
-    color: var(--parch); border: none; border-radius: 4px;
-    font-family: 'Cinzel', serif; font-size: 11px;
-    letter-spacing: 0.5px; cursor: pointer;
-    transition: background 0.15s;
-  }
-  .study-btn:hover { background: var(--brown2); }
+    .chapter-grid {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      padding: 12px 20px; border-bottom: 1px solid rgba(139,105,20,0.1);
+      background: rgba(251,246,236,0.5);
+    }
+    .ch-num {
+      width: 34px; height: 34px; display: flex;
+      align-items: center; justify-content: center;
+      border: 1px solid rgba(139,105,20,0.3); border-radius: 4px;
+      font-family: 'Cinzel', serif; font-size: 13px;
+      cursor: pointer; color: var(--brown2); transition: all 0.15s;
+    }
+    .ch-num:hover { background: rgba(201,168,76,0.2); }
+    .ch-num.active { background: var(--gold-dark); color: white; border-color: var(--gold-dark); }
 
-  .chapter-grid {
-    display: flex; flex-wrap: wrap; gap: 6px;
-    padding: 12px 20px; border-bottom: 1px solid rgba(139,105,20,0.1);
-    background: rgba(251,246,236,0.5);
-  }
-  .ch-num {
-    width: 34px; height: 34px; display: flex;
-    align-items: center; justify-content: center;
-    border: 1px solid rgba(139,105,20,0.3); border-radius: 4px;
-    font-family: 'Cinzel', serif; font-size: 13px;
-    cursor: pointer; color: var(--brown2); transition: all 0.15s;
-  }
-  .ch-num:hover { background: rgba(201,168,76,0.2); }
-  .ch-num.active { background: var(--gold-dark); color: white; border-color: var(--gold-dark); }
+    .verses-area {
+      padding: 20px 24px 40px;
+      max-width: 700px;
+    }
+    .chapter-heading {
+      font-family: 'Cinzel', serif; font-size: 15px;
+      color: var(--red-accent); margin-bottom: 16px;
+      padding-bottom: 10px; border-bottom: 1px solid rgba(139,105,20,0.2);
+      letter-spacing: 0.5px;
+    }
+    .verse-line {
+      display: flex; gap: 8px; margin-bottom: 8px;
+      line-height: 1.7; font-size: 16px; cursor: pointer;
+      padding: 3px 6px; border-radius: 3px; transition: background 0.15s;
+    }
+    .verse-line:hover { background: rgba(201,168,76,0.12); }
+    .verse-line.highlighted { background: rgba(201,168,76,0.25); }
+    .verse-num {
+      font-family: 'Cinzel', serif; font-size: 11px;
+      color: var(--gold-dark); font-weight: 600;
+      min-width: 22px; padding-top: 4px; line-height: 1;
+    }
+    .verse-text { flex: 1; color: var(--brown); }
+    .verse-actions {
+      display: none; gap: 4px; margin-top: 6px;
+      padding: 6px 10px; background: rgba(201,168,76,0.1);
+      border-left: 3px solid var(--gold); border-radius: 0 4px 4px 0;
+      font-size: 12px;
+    }
+    .verse-actions.show { display: flex; flex-wrap: wrap; gap: 6px; }
+    .va-btn {
+      padding: 3px 8px; border: 1px solid rgba(139,105,20,0.4);
+      border-radius: 3px; background: var(--parch);
+      font-family: 'Cinzel', serif; font-size: 11px;
+      cursor: pointer; color: var(--brown2);
+    }
+    .va-btn:hover { background: var(--gold-dark); color: white; border-color: var(--gold-dark); }
 
-  .verses-area {
-    padding: 20px 24px 40px;
-    max-width: 700px;
-  }
-  .chapter-heading {
-    font-family: 'Cinzel', serif; font-size: 15px;
-    color: var(--red-accent); margin-bottom: 16px;
-    padding-bottom: 10px; border-bottom: 1px solid rgba(139,105,20,0.2);
-    letter-spacing: 0.5px;
-  }
-  .verse-line {
-    display: flex; gap: 8px; margin-bottom: 8px;
-    line-height: 1.7; font-size: 16px; cursor: pointer;
-    padding: 3px 6px; border-radius: 3px; transition: background 0.15s;
-  }
-  .verse-line:hover { background: rgba(201,168,76,0.12); }
-  .verse-line.highlighted { background: rgba(201,168,76,0.25); }
-  .verse-num {
-    font-family: 'Cinzel', serif; font-size: 11px;
-    color: var(--gold-dark); font-weight: 600;
-    min-width: 22px; padding-top: 4px; line-height: 1;
-  }
-  .verse-text { flex: 1; color: var(--brown); }
-  .verse-actions {
-    display: none; gap: 4px; margin-top: 6px;
-    padding: 6px 10px; background: rgba(201,168,76,0.1);
-    border-left: 3px solid var(--gold); border-radius: 0 4px 4px 0;
-    font-size: 12px;
-  }
-  .verse-actions.show { display: flex; flex-wrap: wrap; gap: 6px; }
-  .va-btn {
-    padding: 3px 8px; border: 1px solid rgba(139,105,20,0.4);
-    border-radius: 3px; background: var(--parch);
-    font-family: 'Cinzel', serif; font-size: 11px;
-    cursor: pointer; color: var(--brown2);
-  }
-  .va-btn:hover { background: var(--gold-dark); color: white; border-color: var(--gold-dark); }
+    /* LOADING */
+    .loading-verses {
+      padding: 40px 24px; text-align: center;
+      color: var(--gold-dark); font-style: italic; font-size: 15px;
+    }
+    .spinner {
+      width: 24px; height: 24px; border: 2px solid rgba(139,105,20,0.3);
+      border-top-color: var(--gold); border-radius: 50%;
+      animation: spin 0.8s linear infinite; margin: 0 auto 12px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* LOADING spinner */
-  .loading-verses {
-    padding: 40px 24px; text-align: center;
-    color: var(--gold-dark); font-style: italic; font-size: 15px;
-  }
-  .spinner {
-    width: 24px; height: 24px; border: 2px solid rgba(139,105,20,0.3);
-    border-top-color: var(--gold); border-radius: 50%;
-    animation: spin 0.8s linear infinite; margin: 0 auto 12px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+    /* STUDY PANEL */
+    .study-panel { padding: 20px 24px 40px; }
+    .study-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 16px; padding-bottom: 12px;
+      border-bottom: 2px solid rgba(139,105,20,0.2);
+    }
+    .study-icon { font-size: 24px; }
+    .study-title { font-family: 'Cinzel', serif; font-size: 16px; color: var(--brown); font-weight: 600; }
+    .study-subtitle { font-size: 12px; color: var(--gold-dark); margin-top: 2px; }
 
-  /* STUDY PANEL */
-  .study-panel {
-    padding: 20px 24px 40px;
-  }
-  .study-header {
-    display: flex; align-items: center; gap: 10px;
-    margin-bottom: 16px; padding-bottom: 12px;
-    border-bottom: 2px solid rgba(139,105,20,0.2);
-  }
-  .study-icon { font-size: 24px; }
-  .study-title {
-    font-family: 'Cinzel', serif; font-size: 16px;
-    color: var(--brown); font-weight: 600;
-  }
-  .study-subtitle { font-size: 12px; color: var(--gold-dark); margin-top: 2px; }
+    .ai-study-area {
+      background: white; border: 1px solid rgba(139,105,20,0.2);
+      border-radius: 8px; padding: 20px; min-height: 200px;
+      line-height: 1.8; font-size: 15px; color: var(--brown);
+    }
+    .ai-study-area h3 {
+      font-family: 'Cinzel', serif; font-size: 14px; color: var(--red-accent);
+      margin: 18px 0 8px; padding-bottom: 6px;
+      border-bottom: 1px solid rgba(139,105,20,0.15);
+    }
+    .ai-study-area h3:first-child { margin-top: 0; }
+    .ai-study-area p { margin-bottom: 12px; }
+    .ai-study-area blockquote {
+      border-left: 3px solid var(--gold); padding-left: 14px;
+      color: var(--brown2); font-style: italic; margin: 12px 0;
+    }
 
-  .ai-study-area {
-    background: white; border: 1px solid rgba(139,105,20,0.2);
-    border-radius: 8px; padding: 20px; min-height: 200px;
-    line-height: 1.8; font-size: 15px; color: var(--brown);
-  }
-  .ai-study-area h3 {
-    font-family: 'Cinzel', serif; font-size: 14px; color: var(--red-accent);
-    margin: 18px 0 8px; padding-bottom: 6px;
-    border-bottom: 1px solid rgba(139,105,20,0.15);
-  }
-  .ai-study-area h3:first-child { margin-top: 0; }
-  .ai-study-area p { margin-bottom: 12px; }
-  .ai-study-area blockquote {
-    border-left: 3px solid var(--gold); padding-left: 14px;
-    color: var(--brown2); font-style: italic; margin: 12px 0;
-  }
+    .study-options { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .study-opt-btn {
+      padding: 7px 14px; border: 1px solid rgba(139,105,20,0.4);
+      border-radius: 4px; font-family: 'Cinzel', serif; font-size: 12px;
+      background: var(--parch); color: var(--brown2); cursor: pointer;
+      transition: all 0.15s;
+    }
+    .study-opt-btn:hover, .study-opt-btn.active {
+      background: var(--gold-dark); color: white; border-color: var(--gold-dark);
+    }
 
-  .study-options {
-    display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;
-  }
-  .study-opt-btn {
-    padding: 7px 14px; border: 1px solid rgba(139,105,20,0.4);
-    border-radius: 4px; font-family: 'Cinzel', serif; font-size: 12px;
-    background: var(--parch); color: var(--brown2); cursor: pointer;
-    transition: all 0.15s;
-  }
-  .study-opt-btn:hover, .study-opt-btn.active {
-    background: var(--gold-dark); color: white; border-color: var(--gold-dark);
-  }
+    /* REVELAÇÕES */
+    .card-revelation {
+      background: white; border: 1px solid rgba(139,105,20,0.2);
+      border-radius: 8px; padding: 16px; margin-bottom: 12px;
+      transition: box-shadow 0.15s;
+    }
+    .card-revelation:hover { box-shadow: 0 2px 12px rgba(139,105,20,0.15); }
+    .rev-tag {
+      display: inline-block; padding: 2px 8px;
+      background: rgba(139,26,26,0.1); color: var(--red-accent);
+      border-radius: 3px; font-size: 11px; font-family: 'Cinzel', serif;
+      margin-bottom: 8px; letter-spacing: 0.5px;
+    }
+    .rev-title { font-family: 'Cinzel', serif; font-size: 14px; color: var(--brown); font-weight: 600; margin-bottom: 6px; }
+    .rev-text { font-size: 14px; line-height: 1.7; color: var(--brown2); }
+    .rev-pastor { margin-top: 8px; font-size: 12px; color: var(--gold-dark); font-family: 'Cinzel', serif; }
 
-  /* REVELAÇÕES / PREGAÇÕES */
-  .card-revelation {
-    background: white; border: 1px solid rgba(139,105,20,0.2);
-    border-radius: 8px; padding: 16px; margin-bottom: 12px;
-    transition: box-shadow 0.15s;
-  }
-  .card-revelation:hover { box-shadow: 0 2px 12px rgba(139,105,20,0.15); }
-  .rev-tag {
-    display: inline-block; padding: 2px 8px;
-    background: rgba(139,26,26,0.1); color: var(--red-accent);
-    border-radius: 3px; font-size: 11px; font-family: 'Cinzel', serif;
-    margin-bottom: 8px; letter-spacing: 0.5px;
-  }
-  .rev-title {
-    font-family: 'Cinzel', serif; font-size: 14px;
-    color: var(--brown); font-weight: 600; margin-bottom: 6px;
-  }
-  .rev-text { font-size: 14px; line-height: 1.7; color: var(--brown2); }
-  .rev-pastor {
-    margin-top: 8px; font-size: 12px; color: var(--gold-dark);
-    font-family: 'Cinzel', serif;
-  }
+    /* SEARCH */
+    .search-panel { padding: 20px 24px 40px; }
+    .search-big-input {
+      width: 100%; padding: 12px 16px;
+      border: 2px solid rgba(139,105,20,0.4); border-radius: 6px;
+      font-family: 'EB Garamond', serif; font-size: 16px;
+      background: var(--parch); color: var(--brown);
+      outline: none; margin-bottom: 12px;
+    }
+    .search-big-input:focus { border-color: var(--gold); }
 
-  /* SEARCH SECTION */
-  .search-panel { padding: 20px 24px 40px; }
-  .search-big-input {
-    width: 100%; padding: 12px 16px;
-    border: 2px solid rgba(139,105,20,0.4); border-radius: 6px;
-    font-family: 'EB Garamond', serif; font-size: 16px;
-    background: var(--parch); color: var(--brown);
-    outline: none; margin-bottom: 12px;
-  }
-  .search-big-input:focus { border-color: var(--gold); }
+    /* DEVOTIONAL BANNER */
+    .devo-banner {
+      background: linear-gradient(135deg, #1A0A00, #3B2507);
+      color: var(--gold-light); padding: 20px 24px;
+      border-bottom: 1px solid rgba(201,168,76,0.3);
+      position: relative; overflow: hidden;
+    }
+    .devo-banner::before {
+      content: '✝'; position: absolute; right: 20px; top: 50%;
+      transform: translateY(-50%); font-size: 80px;
+      color: rgba(201,168,76,0.08);
+    }
+    .devo-label { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 2px; color: rgba(201,168,76,0.5); text-transform: uppercase; margin-bottom: 6px; }
+    .devo-verse { font-size: 17px; font-style: italic; line-height: 1.6; max-width: 520px; }
+    .devo-ref { font-family: 'Cinzel', serif; font-size: 12px; color: var(--gold); margin-top: 8px; }
 
-  /* DEVOTIONAL BANNER */
-  .devo-banner {
-    background: linear-gradient(135deg, #1A0A00, #3B2507);
-    color: var(--gold-light); padding: 20px 24px;
-    border-bottom: 1px solid rgba(201,168,76,0.3);
-    position: relative; overflow: hidden;
-  }
-  .devo-banner::before {
-    content: '✝'; position: absolute; right: 20px; top: 50%;
-    transform: translateY(-50%); font-size: 80px;
-    color: rgba(201,168,76,0.08);
-  }
-  .devo-label { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 2px; color: rgba(201,168,76,0.5); text-transform: uppercase; margin-bottom: 6px; }
-  .devo-verse { font-size: 17px; font-style: italic; line-height: 1.6; max-width: 520px; }
-  .devo-ref { font-family: 'Cinzel', serif; font-size: 12px; color: var(--gold); margin-top: 8px; }
-
-  .img-bible {
-    width: 100%; border-radius: 6px; margin: 12px 0;
-    border: 1px solid rgba(139,105,20,0.2);
-    max-height: 220px; object-fit: cover;
-  }
-
-  /* responsive */
-  @media (max-width: 600px) {
-    .app-layout { grid-template-columns: 1fr; }
-    .sidebar { max-height: 280px; }
-    .main-content { max-height: none; }
-  }
-</style>
-
-<h2 class="sr-only">Site de Estudo Bíblico — Bíblia Almeida Revista e Corrigida com IA</h2>
+    @media (max-width: 600px) {
+      .app-layout { grid-template-columns: 1fr; }
+      .sidebar { max-height: 280px; }
+      .main-content { max-height: none; }
+    }
+  </style>
+</head>
+<body>
 
 <div class="site-header">
   <div class="header-bg"></div>
   <div class="header-content">
-    <div class="cross-icon"></div>
+    <div class="cross-icon">✝</div>
     <div class="header-titles">
       <div class="site-title">Palavra Sagrada</div>
       <div class="site-subtitle">Bíblia Almeida Revista e Corrigida · ARC</div>
     </div>
-    <div class="verse-of-day" id="verseOfDay">
+    <div class="verse-of-day">
       "Lâmpada para os meus pés é a tua palavra, e luz para o meu caminho."
       <br><strong style="color:var(--gold);font-family:'Cinzel',serif;font-size:10px">Salmos 119:105</strong>
     </div>
   </div>
+</div>
+
+<!-- BARRA DE API KEY GROQ -->
+<div class="api-key-bar">
+  <span class="api-key-label">🤖 Groq API Key:</span>
+  <input class="api-key-input" type="password" id="groqApiKey" placeholder="gsk_..." />
+  <button class="api-key-save" onclick="saveApiKey()">Salvar</button>
+  <span class="api-status" id="apiStatus">Insira sua chave Groq para usar a IA · <a href="https://console.groq.com/keys" target="_blank" style="color:var(--gold);font-style:normal">Obter chave gratuita</a></span>
 </div>
 
 <div class="nav-tabs">
@@ -396,16 +419,19 @@
 
     <div class="sidebar-section">
       <div class="sidebar-title">Velho Testamento</div>
-      <button class="testament-btn" onclick="toggleTestament('vt',this)"><span class="arrow">▶</span> Pentateuco</button>
-      <div class="books-list" id="vt-pent">
+
+      <!-- PENTATEUCO — id correto: 'pent' → div id="list-pent" -->
+      <button class="testament-btn" onclick="toggleSection('pent',this)"><span class="arrow">▶</span> Pentateuco</button>
+      <div class="books-list" id="list-pent">
         <button class="book-btn" onclick="loadBook('Genesis',50)">Gênesis</button>
         <button class="book-btn" onclick="loadBook('Exodo',40)">Êxodo</button>
         <button class="book-btn" onclick="loadBook('Levitico',27)">Levítico</button>
         <button class="book-btn" onclick="loadBook('Numeros',36)">Números</button>
         <button class="book-btn" onclick="loadBook('Deuteronomio',34)">Deuteronômio</button>
       </div>
-      <button class="testament-btn" onclick="toggleTestament('hist',this)"><span class="arrow">▶</span> Livros Históricos</button>
-      <div class="books-list" id="vt-hist">
+
+      <button class="testament-btn" onclick="toggleSection('hist',this)"><span class="arrow">▶</span> Livros Históricos</button>
+      <div class="books-list" id="list-hist">
         <button class="book-btn" onclick="loadBook('Josue',24)">Josué</button>
         <button class="book-btn" onclick="loadBook('Juizes',21)">Juízes</button>
         <button class="book-btn" onclick="loadBook('Rute',4)">Rute</button>
@@ -419,28 +445,31 @@
         <button class="book-btn" onclick="loadBook('Neemias',13)">Neemias</button>
         <button class="book-btn" onclick="loadBook('Ester',10)">Ester</button>
       </div>
-      <button class="testament-btn" onclick="toggleTestament('poe',this)"><span class="arrow">▶</span> Poéticos e Sapienciais</button>
-      <div class="books-list" id="vt-poe">
+
+      <button class="testament-btn" onclick="toggleSection('poe',this)"><span class="arrow">▶</span> Poéticos e Sapienciais</button>
+      <div class="books-list" id="list-poe">
         <button class="book-btn" onclick="loadBook('Jo',42)">Jó</button>
         <button class="book-btn" onclick="loadBook('Salmos',150)">Salmos</button>
         <button class="book-btn" onclick="loadBook('Proverbios',31)">Provérbios</button>
         <button class="book-btn" onclick="loadBook('Eclesiastes',12)">Eclesiastes</button>
         <button class="book-btn" onclick="loadBook('Canticos',8)">Cânticos</button>
       </div>
-      <button class="testament-btn" onclick="toggleTestament('prof',this)"><span class="arrow">▶</span> Profetas Maiores</button>
-      <div class="books-list" id="vt-prof">
+
+      <button class="testament-btn" onclick="toggleSection('prof',this)"><span class="arrow">▶</span> Profetas Maiores</button>
+      <div class="books-list" id="list-prof">
         <button class="book-btn" onclick="loadBook('Isaias',66)">Isaías</button>
         <button class="book-btn" onclick="loadBook('Jeremias',52)">Jeremias</button>
         <button class="book-btn" onclick="loadBook('Lamentacoes',5)">Lamentações</button>
         <button class="book-btn" onclick="loadBook('Ezequiel',48)">Ezequiel</button>
         <button class="book-btn" onclick="loadBook('Daniel',12)">Daniel</button>
       </div>
-      <button class="testament-btn" onclick="toggleTestament('minor',this)"><span class="arrow">▶</span> Profetas Menores</button>
-      <div class="books-list" id="vt-minor">
+
+      <button class="testament-btn" onclick="toggleSection('minor',this)"><span class="arrow">▶</span> Profetas Menores</button>
+      <div class="books-list" id="list-minor">
         <button class="book-btn" onclick="loadBook('Oseias',14)">Oséias</button>
         <button class="book-btn" onclick="loadBook('Joel',3)">Joel</button>
         <button class="book-btn" onclick="loadBook('Amos',9)">Amós</button>
-        <button class="book-btn" onclick="loadBook('Abdias',1)">Abdias</button>
+        <button class="book-btn" onclick="loadBook('Abdias',1)">Obadias</button>
         <button class="book-btn" onclick="loadBook('Jonas',4)">Jonas</button>
         <button class="book-btn" onclick="loadBook('Miqueias',7)">Miqueias</button>
         <button class="book-btn" onclick="loadBook('Naum',3)">Naum</button>
@@ -454,15 +483,17 @@
 
     <div class="sidebar-section">
       <div class="sidebar-title">Novo Testamento</div>
-      <button class="testament-btn" onclick="toggleTestament('evang',this)"><span class="arrow">▶</span> Evangelhos</button>
-      <div class="books-list" id="vt-evang">
+
+      <button class="testament-btn" onclick="toggleSection('evang',this)"><span class="arrow">▶</span> Evangelhos</button>
+      <div class="books-list" id="list-evang">
         <button class="book-btn" onclick="loadBook('Mateus',28)">Mateus</button>
         <button class="book-btn" onclick="loadBook('Marcos',16)">Marcos</button>
         <button class="book-btn" onclick="loadBook('Lucas',24)">Lucas</button>
         <button class="book-btn" onclick="loadBook('Joao',21)">João</button>
       </div>
-      <button class="testament-btn" onclick="toggleTestament('atos',this)"><span class="arrow">▶</span> Atos e Epístolas</button>
-      <div class="books-list" id="vt-atos">
+
+      <button class="testament-btn" onclick="toggleSection('atos',this)"><span class="arrow">▶</span> Atos e Epístolas</button>
+      <div class="books-list" id="list-atos">
         <button class="book-btn" onclick="loadBook('Atos',28)">Atos</button>
         <button class="book-btn" onclick="loadBook('Romanos',16)">Romanos</button>
         <button class="book-btn" onclick="loadBook('1Corintios',16)">1 Coríntios</button>
@@ -486,8 +517,9 @@
         <button class="book-btn" onclick="loadBook('3Joao',1)">3 João</button>
         <button class="book-btn" onclick="loadBook('Judas',1)">Judas</button>
       </div>
-      <button class="testament-btn" onclick="toggleTestament('apoc',this)"><span class="arrow">▶</span> Apocalipse</button>
-      <div class="books-list" id="vt-apoc">
+
+      <button class="testament-btn" onclick="toggleSection('apoc',this)"><span class="arrow">▶</span> Apocalipse</button>
+      <div class="books-list" id="list-apoc">
         <button class="book-btn" onclick="loadBook('Apocalipse',22)">Apocalipse</button>
       </div>
     </div>
@@ -496,11 +528,11 @@
   <!-- MAIN -->
   <div class="main-content">
 
-    <!-- BÍBLIA PANEL -->
+    <!-- BÍBLIA -->
     <div class="panel" id="panel-biblia">
       <div class="devo-banner">
         <div class="devo-label">Versículo do Dia</div>
-        <div class="devo-verse" id="devoText">"Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna."</div>
+        <div class="devo-verse">"Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna."</div>
         <div class="devo-ref">João 3:16 — ARC</div>
       </div>
 
@@ -542,14 +574,6 @@
         </div>
         <div class="ai-study-area" id="studyContent">
           <p style="color:var(--gold-dark);font-style:italic">Aguardando seleção de capítulo... Vá até a aba Bíblia, selecione um livro e capítulo, e clique em <strong>✦ Estudar com IA</strong>.</p>
-          <p>O sistema irá gerar automaticamente:</p>
-          <ul style="padding-left:20px;margin-top:8px;line-height:2">
-            <li>Contexto histórico e cultural do texto</li>
-            <li>Análise teológica profunda</li>
-            <li>Revelações e pregações de pastores renomados</li>
-            <li>Aplicações práticas para sua vida</li>
-            <li>Conexões com outros trechos da Bíblia</li>
-          </ul>
         </div>
       </div>
     </div>
@@ -588,7 +612,7 @@
             <div class="study-subtitle">Pesquise palavras, temas ou referências na Bíblia ARC</div>
           </div>
         </div>
-        <input class="search-big-input" placeholder="Ex: fé, amor, salvação, João 3:16..." id="mainSearch" oninput="mainBibleSearch(this.value)" />
+        <input class="search-big-input" placeholder="Ex: fé, amor, salvação, João 3:16..." id="mainSearch" />
         <div id="searchResults"></div>
       </div>
     </div>
@@ -618,74 +642,137 @@
 </div>
 
 <script>
-const BIBLE_API = 'https://bible-api.com/';
-const ARC_VERSION = '?translation=almeida';
+// ─── CONFIGURAÇÃO API GROQ ────────────────────────────────────────────────────
+const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
+const GROQ_MODEL = 'llama3-70b-8192';
 
-let currentBook = null;
-let currentChapter = 1;
-let currentMaxChapters = 1;
-let studyMode = 'contextual';
+let groqKey = localStorage.getItem('groq_api_key') || '';
 
-const bookAbbrevMap = {
+function saveApiKey() {
+  groqKey = document.getElementById('groqApiKey').value.trim();
+  if (groqKey) {
+    localStorage.setItem('groq_api_key', groqKey);
+    document.getElementById('apiStatus').textContent = '✅ Chave salva com sucesso!';
+    document.getElementById('apiStatus').style.color = 'var(--gold)';
+  }
+}
+
+// Preencher campo se já houver chave salva
+window.addEventListener('DOMContentLoaded', () => {
+  if (groqKey) {
+    document.getElementById('groqApiKey').value = groqKey;
+    document.getElementById('apiStatus').textContent = '✅ Chave carregada. IA pronta!';
+    document.getElementById('apiStatus').style.color = 'var(--gold)';
+  }
+  loadDevocional('morning', null);
+});
+
+async function groqChat(prompt) {
+  groqKey = localStorage.getItem('groq_api_key') || document.getElementById('groqApiKey').value.trim();
+  if (!groqKey) {
+    return '⚠️ Insira sua chave Groq na barra acima para usar a IA. Obtenha gratuitamente em console.groq.com/keys';
+  }
+  const resp = await fetch(GROQ_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + groqKey
+    },
+    body: JSON.stringify({
+      model: GROQ_MODEL,
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  if (!resp.ok) {
+    const err = await resp.json().catch(() => ({}));
+    throw new Error(err.error?.message || `HTTP ${resp.status}`);
+  }
+  const data = await resp.json();
+  return data.choices?.[0]?.message?.content || '';
+}
+
+// ─── MAPEAMENTO DE LIVROS ─────────────────────────────────────────────────────
+// Usando bible-api.com com translation=almeida
+// Abreviações compatíveis com a API
+const bookApiMap = {
   'Genesis':'genesis','Exodo':'exodus','Levitico':'leviticus','Numeros':'numbers',
   'Deuteronomio':'deuteronomy','Josue':'joshua','Juizes':'judges','Rute':'ruth',
-  '1Samuel':'1samuel','2Samuel':'2samuel','1Reis':'1kings','2Reis':'2kings',
-  '1Cronicas':'1chronicles','2Cronicas':'2chronicles','Esdras':'ezra','Neemias':'nehemiah',
+  '1Samuel':'1+samuel','2Samuel':'2+samuel','1Reis':'1+kings','2Reis':'2+kings',
+  '1Cronicas':'1+chronicles','2Cronicas':'2+chronicles','Esdras':'ezra','Neemias':'nehemiah',
   'Ester':'esther','Jo':'job','Salmos':'psalms','Proverbios':'proverbs',
-  'Eclesiastes':'ecclesiastes','Canticos':'songofsolomon','Isaias':'isaiah',
+  'Eclesiastes':'ecclesiastes','Canticos':'song+of+solomon','Isaias':'isaiah',
   'Jeremias':'jeremiah','Lamentacoes':'lamentations','Ezequiel':'ezekiel',
   'Daniel':'daniel','Oseias':'hosea','Joel':'joel','Amos':'amos','Abdias':'obadiah',
   'Jonas':'jonah','Miqueias':'micah','Naum':'nahum','Habacuque':'habakkuk',
   'Sofonias':'zephaniah','Ageu':'haggai','Zacarias':'zechariah','Malaquias':'malachi',
   'Mateus':'matthew','Marcos':'mark','Lucas':'luke','Joao':'john','Atos':'acts',
-  'Romanos':'romans','1Corintios':'1corinthians','2Corintios':'2corinthians',
+  'Romanos':'romans','1Corintios':'1+corinthians','2Corintios':'2+corinthians',
   'Galatas':'galatians','Efesios':'ephesians','Filipenses':'philippians',
-  'Colossenses':'colossians','1Tessalonicenses':'1thessalonians','2Tessalonicenses':'2thessalonians',
-  '1Timoteo':'1timothy','2Timoteo':'2timothy','Tito':'titus','Filemom':'philemon',
-  'Hebreus':'hebrews','Tiago':'james','1Pedro':'1peter','2Pedro':'2peter',
-  '1Joao':'1john','2Joao':'2john','3Joao':'3john','Judas':'jude','Apocalipse':'revelation'
+  'Colossenses':'colossians','1Tessalonicenses':'1+thessalonians','2Tessalonicenses':'2+thessalonians',
+  '1Timoteo':'1+timothy','2Timoteo':'2+timothy','Tito':'titus','Filemom':'philemon',
+  'Hebreus':'hebrews','Tiago':'james','1Pedro':'1+peter','2Pedro':'2+peter',
+  '1Joao':'1+john','2Joao':'2+john','3Joao':'3+john','Judas':'jude','Apocalipse':'revelation'
 };
 
 const bookDisplayNames = {
   'Genesis':'Gênesis','Exodo':'Êxodo','Levitico':'Levítico','Numeros':'Números',
-  'Deuteronomio':'Deuteronômio','Josue':'Josué','Juizes':'Juízes','Jo':'Jó',
-  'Salmos':'Salmos','Proverbios':'Provérbios','Eclesiastes':'Eclesiastes',
-  'Canticos':'Cânticos','Isaias':'Isaías','Jeremias':'Jeremias',
-  'Lamentacoes':'Lamentações','Ezequiel':'Ezequiel','Daniel':'Daniel',
-  'Joao':'João','Atos':'Atos dos Apóstolos','1Corintios':'1 Coríntios',
-  '2Corintios':'2 Coríntios','Galatas':'Gálatas','Efesios':'Efésios',
-  'Filipenses':'Filipenses','Colossenses':'Colossenses','Tiago':'Tiago',
-  'Apocalipse':'Apocalipse'
+  'Deuteronomio':'Deuteronômio','Josue':'Josué','Juizes':'Juízes','Rute':'Rute',
+  '1Samuel':'1 Samuel','2Samuel':'2 Samuel','1Reis':'1 Reis','2Reis':'2 Reis',
+  '1Cronicas':'1 Crônicas','2Cronicas':'2 Crônicas','Esdras':'Esdras','Neemias':'Neemias',
+  'Ester':'Ester','Jo':'Jó','Salmos':'Salmos','Proverbios':'Provérbios',
+  'Eclesiastes':'Eclesiastes','Canticos':'Cânticos dos Cânticos','Isaias':'Isaías',
+  'Jeremias':'Jeremias','Lamentacoes':'Lamentações','Ezequiel':'Ezequiel',
+  'Daniel':'Daniel','Oseias':'Oséias','Joel':'Joel','Amos':'Amós','Abdias':'Obadias',
+  'Jonas':'Jonas','Miqueias':'Miqueias','Naum':'Naum','Habacuque':'Habacuque',
+  'Sofonias':'Sofonias','Ageu':'Ageu','Zacarias':'Zacarias','Malaquias':'Malaquias',
+  'Mateus':'Mateus','Marcos':'Marcos','Lucas':'Lucas','Joao':'João','Atos':'Atos dos Apóstolos',
+  'Romanos':'Romanos','1Corintios':'1 Coríntios','2Corintios':'2 Coríntios',
+  'Galatas':'Gálatas','Efesios':'Efésios','Filipenses':'Filipenses',
+  'Colossenses':'Colossenses','1Tessalonicenses':'1 Tessalonicenses','2Tessalonicenses':'2 Tessalonicenses',
+  '1Timoteo':'1 Timóteo','2Timoteo':'2 Timóteo','Tito':'Tito','Filemom':'Filemom',
+  'Hebreus':'Hebreus','Tiago':'Tiago','1Pedro':'1 Pedro','2Pedro':'2 Pedro',
+  '1Joao':'1 João','2Joao':'2 João','3Joao':'3 João','Judas':'Judas','Apocalipse':'Apocalipse'
 };
 
 function getDisplayName(book) {
-  return bookDisplayNames[book] || book.replace(/([A-Z])/g,' $1').trim();
+  return bookDisplayNames[book] || book;
 }
 
+// ─── ESTADO ───────────────────────────────────────────────────────────────────
+let currentBook = null;
+let currentChapter = 1;
+let currentMaxChapters = 1;
+let studyMode = 'contextual';
+
+// ─── NAVEGAÇÃO ────────────────────────────────────────────────────────────────
 function showPanel(name, btn) {
   document.querySelectorAll('.panel').forEach(p => p.classList.add('hidden'));
-  document.getElementById('panel-'+name).classList.remove('hidden');
+  document.getElementById('panel-' + name).classList.remove('hidden');
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  if(name === 'revelacoes') loadRevelations('salvation', document.querySelector('#panel-revelacoes .study-opt-btn'));
-  if(name === 'devocional') loadDevocional('morning', document.querySelector('#panel-devocional .study-opt-btn'));
+  if (btn) btn.classList.add('active');
+  if (name === 'revelacoes') loadRevelations('salvation', document.querySelector('#panel-revelacoes .study-opt-btn'));
+  if (name === 'devocional') loadDevocional('morning', document.querySelector('#panel-devocional .study-opt-btn'));
 }
 
-function toggleTestament(id, btn) {
-  const list = document.getElementById('vt-'+id);
-  const isOpen = list.classList.contains('open');
+// CORREÇÃO PRINCIPAL: função renomeada e IDs padronizados como "list-{id}"
+function toggleSection(id, btn) {
+  const list = document.getElementById('list-' + id);
+  if (!list) return;
   list.classList.toggle('open');
   btn.classList.toggle('open');
 }
 
+// ─── CARREGAR LIVRO / CAPÍTULO ────────────────────────────────────────────────
 function loadBook(book, maxChapters) {
   currentBook = book;
   currentMaxChapters = maxChapters;
   currentChapter = 1;
   document.querySelectorAll('.book-btn').forEach(b => b.classList.remove('active'));
-  event && event.target && event.target.classList.add('active');
-  showPanel('biblia', document.querySelector('.nav-tab'));
-  document.querySelector('.nav-tab').classList.add('active');
+  if (event && event.currentTarget) event.currentTarget.classList.add('active');
+  const tab = document.querySelector('.nav-tab');
+  showPanel('biblia', tab);
+  tab.classList.add('active');
   renderChapterNav();
   loadChapter(1);
 }
@@ -698,15 +785,15 @@ function renderChapterNav() {
   document.getElementById('currentBookTitle').textContent = getDisplayName(currentBook);
   const sel = document.getElementById('chapterSelect');
   sel.innerHTML = '';
-  for(let i=1; i<=currentMaxChapters; i++) {
+  for (let i = 1; i <= currentMaxChapters; i++) {
     const o = document.createElement('option');
     o.value = i; o.textContent = 'Capítulo ' + i;
     sel.appendChild(o);
   }
   grid.innerHTML = '';
-  for(let i=1; i<=currentMaxChapters; i++) {
+  for (let i = 1; i <= currentMaxChapters; i++) {
     const d = document.createElement('div');
-    d.className = 'ch-num' + (i===currentChapter?' active':'');
+    d.className = 'ch-num' + (i === currentChapter ? ' active' : '');
     d.textContent = i;
     d.onclick = () => loadChapter(i);
     grid.appendChild(d);
@@ -715,22 +802,29 @@ function renderChapterNav() {
 
 async function loadChapter(chNum) {
   currentChapter = chNum;
-  document.getElementById('chapterSelect').value = chNum;
-  document.querySelectorAll('.ch-num').forEach((d,i) => {
-    d.classList.toggle('active', i+1===chNum);
+  const selEl = document.getElementById('chapterSelect');
+  if (selEl) selEl.value = chNum;
+  document.querySelectorAll('.ch-num').forEach((d, i) => {
+    d.classList.toggle('active', i + 1 === chNum);
   });
   const area = document.getElementById('versesArea');
   area.innerHTML = '<div class="loading-verses"><div class="spinner"></div>Carregando capítulo...</div>';
+
+  const abbrev = bookApiMap[currentBook] || currentBook.toLowerCase();
+  const url = `https://bible-api.com/${abbrev}+${chNum}?translation=almeida`;
+
   try {
-    const abbrev = bookAbbrevMap[currentBook] || currentBook.toLowerCase();
-    const resp = await fetch(`${BIBLE_API}${abbrev}+${chNum}${ARC_VERSION}`);
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const data = await resp.json();
-    if(data.verses) {
+    if (data.verses && data.verses.length > 0) {
       renderVerses(data.verses, data.reference || `${getDisplayName(currentBook)} ${chNum}`);
+    } else if (data.error) {
+      area.innerHTML = `<div class="loading-verses" style="color:var(--red-accent)">⚠️ ${data.error}<br><small>Tente outro capítulo ou verifique a referência.</small></div>`;
     } else {
-      area.innerHTML = '<div class="loading-verses" style="color:var(--red-accent)">Versículos não encontrados. Tente outro capítulo.</div>';
+      area.innerHTML = '<div class="loading-verses" style="color:var(--red-accent)">Versículos não encontrados neste capítulo.</div>';
     }
-  } catch(e) {
+  } catch (e) {
     area.innerHTML = `<div class="loading-verses" style="color:var(--red-accent)">Erro ao carregar. Verifique sua conexão.<br><small>${e.message}</small></div>`;
   }
 }
@@ -739,28 +833,30 @@ function renderVerses(verses, reference) {
   const area = document.getElementById('versesArea');
   let html = `<div class="chapter-heading">✝ ${reference}</div>`;
   verses.forEach(v => {
-    html += `<div class="verse-line" onclick="toggleVerseActions(this,${v.verse},'${v.text.replace(/'/g,"\\'")}')">
-      <span class="verse-num">${v.verse}</span>
-      <span class="verse-text">${v.text}</span>
-    </div>
-    <div class="verse-actions" id="va-${v.verse}">
-      <button class="va-btn" onclick="copyVerse(${v.verse},'${v.text.replace(/'/g,"\\'")}')">📋 Copiar</button>
-      <button class="va-btn" onclick="studyVerse(${v.verse},'${v.text.replace(/'/g,"\\'")}')">📖 Estudar versículo</button>
-      <button class="va-btn" onclick="shareVerse(${v.verse})">🔗 Compartilhar</button>
-    </div>`;
+    const safeText = (v.text || '').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    html += `
+      <div class="verse-line" onclick="toggleVerseActions(this,${v.verse},'${safeText}')">
+        <span class="verse-num">${v.verse}</span>
+        <span class="verse-text">${v.text}</span>
+      </div>
+      <div class="verse-actions" id="va-${v.verse}">
+        <button class="va-btn" onclick="copyVerse(${v.verse},'${safeText}')">📋 Copiar</button>
+        <button class="va-btn" onclick="studyVerse(${v.verse},'${safeText}')">📖 Estudar versículo</button>
+        <button class="va-btn" onclick="shareVerse(${v.verse})">🔗 Compartilhar</button>
+      </div>`;
   });
   area.innerHTML = html;
 }
 
-function toggleVerseActions(el, num, text) {
+function toggleVerseActions(el, num) {
   el.classList.toggle('highlighted');
-  const va = document.getElementById('va-'+num);
-  va.classList.toggle('show');
+  const va = document.getElementById('va-' + num);
+  if (va) va.classList.toggle('show');
 }
 
 function copyVerse(num, text) {
   const ref = `${getDisplayName(currentBook)} ${currentChapter}:${num} — ARC`;
-  navigator.clipboard && navigator.clipboard.writeText(`"${text}" — ${ref}`);
+  if (navigator.clipboard) navigator.clipboard.writeText(`"${text}" — ${ref}`);
   alert('Versículo copiado!');
 }
 
@@ -774,18 +870,14 @@ function shareVerse(num) {
   alert(`${getDisplayName(currentBook)} ${currentChapter}:${num} — ARC`);
 }
 
-function prevChapter() {
-  if(currentChapter > 1) loadChapter(currentChapter - 1);
-}
-function nextChapter() {
-  if(currentChapter < currentMaxChapters) loadChapter(currentChapter + 1);
-}
+function prevChapter() { if (currentChapter > 1) loadChapter(currentChapter - 1); }
+function nextChapter() { if (currentChapter < currentMaxChapters) loadChapter(currentChapter + 1); }
 
+// ─── ESTUDO COM IA (GROQ) ─────────────────────────────────────────────────────
 function openStudy() {
-  if(!currentBook) return;
-  const subtitle = `${getDisplayName(currentBook)} — Capítulo ${currentChapter}`;
-  document.getElementById('studySubtitle').textContent = subtitle;
-  showPanel('estudo', null);
+  if (!currentBook) return;
+  document.getElementById('studySubtitle').textContent = `${getDisplayName(currentBook)} — Capítulo ${currentChapter}`;
+  showPanel('estudo', document.querySelector('.nav-tab:nth-child(2)'));
   generateStudy(`${getDisplayName(currentBook)} capítulo ${currentChapter} da Bíblia Almeida Revista e Corrigida`);
 }
 
@@ -793,7 +885,7 @@ function setStudyMode(mode, btn) {
   studyMode = mode;
   document.querySelectorAll('#panel-estudo .study-opt-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  if(currentBook) openStudy();
+  if (currentBook) openStudy();
 }
 
 async function generateStudy(reference) {
@@ -807,28 +899,18 @@ async function generateStudy(reference) {
     prophetic: 'Analise a dimensão profética deste texto. Há profecias cumpridas ou a cumprir? Como se relaciona com o plano redentor de Deus e com o retorno de Cristo?',
     practical: 'Quais aplicações práticas este texto tem para a vida cristã hoje? Como um crente pode viver este ensinamento no dia a dia? Dê exemplos concretos.'
   };
-  const prompt = `Você é um pastor evangelico e teólogo especialista em Bíblia Almeida Revista e Corrigida (ARC). 
-  
-  Texto: ${reference}
-  
-  ${modePrompts[studyMode]}
-  
-  Responda em português do Brasil. Use formatação com subtítulos (use ### para títulos). Seja profundo mas acessível. Inclua referências a outros versículos relacionados. Limite a 400 palavras.`;
+  const prompt = `Você é um pastor evangélico e teólogo especialista em Bíblia Almeida Revista e Corrigida (ARC).
+
+Texto: ${reference}
+
+${modePrompts[studyMode]}
+
+Responda em português do Brasil. Use ### para subtítulos. Seja profundo mas acessível. Inclua referências a outros versículos relacionados. Limite a 400 palavras.`;
 
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-    const data = await resp.json();
-    const text = data.content?.[0]?.text || 'Erro ao gerar estudo.';
+    const text = await groqChat(prompt);
     content.innerHTML = formatStudyText(text);
-  } catch(e) {
+  } catch (e) {
     content.innerHTML = `<p style="color:var(--red-accent)">Erro ao conectar à IA: ${e.message}</p>`;
   }
 }
@@ -843,9 +925,10 @@ function formatStudyText(text) {
     .split('\n\n').map(p => p.trim() ? `<p>${p}</p>` : '').join('');
 }
 
+// ─── REVELAÇÕES (GROQ) ────────────────────────────────────────────────────────
 async function loadRevelations(topic, btn) {
   document.querySelectorAll('#panel-revelacoes .study-opt-btn').forEach(b => b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
+  if (btn) btn.classList.add('active');
   const area = document.getElementById('revelationsContent');
   area.innerHTML = '<div class="loading-verses"><div class="spinner"></div>Buscando revelações e pregações...</div>';
   const topicNames = {
@@ -854,23 +937,22 @@ async function loadRevelations(topic, btn) {
   };
   const prompt = `Você é um pastor evangélico especialista. Sobre o tema "${topicNames[topic]}" na Bíblia (versão ARC):
 
-Gere 3 mini-revelações/ensinamentos de pastores renomados (como Charles Spurgeon, Billy Graham, Martinho Lutero, John Wesley, Watchman Nee, ou pastores brasileiros como Caio Fábio, Silas Malafaia, etc.). 
+Gere 3 mini-revelações/ensinamentos de pastores renomados (como Charles Spurgeon, Billy Graham, Martinho Lutero, John Wesley, Watchman Nee, ou pastores brasileiros como Caio Fábio).
 
 Para cada um, responda em JSON puro sem markdown:
 [
-  {"tag": "Revelação", "pastor": "Nome Pastor", "title": "Título do ensinamento", "text": "Texto de 3-4 frases do ensinamento", "verse": "Livro cap:v — ARC"},
+  {"tag":"Revelação","pastor":"Nome Pastor","title":"Título do ensinamento","text":"Texto de 3-4 frases do ensinamento","verse":"Livro cap:v — ARC"},
   ...
 ]
-Responda APENAS com o JSON, sem texto antes ou depois.`;
+Responda APENAS com o array JSON, sem texto antes ou depois.`;
 
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role:'user', content: prompt }] })
-    });
-    const data = await resp.json();
-    let text = data.content?.[0]?.text || '[]';
-    text = text.replace(/```json|```/g,'').trim();
+    let text = await groqChat(prompt);
+    text = text.replace(/```json|```/g, '').trim();
+    // Extrair apenas o array JSON
+    const start = text.indexOf('[');
+    const end = text.lastIndexOf(']');
+    if (start !== -1 && end !== -1) text = text.slice(start, end + 1);
     const items = JSON.parse(text);
     area.innerHTML = items.map(item => `
       <div class="card-revelation">
@@ -880,68 +962,54 @@ Responda APENAS com o JSON, sem texto antes ou depois.`;
         <div style="margin-top:10px;padding:8px 12px;background:rgba(201,168,76,0.08);border-left:3px solid var(--gold);border-radius:0 4px 4px 0;font-style:italic;font-size:13px;color:var(--brown2)">${item.verse}</div>
         <div class="rev-pastor">✝ ${item.pastor}</div>
       </div>`).join('');
-  } catch(e) {
-    area.innerHTML = `<div style="color:var(--red-accent);padding:20px">Erro ao carregar revelações. ${e.message}</div>`;
+  } catch (e) {
+    area.innerHTML = `<div style="color:var(--red-accent);padding:20px">Erro ao carregar revelações: ${e.message}</div>`;
   }
 }
 
+// ─── DEVOCIONAL (GROQ) ────────────────────────────────────────────────────────
 async function loadDevocional(time, btn) {
   document.querySelectorAll('#panel-devocional .study-opt-btn').forEach(b => b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
+  if (btn) btn.classList.add('active');
   const area = document.getElementById('devocionalContent');
   area.innerHTML = '<div class="loading-verses"><div class="spinner"></div>Preparando seu devocional...</div>';
   const timeNames = { morning:'da manhã', evening:'da noite', weekly:'semanal' };
-  const prompt = `Escreva um devocional evangélico ${timeNames[time]} inspirador e profundo. 
-  Use um versículo da Bíblia ARC como base. Inclua: 
-  1. Um versículo chave (em destaque com >)
-  2. Uma reflexão de 3-4 parágrafos
-  3. Uma oração final
-  Use ### para os títulos. Língua portuguesa do Brasil. Seja pastoral, quente, edificante.`;
+  const prompt = `Escreva um devocional evangélico ${timeNames[time]} inspirador e profundo.
+Use um versículo da Bíblia ARC como base. Inclua:
+1. Um versículo chave (em destaque com >)
+2. Uma reflexão de 3-4 parágrafos
+3. Uma oração final
+Use ### para os títulos. Língua portuguesa do Brasil. Seja pastoral, quente, edificante.`;
+
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role:'user', content: prompt }] })
-    });
-    const data = await resp.json();
-    area.innerHTML = formatStudyText(data.content?.[0]?.text || '');
-  } catch(e) {
+    const text = await groqChat(prompt);
+    area.innerHTML = formatStudyText(text);
+  } catch (e) {
     area.innerHTML = `<p style="color:var(--red-accent)">Erro: ${e.message}</p>`;
   }
 }
 
-const allVerseRefs = [
-  { ref:'João 3:16', text:'Porque Deus amou o mundo de tal maneira...' },
-  { ref:'Salmos 23:1', text:'O Senhor é o meu pastor; nada me faltará.' },
-  { ref:'Provérbios 3:5', text:'Confia no Senhor de todo o teu coração...' },
-  { ref:'Jeremias 29:11', text:'Porque sou eu que conheço os planos que tenho para vocês...' },
-  { ref:'Romanos 8:28', text:'E sabemos que todas as coisas contribuem juntamente para o bem...' },
-  { ref:'Filipenses 4:13', text:'Posso tudo naquele que me fortalece.' },
-  { ref:'Isaías 41:10', text:'Não temas, porque eu sou contigo...' },
-  { ref:'Mateus 6:33', text:'Mas buscai primeiro o reino de Deus...' },
-];
-
-function sidebarSearch(val) {
-  const res = document.getElementById('sideResults');
-  if(!val || val.length < 3) { res.innerHTML=''; return; }
-  const matches = allVerseRefs.filter(v => v.ref.toLowerCase().includes(val.toLowerCase()) || v.text.toLowerCase().includes(val.toLowerCase()));
-  res.innerHTML = matches.slice(0,5).map(m => `<div class="search-result-item"><div class="search-result-ref">${m.ref}</div>${m.text.substring(0,60)}...</div>`).join('');
-}
+// ─── BUSCA (GROQ) ─────────────────────────────────────────────────────────────
+let searchTimeout;
+document.getElementById('mainSearch').addEventListener('input', function () {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => mainBibleSearch(this.value), 800);
+});
 
 async function mainBibleSearch(val) {
   const area = document.getElementById('searchResults');
-  if(!val || val.length < 3) { area.innerHTML=''; return; }
-  if(val.length < 5) return;
+  if (!val || val.length < 3) { area.innerHTML = ''; return; }
   area.innerHTML = '<div class="loading-verses"><div class="spinner"></div>Buscando...</div>';
   const prompt = `Busque na Bíblia ARC versículos relacionados a: "${val}". Retorne JSON:
 [{"ref":"Livro cap:v","text":"texto do versículo","context":"breve contexto"}]
-Máximo 5 resultados. Apenas JSON, sem markdown.`;
+Máximo 5 resultados. Apenas o array JSON, sem markdown.`;
+
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:800, messages:[{role:'user',content:prompt}] })
-    });
-    const data = await resp.json();
-    let text = (data.content?.[0]?.text||'[]').replace(/```json|```/g,'').trim();
+    let text = await groqChat(prompt);
+    text = text.replace(/```json|```/g, '').trim();
+    const start = text.indexOf('[');
+    const end = text.lastIndexOf(']');
+    if (start !== -1 && end !== -1) text = text.slice(start, end + 1);
     const items = JSON.parse(text);
     area.innerHTML = items.map(it => `
       <div class="card-revelation">
@@ -949,14 +1017,39 @@ Máximo 5 resultados. Apenas JSON, sem markdown.`;
         <div class="rev-title" style="font-size:15px;font-style:italic">"${it.text}"</div>
         <div class="rev-text" style="margin-top:8px;font-size:13px">${it.context}</div>
       </div>`).join('');
-  } catch(e) { area.innerHTML = `<p style="color:var(--red-accent)">Erro: ${e.message}</p>`; }
+  } catch (e) {
+    area.innerHTML = `<p style="color:var(--red-accent)">Erro: ${e.message}</p>`;
+  }
 }
 
-let searchTimeout;
-document.getElementById('mainSearch').addEventListener('input', function() {
-  clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => mainBibleSearch(this.value), 800);
-});
+// ─── BUSCA LATERAL ────────────────────────────────────────────────────────────
+const allVerseRefs = [
+  { ref:'João 3:16', text:'Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito...' },
+  { ref:'Salmos 23:1', text:'O Senhor é o meu pastor; nada me faltará.' },
+  { ref:'Provérbios 3:5', text:'Confia no Senhor de todo o teu coração...' },
+  { ref:'Jeremias 29:11', text:'Porque sou eu que conheço os planos que tenho para vocês...' },
+  { ref:'Romanos 8:28', text:'E sabemos que todas as coisas contribuem juntamente para o bem...' },
+  { ref:'Filipenses 4:13', text:'Posso tudo naquele que me fortalece.' },
+  { ref:'Isaías 41:10', text:'Não temas, porque eu sou contigo...' },
+  { ref:'Mateus 6:33', text:'Mas buscai primeiro o reino de Deus...' },
+  { ref:'Gênesis 1:1', text:'No princípio, criou Deus os céus e a terra.' },
+  { ref:'Êxodo 20:3', text:'Não terás outros deuses diante de mim.' },
+  { ref:'Salmos 119:105', text:'Lâmpada para os meus pés é a tua palavra.' },
+];
 
-loadDevocional('morning', null);
+function sidebarSearch(val) {
+  const res = document.getElementById('sideResults');
+  if (!val || val.length < 2) { res.innerHTML = ''; return; }
+  const matches = allVerseRefs.filter(v =>
+    v.ref.toLowerCase().includes(val.toLowerCase()) ||
+    v.text.toLowerCase().includes(val.toLowerCase())
+  );
+  res.innerHTML = matches.slice(0, 5).map(m => `
+    <div class="search-result-item">
+      <div class="search-result-ref">${m.ref}</div>
+      ${m.text.substring(0, 60)}...
+    </div>`).join('');
+}
 </script>
+</body>
+</html>
