@@ -1,150 +1,962 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bíblia ARC • Estudo + Revelações</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap');
-    body { font-family: 'Inter', sans-serif; }
-    .titulo-biblia { font-family: 'Playfair Display', serif; }
-    .verso { line-height: 1.85; }
-    .numero-verso { color: #b91c1c; font-weight: 700; }
-  </style>
-</head>
-<body class="bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 min-h-screen">
 
-  <nav class="bg-gradient-to-r from-indigo-700 via-purple-700 to-red-700 text-white shadow-xl sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <i class="fa-solid fa-book-bible text-4xl"></i>
-        <div>
-          <h1 class="text-3xl font-bold titulo-biblia">Bíblia ARC</h1>
-          <p class="text-xs opacity-75">Estudo Completo com Imagens e Revelações</p>
-        </div>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8CC7A;
+    --gold-dark: #8B6914;
+    --parch: #FBF6EC;
+    --parch2: #F5EDDA;
+    --brown: #3B2507;
+    --brown2: #5C3A0E;
+    --red-accent: #8B1A1A;
+    --cream: #FAF7F0;
+  }
+
+  body { font-family: 'EB Garamond', Georgia, serif; background: var(--cream); color: var(--brown); min-height: 100vh; }
+
+  /* HEADER */
+  .site-header {
+    background: linear-gradient(135deg, #1A0A00 0%, #2D1200 50%, #1A0A00 100%);
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 3px solid var(--gold);
+  }
+  .header-bg {
+    position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(201,168,76,0.03) 35px, rgba(201,168,76,0.03) 70px);
+  }
+  .header-content {
+    position: relative; z-index: 1;
+    display: flex; align-items: center; gap: 16px;
+    padding: 18px 24px 14px;
+  }
+  .cross-icon {
+    width: 44px; height: 44px; position: relative; flex-shrink: 0;
+  }
+  .cross-icon::before {
+    content: '✝'; font-size: 38px; color: var(--gold); position: absolute; top: 0; left: 0; line-height: 44px;
+  }
+  .header-titles { flex: 1; }
+  .site-title {
+    font-family: 'Cinzel', serif;
+    font-size: 22px; font-weight: 700;
+    color: var(--gold-light);
+    letter-spacing: 1px;
+    line-height: 1.1;
+  }
+  .site-subtitle {
+    font-size: 12px; color: rgba(201,168,76,0.65);
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .verse-of-day {
+    font-size: 11px; color: rgba(201,168,76,0.5);
+    font-style: italic; max-width: 220px; text-align: right;
+    line-height: 1.4;
+  }
+
+  /* NAV TABS */
+  .nav-tabs {
+    display: flex; background: #0F0600;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+    overflow-x: auto;
+  }
+  .nav-tab {
+    padding: 10px 18px; font-family: 'Cinzel', serif;
+    font-size: 12px; letter-spacing: 0.5px;
+    color: rgba(201,168,76,0.5); cursor: pointer;
+    border: none; background: transparent;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap; transition: color 0.2s, border-color 0.2s;
+  }
+  .nav-tab:hover { color: var(--gold-light); }
+  .nav-tab.active { color: var(--gold-light); border-bottom-color: var(--gold); }
+
+  /* LAYOUT */
+  .app-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: calc(100vh - 120px);
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    background: var(--parch2);
+    border-right: 1px solid rgba(139,105,20,0.3);
+    overflow-y: auto;
+    max-height: calc(100vh - 120px);
+  }
+  .sidebar-section { border-bottom: 1px solid rgba(139,105,20,0.2); }
+  .sidebar-title {
+    font-family: 'Cinzel', serif; font-size: 11px;
+    font-weight: 600; letter-spacing: 1.5px;
+    color: var(--brown2); text-transform: uppercase;
+    padding: 10px 14px 8px;
+    background: rgba(201,168,76,0.1);
+  }
+  .testament-btn {
+    width: 100%; padding: 6px 14px;
+    background: transparent; border: none;
+    text-align: left; font-family: 'Cinzel', serif;
+    font-size: 12px; color: var(--brown); cursor: pointer;
+    transition: background 0.15s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .testament-btn:hover, .testament-btn.active {
+    background: rgba(201,168,76,0.15); color: var(--gold-dark);
+  }
+  .testament-btn .arrow { font-size: 9px; transition: transform 0.2s; }
+  .testament-btn.open .arrow { transform: rotate(90deg); }
+
+  .books-list { display: none; padding: 2px 0; }
+  .books-list.open { display: block; }
+  .book-btn {
+    width: 100%; padding: 5px 14px 5px 28px;
+    background: transparent; border: none;
+    text-align: left; font-size: 13px;
+    color: var(--brown2); cursor: pointer;
+    transition: background 0.15s; line-height: 1.4;
+  }
+  .book-btn:hover { background: rgba(201,168,76,0.1); }
+  .book-btn.active {
+    background: rgba(201,168,76,0.2); color: var(--red-accent);
+    font-weight: 500;
+  }
+
+  .search-box {
+    padding: 10px 12px;
+  }
+  .search-input {
+    width: 100%; padding: 7px 10px;
+    border: 1px solid rgba(139,105,20,0.4);
+    border-radius: 4px; font-size: 13px;
+    background: var(--parch); color: var(--brown);
+    font-family: 'EB Garamond', serif;
+    outline: none;
+  }
+  .search-input:focus { border-color: var(--gold); }
+  .search-results { padding: 4px 12px; }
+  .search-result-item {
+    padding: 6px 0; border-bottom: 1px solid rgba(139,105,20,0.1);
+    cursor: pointer; font-size: 13px;
+  }
+  .search-result-item:hover { color: var(--red-accent); }
+  .search-result-ref { font-size: 11px; color: var(--gold-dark); font-family: 'Cinzel', serif; }
+
+  /* MAIN CONTENT */
+  .main-content {
+    background: var(--parch);
+    overflow-y: auto;
+    max-height: calc(100vh - 120px);
+  }
+
+  /* BIBLE PANEL */
+  .panel { padding: 0; }
+  .panel.hidden { display: none; }
+
+  .chapter-nav {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 20px; background: var(--parch2);
+    border-bottom: 1px solid rgba(139,105,20,0.2);
+    flex-wrap: wrap;
+  }
+  .book-title {
+    font-family: 'Cinzel', serif; font-size: 18px;
+    font-weight: 600; color: var(--brown); flex: 1;
+    min-width: 140px;
+  }
+  .chapter-select, .chapter-nav-btn {
+    padding: 5px 10px; border: 1px solid rgba(139,105,20,0.4);
+    border-radius: 4px; font-family: 'Cinzel', serif;
+    font-size: 12px; background: var(--parch);
+    color: var(--brown); cursor: pointer;
+  }
+  .chapter-nav-btn:hover { background: rgba(201,168,76,0.2); }
+  .study-btn {
+    padding: 6px 12px; background: var(--gold-dark);
+    color: var(--parch); border: none; border-radius: 4px;
+    font-family: 'Cinzel', serif; font-size: 11px;
+    letter-spacing: 0.5px; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .study-btn:hover { background: var(--brown2); }
+
+  .chapter-grid {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    padding: 12px 20px; border-bottom: 1px solid rgba(139,105,20,0.1);
+    background: rgba(251,246,236,0.5);
+  }
+  .ch-num {
+    width: 34px; height: 34px; display: flex;
+    align-items: center; justify-content: center;
+    border: 1px solid rgba(139,105,20,0.3); border-radius: 4px;
+    font-family: 'Cinzel', serif; font-size: 13px;
+    cursor: pointer; color: var(--brown2); transition: all 0.15s;
+  }
+  .ch-num:hover { background: rgba(201,168,76,0.2); }
+  .ch-num.active { background: var(--gold-dark); color: white; border-color: var(--gold-dark); }
+
+  .verses-area {
+    padding: 20px 24px 40px;
+    max-width: 700px;
+  }
+  .chapter-heading {
+    font-family: 'Cinzel', serif; font-size: 15px;
+    color: var(--red-accent); margin-bottom: 16px;
+    padding-bottom: 10px; border-bottom: 1px solid rgba(139,105,20,0.2);
+    letter-spacing: 0.5px;
+  }
+  .verse-line {
+    display: flex; gap: 8px; margin-bottom: 8px;
+    line-height: 1.7; font-size: 16px; cursor: pointer;
+    padding: 3px 6px; border-radius: 3px; transition: background 0.15s;
+  }
+  .verse-line:hover { background: rgba(201,168,76,0.12); }
+  .verse-line.highlighted { background: rgba(201,168,76,0.25); }
+  .verse-num {
+    font-family: 'Cinzel', serif; font-size: 11px;
+    color: var(--gold-dark); font-weight: 600;
+    min-width: 22px; padding-top: 4px; line-height: 1;
+  }
+  .verse-text { flex: 1; color: var(--brown); }
+  .verse-actions {
+    display: none; gap: 4px; margin-top: 6px;
+    padding: 6px 10px; background: rgba(201,168,76,0.1);
+    border-left: 3px solid var(--gold); border-radius: 0 4px 4px 0;
+    font-size: 12px;
+  }
+  .verse-actions.show { display: flex; flex-wrap: wrap; gap: 6px; }
+  .va-btn {
+    padding: 3px 8px; border: 1px solid rgba(139,105,20,0.4);
+    border-radius: 3px; background: var(--parch);
+    font-family: 'Cinzel', serif; font-size: 11px;
+    cursor: pointer; color: var(--brown2);
+  }
+  .va-btn:hover { background: var(--gold-dark); color: white; border-color: var(--gold-dark); }
+
+  /* LOADING spinner */
+  .loading-verses {
+    padding: 40px 24px; text-align: center;
+    color: var(--gold-dark); font-style: italic; font-size: 15px;
+  }
+  .spinner {
+    width: 24px; height: 24px; border: 2px solid rgba(139,105,20,0.3);
+    border-top-color: var(--gold); border-radius: 50%;
+    animation: spin 0.8s linear infinite; margin: 0 auto 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* STUDY PANEL */
+  .study-panel {
+    padding: 20px 24px 40px;
+  }
+  .study-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 16px; padding-bottom: 12px;
+    border-bottom: 2px solid rgba(139,105,20,0.2);
+  }
+  .study-icon { font-size: 24px; }
+  .study-title {
+    font-family: 'Cinzel', serif; font-size: 16px;
+    color: var(--brown); font-weight: 600;
+  }
+  .study-subtitle { font-size: 12px; color: var(--gold-dark); margin-top: 2px; }
+
+  .ai-study-area {
+    background: white; border: 1px solid rgba(139,105,20,0.2);
+    border-radius: 8px; padding: 20px; min-height: 200px;
+    line-height: 1.8; font-size: 15px; color: var(--brown);
+  }
+  .ai-study-area h3 {
+    font-family: 'Cinzel', serif; font-size: 14px; color: var(--red-accent);
+    margin: 18px 0 8px; padding-bottom: 6px;
+    border-bottom: 1px solid rgba(139,105,20,0.15);
+  }
+  .ai-study-area h3:first-child { margin-top: 0; }
+  .ai-study-area p { margin-bottom: 12px; }
+  .ai-study-area blockquote {
+    border-left: 3px solid var(--gold); padding-left: 14px;
+    color: var(--brown2); font-style: italic; margin: 12px 0;
+  }
+
+  .study-options {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;
+  }
+  .study-opt-btn {
+    padding: 7px 14px; border: 1px solid rgba(139,105,20,0.4);
+    border-radius: 4px; font-family: 'Cinzel', serif; font-size: 12px;
+    background: var(--parch); color: var(--brown2); cursor: pointer;
+    transition: all 0.15s;
+  }
+  .study-opt-btn:hover, .study-opt-btn.active {
+    background: var(--gold-dark); color: white; border-color: var(--gold-dark);
+  }
+
+  /* REVELAÇÕES / PREGAÇÕES */
+  .card-revelation {
+    background: white; border: 1px solid rgba(139,105,20,0.2);
+    border-radius: 8px; padding: 16px; margin-bottom: 12px;
+    transition: box-shadow 0.15s;
+  }
+  .card-revelation:hover { box-shadow: 0 2px 12px rgba(139,105,20,0.15); }
+  .rev-tag {
+    display: inline-block; padding: 2px 8px;
+    background: rgba(139,26,26,0.1); color: var(--red-accent);
+    border-radius: 3px; font-size: 11px; font-family: 'Cinzel', serif;
+    margin-bottom: 8px; letter-spacing: 0.5px;
+  }
+  .rev-title {
+    font-family: 'Cinzel', serif; font-size: 14px;
+    color: var(--brown); font-weight: 600; margin-bottom: 6px;
+  }
+  .rev-text { font-size: 14px; line-height: 1.7; color: var(--brown2); }
+  .rev-pastor {
+    margin-top: 8px; font-size: 12px; color: var(--gold-dark);
+    font-family: 'Cinzel', serif;
+  }
+
+  /* SEARCH SECTION */
+  .search-panel { padding: 20px 24px 40px; }
+  .search-big-input {
+    width: 100%; padding: 12px 16px;
+    border: 2px solid rgba(139,105,20,0.4); border-radius: 6px;
+    font-family: 'EB Garamond', serif; font-size: 16px;
+    background: var(--parch); color: var(--brown);
+    outline: none; margin-bottom: 12px;
+  }
+  .search-big-input:focus { border-color: var(--gold); }
+
+  /* DEVOTIONAL BANNER */
+  .devo-banner {
+    background: linear-gradient(135deg, #1A0A00, #3B2507);
+    color: var(--gold-light); padding: 20px 24px;
+    border-bottom: 1px solid rgba(201,168,76,0.3);
+    position: relative; overflow: hidden;
+  }
+  .devo-banner::before {
+    content: '✝'; position: absolute; right: 20px; top: 50%;
+    transform: translateY(-50%); font-size: 80px;
+    color: rgba(201,168,76,0.08);
+  }
+  .devo-label { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 2px; color: rgba(201,168,76,0.5); text-transform: uppercase; margin-bottom: 6px; }
+  .devo-verse { font-size: 17px; font-style: italic; line-height: 1.6; max-width: 520px; }
+  .devo-ref { font-family: 'Cinzel', serif; font-size: 12px; color: var(--gold); margin-top: 8px; }
+
+  .img-bible {
+    width: 100%; border-radius: 6px; margin: 12px 0;
+    border: 1px solid rgba(139,105,20,0.2);
+    max-height: 220px; object-fit: cover;
+  }
+
+  /* responsive */
+  @media (max-width: 600px) {
+    .app-layout { grid-template-columns: 1fr; }
+    .sidebar { max-height: 280px; }
+    .main-content { max-height: none; }
+  }
+</style>
+
+<h2 class="sr-only">Site de Estudo Bíblico — Bíblia Almeida Revista e Corrigida com IA</h2>
+
+<div class="site-header">
+  <div class="header-bg"></div>
+  <div class="header-content">
+    <div class="cross-icon"></div>
+    <div class="header-titles">
+      <div class="site-title">Palavra Sagrada</div>
+      <div class="site-subtitle">Bíblia Almeida Revista e Corrigida · ARC</div>
+    </div>
+    <div class="verse-of-day" id="verseOfDay">
+      "Lâmpada para os meus pés é a tua palavra, e luz para o meu caminho."
+      <br><strong style="color:var(--gold);font-family:'Cinzel',serif;font-size:10px">Salmos 119:105</strong>
+    </div>
+  </div>
+</div>
+
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="showPanel('biblia',this)">✝ Bíblia</button>
+  <button class="nav-tab" onclick="showPanel('estudo',this)">📖 Estudo com IA</button>
+  <button class="nav-tab" onclick="showPanel('revelacoes',this)">🔥 Revelações & Pregações</button>
+  <button class="nav-tab" onclick="showPanel('busca',this)">🔍 Buscar</button>
+  <button class="nav-tab" onclick="showPanel('devocional',this)">🌅 Devocional</button>
+</div>
+
+<div class="app-layout">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="search-box">
+      <input class="search-input" placeholder="Buscar versículo..." id="sideSearch" oninput="sidebarSearch(this.value)" />
+      <div class="search-results" id="sideResults"></div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-title">Velho Testamento</div>
+      <button class="testament-btn" onclick="toggleTestament('vt',this)"><span class="arrow">▶</span> Pentateuco</button>
+      <div class="books-list" id="vt-pent">
+        <button class="book-btn" onclick="loadBook('Genesis',50)">Gênesis</button>
+        <button class="book-btn" onclick="loadBook('Exodo',40)">Êxodo</button>
+        <button class="book-btn" onclick="loadBook('Levitico',27)">Levítico</button>
+        <button class="book-btn" onclick="loadBook('Numeros',36)">Números</button>
+        <button class="book-btn" onclick="loadBook('Deuteronomio',34)">Deuteronômio</button>
+      </div>
+      <button class="testament-btn" onclick="toggleTestament('hist',this)"><span class="arrow">▶</span> Livros Históricos</button>
+      <div class="books-list" id="vt-hist">
+        <button class="book-btn" onclick="loadBook('Josue',24)">Josué</button>
+        <button class="book-btn" onclick="loadBook('Juizes',21)">Juízes</button>
+        <button class="book-btn" onclick="loadBook('Rute',4)">Rute</button>
+        <button class="book-btn" onclick="loadBook('1Samuel',31)">1 Samuel</button>
+        <button class="book-btn" onclick="loadBook('2Samuel',24)">2 Samuel</button>
+        <button class="book-btn" onclick="loadBook('1Reis',22)">1 Reis</button>
+        <button class="book-btn" onclick="loadBook('2Reis',25)">2 Reis</button>
+        <button class="book-btn" onclick="loadBook('1Cronicas',29)">1 Crônicas</button>
+        <button class="book-btn" onclick="loadBook('2Cronicas',36)">2 Crônicas</button>
+        <button class="book-btn" onclick="loadBook('Esdras',10)">Esdras</button>
+        <button class="book-btn" onclick="loadBook('Neemias',13)">Neemias</button>
+        <button class="book-btn" onclick="loadBook('Ester',10)">Ester</button>
+      </div>
+      <button class="testament-btn" onclick="toggleTestament('poe',this)"><span class="arrow">▶</span> Poéticos e Sapienciais</button>
+      <div class="books-list" id="vt-poe">
+        <button class="book-btn" onclick="loadBook('Jo',42)">Jó</button>
+        <button class="book-btn" onclick="loadBook('Salmos',150)">Salmos</button>
+        <button class="book-btn" onclick="loadBook('Proverbios',31)">Provérbios</button>
+        <button class="book-btn" onclick="loadBook('Eclesiastes',12)">Eclesiastes</button>
+        <button class="book-btn" onclick="loadBook('Canticos',8)">Cânticos</button>
+      </div>
+      <button class="testament-btn" onclick="toggleTestament('prof',this)"><span class="arrow">▶</span> Profetas Maiores</button>
+      <div class="books-list" id="vt-prof">
+        <button class="book-btn" onclick="loadBook('Isaias',66)">Isaías</button>
+        <button class="book-btn" onclick="loadBook('Jeremias',52)">Jeremias</button>
+        <button class="book-btn" onclick="loadBook('Lamentacoes',5)">Lamentações</button>
+        <button class="book-btn" onclick="loadBook('Ezequiel',48)">Ezequiel</button>
+        <button class="book-btn" onclick="loadBook('Daniel',12)">Daniel</button>
+      </div>
+      <button class="testament-btn" onclick="toggleTestament('minor',this)"><span class="arrow">▶</span> Profetas Menores</button>
+      <div class="books-list" id="vt-minor">
+        <button class="book-btn" onclick="loadBook('Oseias',14)">Oséias</button>
+        <button class="book-btn" onclick="loadBook('Joel',3)">Joel</button>
+        <button class="book-btn" onclick="loadBook('Amos',9)">Amós</button>
+        <button class="book-btn" onclick="loadBook('Abdias',1)">Abdias</button>
+        <button class="book-btn" onclick="loadBook('Jonas',4)">Jonas</button>
+        <button class="book-btn" onclick="loadBook('Miqueias',7)">Miqueias</button>
+        <button class="book-btn" onclick="loadBook('Naum',3)">Naum</button>
+        <button class="book-btn" onclick="loadBook('Habacuque',3)">Habacuque</button>
+        <button class="book-btn" onclick="loadBook('Sofonias',3)">Sofonias</button>
+        <button class="book-btn" onclick="loadBook('Ageu',2)">Ageu</button>
+        <button class="book-btn" onclick="loadBook('Zacarias',14)">Zacarias</button>
+        <button class="book-btn" onclick="loadBook('Malaquias',4)">Malaquias</button>
       </div>
     </div>
-  </nav>
 
-  <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 p-6">
-
-    <!-- Sidebar -->
-    <div class="lg:w-80 bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl p-6 h-fit sticky top-6">
-      <h2 class="font-bold text-xl mb-5 flex items-center gap-3"><i class="fa-solid fa-book"></i> Livros</h2>
-      <div id="lista-livros" class="max-h-[75vh] overflow-y-auto space-y-1 text-sm"></div>
-    </div>
-
-    <!-- Principal -->
-    <div class="flex-1">
-      <div class="mb-6">
-        <h1 id="titulo-capitulo" class="text-4xl font-bold titulo-biblia"></h1>
-        <p id="subtitulo" class="text-zinc-500 dark:text-zinc-400"></p>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Novo Testamento</div>
+      <button class="testament-btn" onclick="toggleTestament('evang',this)"><span class="arrow">▶</span> Evangelhos</button>
+      <div class="books-list" id="vt-evang">
+        <button class="book-btn" onclick="loadBook('Mateus',28)">Mateus</button>
+        <button class="book-btn" onclick="loadBook('Marcos',16)">Marcos</button>
+        <button class="book-btn" onclick="loadBook('Lucas',24)">Lucas</button>
+        <button class="book-btn" onclick="loadBook('Joao',21)">João</button>
       </div>
-
-      <!-- Abas -->
-      <div class="flex border-b mb-6 text-sm">
-        <button onclick="mudarAba(0)" id="aba-0" class="aba px-6 py-3 font-medium border-b-4 border-red-600">📖 Texto</button>
-        <button onclick="mudarAba(1)" id="aba-1" class="aba px-6 py-3 font-medium">📝 Estudos</button>
-        <button onclick="mudarAba(2)" id="aba-2" class="aba px-6 py-3 font-medium">🔥 Revelações</button>
-        <button onclick="mudarAba(3)" id="aba-3" class="aba px-6 py-3 font-medium">🖼️ Imagens</button>
+      <button class="testament-btn" onclick="toggleTestament('atos',this)"><span class="arrow">▶</span> Atos e Epístolas</button>
+      <div class="books-list" id="vt-atos">
+        <button class="book-btn" onclick="loadBook('Atos',28)">Atos</button>
+        <button class="book-btn" onclick="loadBook('Romanos',16)">Romanos</button>
+        <button class="book-btn" onclick="loadBook('1Corintios',16)">1 Coríntios</button>
+        <button class="book-btn" onclick="loadBook('2Corintios',13)">2 Coríntios</button>
+        <button class="book-btn" onclick="loadBook('Galatas',6)">Gálatas</button>
+        <button class="book-btn" onclick="loadBook('Efesios',6)">Efésios</button>
+        <button class="book-btn" onclick="loadBook('Filipenses',4)">Filipenses</button>
+        <button class="book-btn" onclick="loadBook('Colossenses',4)">Colossenses</button>
+        <button class="book-btn" onclick="loadBook('1Tessalonicenses',5)">1 Tessalonicenses</button>
+        <button class="book-btn" onclick="loadBook('2Tessalonicenses',3)">2 Tessalonicenses</button>
+        <button class="book-btn" onclick="loadBook('1Timoteo',6)">1 Timóteo</button>
+        <button class="book-btn" onclick="loadBook('2Timoteo',4)">2 Timóteo</button>
+        <button class="book-btn" onclick="loadBook('Tito',3)">Tito</button>
+        <button class="book-btn" onclick="loadBook('Filemom',1)">Filemom</button>
+        <button class="book-btn" onclick="loadBook('Hebreus',13)">Hebreus</button>
+        <button class="book-btn" onclick="loadBook('Tiago',5)">Tiago</button>
+        <button class="book-btn" onclick="loadBook('1Pedro',5)">1 Pedro</button>
+        <button class="book-btn" onclick="loadBook('2Pedro',3)">2 Pedro</button>
+        <button class="book-btn" onclick="loadBook('1Joao',5)">1 João</button>
+        <button class="book-btn" onclick="loadBook('2Joao',1)">2 João</button>
+        <button class="book-btn" onclick="loadBook('3Joao',1)">3 João</button>
+        <button class="book-btn" onclick="loadBook('Judas',1)">Judas</button>
       </div>
-
-      <div id="conteudo-0" class="aba-conteudo">
-        <div id="navegacao-capitulos" class="flex flex-wrap gap-2 mb-8"></div>
-        <div id="texto-biblia" class="space-y-6 text-lg"></div>
+      <button class="testament-btn" onclick="toggleTestament('apoc',this)"><span class="arrow">▶</span> Apocalipse</button>
+      <div class="books-list" id="vt-apoc">
+        <button class="book-btn" onclick="loadBook('Apocalipse',22)">Apocalipse</button>
       </div>
-
-      <div id="conteudo-1" class="aba-conteudo hidden">Estudos virão aqui...</div>
-      <div id="conteudo-2" class="aba-conteudo hidden">Revelações virão aqui...</div>
-      <div id="conteudo-3" class="aba-conteudo hidden">Imagens virão aqui...</div>
     </div>
   </div>
 
-  <script>
-    let biblia = null;
-    let livroIndexAtual = 0;
-    let capituloAtual = 1;
+  <!-- MAIN -->
+  <div class="main-content">
 
-    async function carregarBiblia() {
-      try {
-        const url = "https://raw.githubusercontent.com/maatheusgois/bible/main/versions/pt-br/arc.json";
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Falha ao carregar");
-        biblia = await res.json();
-        
-        console.log("Bíblia carregada com", biblia.length, "livros");
-        renderizarListaLivros();
-        carregarCapitulo(0, 1); // Começa com Gênesis 1
-      } catch (e) {
-        console.error(e);
-        alert("Não consegui carregar a Bíblia. Verifique sua internet ou tente novamente.");
-      }
+    <!-- BÍBLIA PANEL -->
+    <div class="panel" id="panel-biblia">
+      <div class="devo-banner">
+        <div class="devo-label">Versículo do Dia</div>
+        <div class="devo-verse" id="devoText">"Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna."</div>
+        <div class="devo-ref">João 3:16 — ARC</div>
+      </div>
+
+      <div class="chapter-nav" id="chapterNav" style="display:none">
+        <div class="book-title" id="currentBookTitle">Gênesis</div>
+        <button class="chapter-nav-btn" onclick="prevChapter()">◀ Anterior</button>
+        <select class="chapter-select" id="chapterSelect" onchange="loadChapter(parseInt(this.value))"></select>
+        <button class="chapter-nav-btn" onclick="nextChapter()">Próximo ▶</button>
+        <button class="study-btn" onclick="openStudy()">✦ Estudar com IA</button>
+      </div>
+
+      <div class="chapter-grid" id="chapterGrid" style="display:none"></div>
+      <div class="verses-area" id="versesArea">
+        <div style="text-align:center;padding:60px 0;color:var(--gold-dark);font-style:italic;font-size:17px">
+          ✝ Selecione um livro na barra lateral para começar a leitura
+          <br><br>
+          <span style="font-size:13px;color:var(--brown2)">Toda a Bíblia em Almeida Revista e Corrigida (ARC)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESTUDO COM IA -->
+    <div class="panel hidden" id="panel-estudo">
+      <div class="study-panel">
+        <div class="study-header">
+          <div class="study-icon">📖</div>
+          <div>
+            <div class="study-title">Estudo Bíblico com Inteligência Artificial</div>
+            <div class="study-subtitle" id="studySubtitle">Selecione um capítulo na aba Bíblia e clique em "Estudar com IA"</div>
+          </div>
+        </div>
+        <div class="study-options">
+          <button class="study-opt-btn active" onclick="setStudyMode('contextual',this)">📜 Contexto Histórico</button>
+          <button class="study-opt-btn" onclick="setStudyMode('theological',this)">✝ Teologia</button>
+          <button class="study-opt-btn" onclick="setStudyMode('devotional',this)">🌅 Devocional</button>
+          <button class="study-opt-btn" onclick="setStudyMode('pastoral',this)">🙏 Visão Pastoral</button>
+          <button class="study-opt-btn" onclick="setStudyMode('prophetic',this)">🔥 Profético</button>
+          <button class="study-opt-btn" onclick="setStudyMode('practical',this)">💡 Aplicação Prática</button>
+        </div>
+        <div class="ai-study-area" id="studyContent">
+          <p style="color:var(--gold-dark);font-style:italic">Aguardando seleção de capítulo... Vá até a aba Bíblia, selecione um livro e capítulo, e clique em <strong>✦ Estudar com IA</strong>.</p>
+          <p>O sistema irá gerar automaticamente:</p>
+          <ul style="padding-left:20px;margin-top:8px;line-height:2">
+            <li>Contexto histórico e cultural do texto</li>
+            <li>Análise teológica profunda</li>
+            <li>Revelações e pregações de pastores renomados</li>
+            <li>Aplicações práticas para sua vida</li>
+            <li>Conexões com outros trechos da Bíblia</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVELAÇÕES & PREGAÇÕES -->
+    <div class="panel hidden" id="panel-revelacoes">
+      <div class="study-panel">
+        <div class="study-header">
+          <div class="study-icon">🔥</div>
+          <div>
+            <div class="study-title">Revelações, Pregações & Ensinamentos</div>
+            <div class="study-subtitle">Gerado com IA baseado em teologia evangélica e pregações de pastores</div>
+          </div>
+        </div>
+        <div class="study-options">
+          <button class="study-opt-btn active" onclick="loadRevelations('salvation',this)">🕊️ Salvação</button>
+          <button class="study-opt-btn" onclick="loadRevelations('faith',this)">⚓ Fé</button>
+          <button class="study-opt-btn" onclick="loadRevelations('endtimes',this)">⏳ Fim dos Tempos</button>
+          <button class="study-opt-btn" onclick="loadRevelations('healing',this)">💊 Cura</button>
+          <button class="study-opt-btn" onclick="loadRevelations('prayer',this)">🙏 Oração</button>
+          <button class="study-opt-btn" onclick="loadRevelations('grace',this)">✨ Graça</button>
+        </div>
+        <div id="revelationsContent">
+          <div class="loading-verses"><div class="spinner"></div>Carregando revelações...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BUSCA -->
+    <div class="panel hidden" id="panel-busca">
+      <div class="search-panel">
+        <div class="study-header">
+          <div class="study-icon">🔍</div>
+          <div>
+            <div class="study-title">Buscar na Bíblia</div>
+            <div class="study-subtitle">Pesquise palavras, temas ou referências na Bíblia ARC</div>
+          </div>
+        </div>
+        <input class="search-big-input" placeholder="Ex: fé, amor, salvação, João 3:16..." id="mainSearch" oninput="mainBibleSearch(this.value)" />
+        <div id="searchResults"></div>
+      </div>
+    </div>
+
+    <!-- DEVOCIONAL -->
+    <div class="panel hidden" id="panel-devocional">
+      <div class="study-panel">
+        <div class="study-header">
+          <div class="study-icon">🌅</div>
+          <div>
+            <div class="study-title">Devocional Diário</div>
+            <div class="study-subtitle">Reflexão diária gerada com IA para edificação espiritual</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+          <button class="study-opt-btn active" onclick="loadDevocional('morning',this)">☀️ Manhã</button>
+          <button class="study-opt-btn" onclick="loadDevocional('evening',this)">🌙 Noite</button>
+          <button class="study-opt-btn" onclick="loadDevocional('weekly',this)">📅 Semanal</button>
+        </div>
+        <div class="ai-study-area" id="devocionalContent">
+          <div class="loading-verses"><div class="spinner"></div>Preparando seu devocional...</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const BIBLE_API = 'https://bible-api.com/';
+const ARC_VERSION = '?translation=almeida';
+
+let currentBook = null;
+let currentChapter = 1;
+let currentMaxChapters = 1;
+let studyMode = 'contextual';
+
+const bookAbbrevMap = {
+  'Genesis':'genesis','Exodo':'exodus','Levitico':'leviticus','Numeros':'numbers',
+  'Deuteronomio':'deuteronomy','Josue':'joshua','Juizes':'judges','Rute':'ruth',
+  '1Samuel':'1samuel','2Samuel':'2samuel','1Reis':'1kings','2Reis':'2kings',
+  '1Cronicas':'1chronicles','2Cronicas':'2chronicles','Esdras':'ezra','Neemias':'nehemiah',
+  'Ester':'esther','Jo':'job','Salmos':'psalms','Proverbios':'proverbs',
+  'Eclesiastes':'ecclesiastes','Canticos':'songofsolomon','Isaias':'isaiah',
+  'Jeremias':'jeremiah','Lamentacoes':'lamentations','Ezequiel':'ezekiel',
+  'Daniel':'daniel','Oseias':'hosea','Joel':'joel','Amos':'amos','Abdias':'obadiah',
+  'Jonas':'jonah','Miqueias':'micah','Naum':'nahum','Habacuque':'habakkuk',
+  'Sofonias':'zephaniah','Ageu':'haggai','Zacarias':'zechariah','Malaquias':'malachi',
+  'Mateus':'matthew','Marcos':'mark','Lucas':'luke','Joao':'john','Atos':'acts',
+  'Romanos':'romans','1Corintios':'1corinthians','2Corintios':'2corinthians',
+  'Galatas':'galatians','Efesios':'ephesians','Filipenses':'philippians',
+  'Colossenses':'colossians','1Tessalonicenses':'1thessalonians','2Tessalonicenses':'2thessalonians',
+  '1Timoteo':'1timothy','2Timoteo':'2timothy','Tito':'titus','Filemom':'philemon',
+  'Hebreus':'hebrews','Tiago':'james','1Pedro':'1peter','2Pedro':'2peter',
+  '1Joao':'1john','2Joao':'2john','3Joao':'3john','Judas':'jude','Apocalipse':'revelation'
+};
+
+const bookDisplayNames = {
+  'Genesis':'Gênesis','Exodo':'Êxodo','Levitico':'Levítico','Numeros':'Números',
+  'Deuteronomio':'Deuteronômio','Josue':'Josué','Juizes':'Juízes','Jo':'Jó',
+  'Salmos':'Salmos','Proverbios':'Provérbios','Eclesiastes':'Eclesiastes',
+  'Canticos':'Cânticos','Isaias':'Isaías','Jeremias':'Jeremias',
+  'Lamentacoes':'Lamentações','Ezequiel':'Ezequiel','Daniel':'Daniel',
+  'Joao':'João','Atos':'Atos dos Apóstolos','1Corintios':'1 Coríntios',
+  '2Corintios':'2 Coríntios','Galatas':'Gálatas','Efesios':'Efésios',
+  'Filipenses':'Filipenses','Colossenses':'Colossenses','Tiago':'Tiago',
+  'Apocalipse':'Apocalipse'
+};
+
+function getDisplayName(book) {
+  return bookDisplayNames[book] || book.replace(/([A-Z])/g,' $1').trim();
+}
+
+function showPanel(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.add('hidden'));
+  document.getElementById('panel-'+name).classList.remove('hidden');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  if(name === 'revelacoes') loadRevelations('salvation', document.querySelector('#panel-revelacoes .study-opt-btn'));
+  if(name === 'devocional') loadDevocional('morning', document.querySelector('#panel-devocional .study-opt-btn'));
+}
+
+function toggleTestament(id, btn) {
+  const list = document.getElementById('vt-'+id);
+  const isOpen = list.classList.contains('open');
+  list.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+
+function loadBook(book, maxChapters) {
+  currentBook = book;
+  currentMaxChapters = maxChapters;
+  currentChapter = 1;
+  document.querySelectorAll('.book-btn').forEach(b => b.classList.remove('active'));
+  event && event.target && event.target.classList.add('active');
+  showPanel('biblia', document.querySelector('.nav-tab'));
+  document.querySelector('.nav-tab').classList.add('active');
+  renderChapterNav();
+  loadChapter(1);
+}
+
+function renderChapterNav() {
+  const nav = document.getElementById('chapterNav');
+  const grid = document.getElementById('chapterGrid');
+  nav.style.display = 'flex';
+  grid.style.display = 'flex';
+  document.getElementById('currentBookTitle').textContent = getDisplayName(currentBook);
+  const sel = document.getElementById('chapterSelect');
+  sel.innerHTML = '';
+  for(let i=1; i<=currentMaxChapters; i++) {
+    const o = document.createElement('option');
+    o.value = i; o.textContent = 'Capítulo ' + i;
+    sel.appendChild(o);
+  }
+  grid.innerHTML = '';
+  for(let i=1; i<=currentMaxChapters; i++) {
+    const d = document.createElement('div');
+    d.className = 'ch-num' + (i===currentChapter?' active':'');
+    d.textContent = i;
+    d.onclick = () => loadChapter(i);
+    grid.appendChild(d);
+  }
+}
+
+async function loadChapter(chNum) {
+  currentChapter = chNum;
+  document.getElementById('chapterSelect').value = chNum;
+  document.querySelectorAll('.ch-num').forEach((d,i) => {
+    d.classList.toggle('active', i+1===chNum);
+  });
+  const area = document.getElementById('versesArea');
+  area.innerHTML = '<div class="loading-verses"><div class="spinner"></div>Carregando capítulo...</div>';
+  try {
+    const abbrev = bookAbbrevMap[currentBook] || currentBook.toLowerCase();
+    const resp = await fetch(`${BIBLE_API}${abbrev}+${chNum}${ARC_VERSION}`);
+    const data = await resp.json();
+    if(data.verses) {
+      renderVerses(data.verses, data.reference || `${getDisplayName(currentBook)} ${chNum}`);
+    } else {
+      area.innerHTML = '<div class="loading-verses" style="color:var(--red-accent)">Versículos não encontrados. Tente outro capítulo.</div>';
     }
+  } catch(e) {
+    area.innerHTML = `<div class="loading-verses" style="color:var(--red-accent)">Erro ao carregar. Verifique sua conexão.<br><small>${e.message}</small></div>`;
+  }
+}
 
-    function renderizarListaLivros() {
-      const container = document.getElementById('lista-livros');
-      container.innerHTML = '';
-      biblia.forEach((livro, index) => {
-        const div = document.createElement('div');
-        div.className = `px-4 py-3 rounded-2xl cursor-pointer hover:bg-indigo-50 dark:hover:bg-zinc-800 flex justify-between ${index === livroIndexAtual ? 'bg-indigo-100 dark:bg-zinc-700 font-medium' : ''}`;
-        div.innerHTML = `
-          <span>${livro.name}</span>
-          <span class="text-xs bg-zinc-200 dark:bg-zinc-700 px-2.5 py-0.5 rounded-full">${livro.chapters.length} cap</span>
-        `;
-        div.onclick = () => carregarCapitulo(index, 1);
-        container.appendChild(div);
-      });
-    }
+function renderVerses(verses, reference) {
+  const area = document.getElementById('versesArea');
+  let html = `<div class="chapter-heading">✝ ${reference}</div>`;
+  verses.forEach(v => {
+    html += `<div class="verse-line" onclick="toggleVerseActions(this,${v.verse},'${v.text.replace(/'/g,"\\'")}')">
+      <span class="verse-num">${v.verse}</span>
+      <span class="verse-text">${v.text}</span>
+    </div>
+    <div class="verse-actions" id="va-${v.verse}">
+      <button class="va-btn" onclick="copyVerse(${v.verse},'${v.text.replace(/'/g,"\\'")}')">📋 Copiar</button>
+      <button class="va-btn" onclick="studyVerse(${v.verse},'${v.text.replace(/'/g,"\\'")}')">📖 Estudar versículo</button>
+      <button class="va-btn" onclick="shareVerse(${v.verse})">🔗 Compartilhar</button>
+    </div>`;
+  });
+  area.innerHTML = html;
+}
 
-    function carregarCapitulo(index, capitulo) {
-      livroIndexAtual = index;
-      capituloAtual = capitulo;
-      const livro = biblia[index];
+function toggleVerseActions(el, num, text) {
+  el.classList.toggle('highlighted');
+  const va = document.getElementById('va-'+num);
+  va.classList.toggle('show');
+}
 
-      document.getElementById('titulo-capitulo').innerHTML = `${livro.name} <span class="text-2xl text-zinc-400 font-normal">${capitulo}</span>`;
-      document.getElementById('subtitulo').textContent = 'Almeida Revista e Corrigida (ARC)';
+function copyVerse(num, text) {
+  const ref = `${getDisplayName(currentBook)} ${currentChapter}:${num} — ARC`;
+  navigator.clipboard && navigator.clipboard.writeText(`"${text}" — ${ref}`);
+  alert('Versículo copiado!');
+}
 
-      // Texto dos versículos
-      const versos = livro.chapters[capitulo - 1] || [];
-      let html = '';
-      versos.forEach((texto, i) => {
-        html += `
-          <div class="verso flex gap-5 group">
-            <span class="numero-verso text-xl w-8 flex-shrink-0 text-right">${i+1}</span>
-            <p class="flex-1">${texto}</p>
-          </div>`;
-      });
-      document.getElementById('texto-biblia').innerHTML = html || '<p class="text-red-500">Capítulo não encontrado.</p>';
+function studyVerse(num, text) {
+  document.getElementById('studySubtitle').textContent = `${getDisplayName(currentBook)} ${currentChapter}:${num}`;
+  showPanel('estudo', null);
+  generateStudy(`${getDisplayName(currentBook)} capítulo ${currentChapter}, versículo ${num}: "${text}"`);
+}
 
-      // Navegação de capítulos (agora mais robusta)
-      renderizarNavegacaoCapitulo(livro);
-    }
+function shareVerse(num) {
+  alert(`${getDisplayName(currentBook)} ${currentChapter}:${num} — ARC`);
+}
 
-    function renderizarNavegacaoCapitulo(livro) {
-      const container = document.getElementById('navegacao-capitulos');
-      container.innerHTML = '<span class="text-sm text-zinc-500 mr-4 self-center">Capítulos:</span>';
+function prevChapter() {
+  if(currentChapter > 1) loadChapter(currentChapter - 1);
+}
+function nextChapter() {
+  if(currentChapter < currentMaxChapters) loadChapter(currentChapter + 1);
+}
 
-      const total = livro.chapters.length;
-      for (let i = 1; i <= total; i++) {
-        const btn = document.createElement('button');
-        btn.className = `px-4 py-2 rounded-2xl text-sm transition-all ${i === capituloAtual 
-          ? 'bg-red-600 text-white shadow' 
-          : 'bg-white dark:bg-zinc-800 hover:bg-gray-100 dark:hover:bg-zinc-700'}`;
-        btn.textContent = i;
-        btn.onclick = () => carregarCapitulo(livroIndexAtual, i);
-        container.appendChild(btn);
-      }
-    }
+function openStudy() {
+  if(!currentBook) return;
+  const subtitle = `${getDisplayName(currentBook)} — Capítulo ${currentChapter}`;
+  document.getElementById('studySubtitle').textContent = subtitle;
+  showPanel('estudo', null);
+  generateStudy(`${getDisplayName(currentBook)} capítulo ${currentChapter} da Bíblia Almeida Revista e Corrigida`);
+}
 
-    function mudarAba(n) {
-      document.querySelectorAll('.aba-conteudo').forEach(el => el.classList.add('hidden'));
-      document.getElementById('conteudo-' + n).classList.remove('hidden');
-    }
+function setStudyMode(mode, btn) {
+  studyMode = mode;
+  document.querySelectorAll('#panel-estudo .study-opt-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if(currentBook) openStudy();
+}
 
-    // Iniciar
-    carregarBiblia();
-  </script>
-</body>
-</html>
+async function generateStudy(reference) {
+  const content = document.getElementById('studyContent');
+  content.innerHTML = '<div class="loading-verses"><div class="spinner"></div>Gerando estudo bíblico com IA...</div>';
+  const modePrompts = {
+    contextual: 'Analise o contexto histórico, cultural e literário deste trecho bíblico. Explique quem escreveu, para quem, em que época e o que estava acontecendo.',
+    theological: 'Faça uma análise teológica profunda deste trecho. Explore os temas teológicos, doutrinas envolvidas e como se encaixa na revelação progressiva de Deus.',
+    devotional: 'Escreva uma reflexão devocional inspiradora sobre este trecho. Qual mensagem Deus tem para nosso coração hoje? Use linguagem acolhedora e edificante.',
+    pastoral: 'Como grandes pastores evangélicos — como Billy Graham, Charles Spurgeon, John Stott, Martinho Lutero — pregaram e ensinaram sobre este texto? Apresente diferentes perspectivas pastorais.',
+    prophetic: 'Analise a dimensão profética deste texto. Há profecias cumpridas ou a cumprir? Como se relaciona com o plano redentor de Deus e com o retorno de Cristo?',
+    practical: 'Quais aplicações práticas este texto tem para a vida cristã hoje? Como um crente pode viver este ensinamento no dia a dia? Dê exemplos concretos.'
+  };
+  const prompt = `Você é um pastor evangelico e teólogo especialista em Bíblia Almeida Revista e Corrigida (ARC). 
+  
+  Texto: ${reference}
+  
+  ${modePrompts[studyMode]}
+  
+  Responda em português do Brasil. Use formatação com subtítulos (use ### para títulos). Seja profundo mas acessível. Inclua referências a outros versículos relacionados. Limite a 400 palavras.`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await resp.json();
+    const text = data.content?.[0]?.text || 'Erro ao gerar estudo.';
+    content.innerHTML = formatStudyText(text);
+  } catch(e) {
+    content.innerHTML = `<p style="color:var(--red-accent)">Erro ao conectar à IA: ${e.message}</p>`;
+  }
+}
+
+function formatStudyText(text) {
+  return text
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.+)$/gm, '<h3>$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
+    .split('\n\n').map(p => p.trim() ? `<p>${p}</p>` : '').join('');
+}
+
+async function loadRevelations(topic, btn) {
+  document.querySelectorAll('#panel-revelacoes .study-opt-btn').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const area = document.getElementById('revelationsContent');
+  area.innerHTML = '<div class="loading-verses"><div class="spinner"></div>Buscando revelações e pregações...</div>';
+  const topicNames = {
+    salvation:'Salvação', faith:'Fé', endtimes:'Fim dos Tempos e Profecia',
+    healing:'Cura Divina', prayer:'Oração e Intercessão', grace:'Graça e Misericórdia'
+  };
+  const prompt = `Você é um pastor evangélico especialista. Sobre o tema "${topicNames[topic]}" na Bíblia (versão ARC):
+
+Gere 3 mini-revelações/ensinamentos de pastores renomados (como Charles Spurgeon, Billy Graham, Martinho Lutero, John Wesley, Watchman Nee, ou pastores brasileiros como Caio Fábio, Silas Malafaia, etc.). 
+
+Para cada um, responda em JSON puro sem markdown:
+[
+  {"tag": "Revelação", "pastor": "Nome Pastor", "title": "Título do ensinamento", "text": "Texto de 3-4 frases do ensinamento", "verse": "Livro cap:v — ARC"},
+  ...
+]
+Responda APENAS com o JSON, sem texto antes ou depois.`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role:'user', content: prompt }] })
+    });
+    const data = await resp.json();
+    let text = data.content?.[0]?.text || '[]';
+    text = text.replace(/```json|```/g,'').trim();
+    const items = JSON.parse(text);
+    area.innerHTML = items.map(item => `
+      <div class="card-revelation">
+        <span class="rev-tag">${item.tag}</span>
+        <div class="rev-title">${item.title}</div>
+        <div class="rev-text">${item.text}</div>
+        <div style="margin-top:10px;padding:8px 12px;background:rgba(201,168,76,0.08);border-left:3px solid var(--gold);border-radius:0 4px 4px 0;font-style:italic;font-size:13px;color:var(--brown2)">${item.verse}</div>
+        <div class="rev-pastor">✝ ${item.pastor}</div>
+      </div>`).join('');
+  } catch(e) {
+    area.innerHTML = `<div style="color:var(--red-accent);padding:20px">Erro ao carregar revelações. ${e.message}</div>`;
+  }
+}
+
+async function loadDevocional(time, btn) {
+  document.querySelectorAll('#panel-devocional .study-opt-btn').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const area = document.getElementById('devocionalContent');
+  area.innerHTML = '<div class="loading-verses"><div class="spinner"></div>Preparando seu devocional...</div>';
+  const timeNames = { morning:'da manhã', evening:'da noite', weekly:'semanal' };
+  const prompt = `Escreva um devocional evangélico ${timeNames[time]} inspirador e profundo. 
+  Use um versículo da Bíblia ARC como base. Inclua: 
+  1. Um versículo chave (em destaque com >)
+  2. Uma reflexão de 3-4 parágrafos
+  3. Uma oração final
+  Use ### para os títulos. Língua portuguesa do Brasil. Seja pastoral, quente, edificante.`;
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role:'user', content: prompt }] })
+    });
+    const data = await resp.json();
+    area.innerHTML = formatStudyText(data.content?.[0]?.text || '');
+  } catch(e) {
+    area.innerHTML = `<p style="color:var(--red-accent)">Erro: ${e.message}</p>`;
+  }
+}
+
+const allVerseRefs = [
+  { ref:'João 3:16', text:'Porque Deus amou o mundo de tal maneira...' },
+  { ref:'Salmos 23:1', text:'O Senhor é o meu pastor; nada me faltará.' },
+  { ref:'Provérbios 3:5', text:'Confia no Senhor de todo o teu coração...' },
+  { ref:'Jeremias 29:11', text:'Porque sou eu que conheço os planos que tenho para vocês...' },
+  { ref:'Romanos 8:28', text:'E sabemos que todas as coisas contribuem juntamente para o bem...' },
+  { ref:'Filipenses 4:13', text:'Posso tudo naquele que me fortalece.' },
+  { ref:'Isaías 41:10', text:'Não temas, porque eu sou contigo...' },
+  { ref:'Mateus 6:33', text:'Mas buscai primeiro o reino de Deus...' },
+];
+
+function sidebarSearch(val) {
+  const res = document.getElementById('sideResults');
+  if(!val || val.length < 3) { res.innerHTML=''; return; }
+  const matches = allVerseRefs.filter(v => v.ref.toLowerCase().includes(val.toLowerCase()) || v.text.toLowerCase().includes(val.toLowerCase()));
+  res.innerHTML = matches.slice(0,5).map(m => `<div class="search-result-item"><div class="search-result-ref">${m.ref}</div>${m.text.substring(0,60)}...</div>`).join('');
+}
+
+async function mainBibleSearch(val) {
+  const area = document.getElementById('searchResults');
+  if(!val || val.length < 3) { area.innerHTML=''; return; }
+  if(val.length < 5) return;
+  area.innerHTML = '<div class="loading-verses"><div class="spinner"></div>Buscando...</div>';
+  const prompt = `Busque na Bíblia ARC versículos relacionados a: "${val}". Retorne JSON:
+[{"ref":"Livro cap:v","text":"texto do versículo","context":"breve contexto"}]
+Máximo 5 resultados. Apenas JSON, sem markdown.`;
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:800, messages:[{role:'user',content:prompt}] })
+    });
+    const data = await resp.json();
+    let text = (data.content?.[0]?.text||'[]').replace(/```json|```/g,'').trim();
+    const items = JSON.parse(text);
+    area.innerHTML = items.map(it => `
+      <div class="card-revelation">
+        <span class="rev-tag">${it.ref}</span>
+        <div class="rev-title" style="font-size:15px;font-style:italic">"${it.text}"</div>
+        <div class="rev-text" style="margin-top:8px;font-size:13px">${it.context}</div>
+      </div>`).join('');
+  } catch(e) { area.innerHTML = `<p style="color:var(--red-accent)">Erro: ${e.message}</p>`; }
+}
+
+let searchTimeout;
+document.getElementById('mainSearch').addEventListener('input', function() {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => mainBibleSearch(this.value), 800);
+});
+
+loadDevocional('morning', null);
+</script>
