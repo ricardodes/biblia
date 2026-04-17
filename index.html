@@ -257,6 +257,51 @@
       border-left: 3px solid var(--gold); padding-left: 12px;
       color: var(--brown2); font-style: italic; margin: 10px 0; font-size: 13px;
     }
+    /* BARRA DE PROGRESSO */
+    .progress-bar-wrap {
+      padding: 10px 20px 0;
+      background: var(--parch2);
+      border-bottom: 1px solid var(--border);
+    }
+    .progress-top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 6px; gap: 10px; flex-wrap: wrap;
+    }
+    .progress-label {
+      font-family: 'Cinzel', serif; font-size: 11px;
+      color: var(--brown2); letter-spacing: 0.5px;
+    }
+    .progress-pct {
+      font-family: 'Cinzel', serif; font-size: 12px;
+      color: var(--gold); font-weight: 600;
+    }
+    .progress-track {
+      width: 100%; height: 6px;
+      background: rgba(201,168,76,0.12);
+      border-radius: 99px; overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold-dark), var(--gold));
+      border-radius: 99px;
+      transition: width 0.5s ease;
+    }
+    .mark-read-btn {
+      padding: 5px 14px; border: none; border-radius: 4px;
+      font-family: 'Cinzel', serif; font-size: 11px; cursor: pointer;
+      transition: all 0.15s; letter-spacing: 0.4px;
+    }
+    .mark-read-btn.unread {
+      background: rgba(201,168,76,0.15); color: var(--gold);
+      border: 1px solid var(--border);
+    }
+    .mark-read-btn.unread:hover { background: var(--gold-dark); color: white; border-color: var(--gold-dark); }
+    .mark-read-btn.read {
+      background: rgba(100,180,100,0.15); color: #7ecb7e;
+      border: 1px solid rgba(100,180,100,0.3);
+    }
+    .mark-read-btn.read:hover { background: rgba(100,180,100,0.28); }
     /* STAR / FAVORITOS */
     .star-btn {
       background: none; border: none; cursor: pointer;
@@ -326,6 +371,8 @@
     }
     .ch-num:hover { background: rgba(201,168,76,0.15); color: var(--brown); }
     .ch-num.active { background: var(--gold-dark); color: white; border-color: var(--gold-dark); }
+    .ch-num.ch-read { border-color: rgba(100,180,100,0.5); color: #7ecb7e; }
+    .ch-num.ch-read.active { background: var(--gold-dark); color: white; border-color: var(--gold-dark); }
 
     .verses-area {
       padding: 20px 24px 40px;
@@ -645,6 +692,18 @@
         <button class="chapter-nav-btn" onclick="prevChapter()">◀ Anterior</button>
         <select class="chapter-select" id="chapterSelect" onchange="loadChapter(parseInt(this.value))"></select>
         <button class="chapter-nav-btn" onclick="nextChapter()">Próximo ▶</button>
+        <button class="mark-read-btn unread" id="markReadBtn" onclick="toggleChapterRead()">☐ Marcar como lido</button>
+      </div>
+
+      <!-- BARRA DE PROGRESSO -->
+      <div class="progress-bar-wrap" id="progressBarWrap" style="display:none">
+        <div class="progress-top">
+          <span class="progress-label" id="progressLabel">Progresso em <span id="progressBookName"></span></span>
+          <span class="progress-pct" id="progressPct">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill" style="width:0%"></div>
+        </div>
       </div>
 
       <div class="chapter-grid" id="chapterGrid" style="display:none"></div>
@@ -937,23 +996,18 @@ function renderChapterNav() {
     o.value = i; o.textContent = 'Capítulo ' + i;
     sel.appendChild(o);
   }
-  grid.innerHTML = '';
-  for (let i = 1; i <= currentMaxChapters; i++) {
-    const d = document.createElement('div');
-    d.className = 'ch-num' + (i === currentChapter ? ' active' : '');
-    d.textContent = i;
-    d.onclick = () => loadChapter(i);
-    grid.appendChild(d);
-  }
+  renderChapterGrid();
+  updateProgressBar();
+  updateReadButton();
 }
 
 async function loadChapter(chNum) {
   currentChapter = chNum;
   const selEl = document.getElementById('chapterSelect');
   if (selEl) selEl.value = chNum;
-  document.querySelectorAll('.ch-num').forEach((d, i) => {
-    d.classList.toggle('active', i + 1 === chNum);
-  });
+  renderChapterGrid();
+  updateReadButton();
+  updateProgressBar();
   const area = document.getElementById('versesArea');
   area.innerHTML = '<div class="loading-verses"><div class="spinner"></div>Carregando capítulo...</div>';
 
@@ -1319,6 +1373,65 @@ function removeFav(key) {
   delete favorites[key];
   saveFavorites();
   renderFavoritos();
+}
+
+// ─── PROGRESSO DE LEITURA ─────────────────────────────────────────────────────
+let readChapters = JSON.parse(localStorage.getItem('bible_read') || '{}');
+
+function getReadKey(book, ch) {
+  return `${book}_${ch}`;
+}
+
+function toggleChapterRead() {
+  const key = getReadKey(currentBook, currentChapter);
+  if (readChapters[key]) {
+    delete readChapters[key];
+  } else {
+    readChapters[key] = true;
+  }
+  localStorage.setItem('bible_read', JSON.stringify(readChapters));
+  updateReadButton();
+  updateProgressBar();
+  // Update chapter grid dot
+  renderChapterGrid();
+}
+
+function updateReadButton() {
+  const btn = document.getElementById('markReadBtn');
+  if (!btn || !currentBook) return;
+  const key = getReadKey(currentBook, currentChapter);
+  const isRead = !!readChapters[key];
+  btn.className = `mark-read-btn ${isRead ? 'read' : 'unread'}`;
+  btn.textContent = isRead ? '✔ Capítulo lido' : '☐ Marcar como lido';
+}
+
+function updateProgressBar() {
+  if (!currentBook) return;
+  const wrap = document.getElementById('progressBarWrap');
+  wrap.style.display = 'block';
+  let readCount = 0;
+  for (let i = 1; i <= currentMaxChapters; i++) {
+    if (readChapters[getReadKey(currentBook, i)]) readCount++;
+  }
+  const pct = Math.round((readCount / currentMaxChapters) * 100);
+  document.getElementById('progressBookName').textContent = getDisplayName(currentBook);
+  document.getElementById('progressPct').textContent = `${readCount}/${currentMaxChapters} cap. (${pct}%)`;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function renderChapterGrid() {
+  const grid = document.getElementById('chapterGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  for (let i = 1; i <= currentMaxChapters; i++) {
+    const d = document.createElement('div');
+    const isRead = !!readChapters[getReadKey(currentBook, i)];
+    d.className = 'ch-num' + (i === currentChapter ? ' active' : '') + (isRead ? ' ch-read' : '');
+    d.textContent = i;
+    if (isRead && i !== currentChapter) d.title = `Capítulo ${i} — lido ✔`;
+    d.onclick = () => loadChapter(i);
+    grid.appendChild(d);
+  }
 }
 
 // Init tab count
