@@ -192,6 +192,12 @@
       background: var(--parch);
       overflow-y: auto;
       max-height: calc(100vh - 140px);
+      min-width: 0;
+    }
+    #panel-mapamental.panel:not(.hidden) ~ * { display: none; }
+    /* When mapamental is shown, make main-content not clip it */
+    .main-content:has(#panel-mapamental:not(.hidden)) {
+      overflow-y: auto;
     }
 
     /* BIBLE PANEL */
@@ -530,6 +536,8 @@
       background: var(--parch);
       padding: 0;
       overflow-y: auto;
+      max-height: calc(100vh - 140px);
+      width: 100%;
     }
     .mm-header {
       background: linear-gradient(135deg, #1A0A00 0%, #3B2507 60%, #1A0A00 100%);
@@ -569,9 +577,11 @@
 
     .mm-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 20px;
       padding: 24px 20px 40px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .mm-book-card {
@@ -582,6 +592,9 @@
       transition: transform 0.2s, box-shadow 0.2s;
       cursor: pointer;
       position: relative;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      min-width: 0;
     }
     .mm-book-card:hover {
       transform: translateY(-3px);
@@ -635,6 +648,9 @@
     .mm-card-body {
       background: #18100A;
       padding: 14px 16px;
+      overflow: hidden;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
     .mm-section-title {
       font-family: 'Cinzel', serif; font-size: 10px;
@@ -684,6 +700,7 @@
     .mm-summary-item {
       background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
       border-radius: 6px; padding: 7px 9px;
+      min-width: 0; overflow: hidden;
     }
     .mm-summary-ref {
       font-family: 'Cinzel', serif; font-size: 9px;
@@ -2055,7 +2072,7 @@ window.addEventListener('DOMContentLoaded', () => {
   }
   loadDevocional('morning', null);
 });
-</script>
+
 // ─── PAINEL LATERAL DE ESTUDO ─────────────────────────────────────────────────
 let sideStudyMode = 'contextual';
 let sideStudyLoaded = false;
