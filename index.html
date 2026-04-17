@@ -1286,7 +1286,7 @@ function renderVerses(verses, reference) {
   area.innerHTML = html;
   window._ttsVerses = verses;
   // Auto-load side study for the chapter
-  loadSideStudy();
+  setTimeout(() => { if (typeof loadSideStudy === 'function') loadSideStudy(); }, 0);
 }
 
 function toggleVerseActions(el, num) {
