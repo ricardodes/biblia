@@ -524,6 +524,221 @@
       .sidebar { max-height: 280px; }
       .main-content { max-height: none; }
     }
+
+    /* ═══════════════ MAPA MENTAL ═══════════════ */
+    #panel-mapamental {
+      background: var(--parch);
+      padding: 0;
+      overflow-y: auto;
+    }
+    .mm-header {
+      background: linear-gradient(135deg, #1A0A00 0%, #3B2507 60%, #1A0A00 100%);
+      padding: 20px 28px;
+      border-bottom: 3px solid var(--gold);
+      display: flex; align-items: center; gap: 16px;
+      flex-wrap: wrap;
+    }
+    .mm-header-icon { font-size: 36px; }
+    .mm-header-title {
+      font-family: 'Cinzel', serif; font-size: 22px;
+      color: var(--gold-light); font-weight: 700; letter-spacing: 1px;
+    }
+    .mm-header-sub {
+      font-size: 13px; color: rgba(201,168,76,0.6);
+      margin-top: 4px; font-family: 'Inter', sans-serif;
+    }
+    .mm-filter-bar {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      padding: 14px 20px; background: rgba(0,0,0,0.3);
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+    }
+    .mm-filter-label {
+      font-family: 'Cinzel', serif; font-size: 11px;
+      color: var(--gold-dark); letter-spacing: 1px;
+      margin-right: 4px;
+    }
+    .mm-filter-btn {
+      padding: 5px 14px; border: 1px solid var(--border);
+      border-radius: 20px; font-family: 'Cinzel', serif; font-size: 11px;
+      background: transparent; color: var(--brown2); cursor: pointer;
+      transition: all 0.2s; white-space: nowrap;
+    }
+    .mm-filter-btn:hover { background: rgba(201,168,76,0.15); color: var(--gold-light); }
+    .mm-filter-btn.active { background: var(--gold-dark); color: white; border-color: var(--gold-dark); }
+
+    .mm-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+      padding: 24px 20px 40px;
+    }
+
+    .mm-book-card {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      position: relative;
+    }
+    .mm-book-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    }
+    .mm-book-card.hidden { display: none; }
+
+    /* Color themes per section */
+    .mm-card-pent   { --card-accent: #2E7D32; --card-accent-light: #4CAF50; --card-bg-top: #0A2E0C; }
+    .mm-card-hist   { --card-accent: #8B4513; --card-accent-light: #D2691E; --card-bg-top: #2A1005; }
+    .mm-card-poe    { --card-accent: #4A0080; --card-accent-light: #9C27B0; --card-bg-top: #1A0030; }
+    .mm-card-prof   { --card-accent: #B71C1C; --card-accent-light: #EF5350; --card-bg-top: #2A0505; }
+    .mm-card-evang  { --card-accent: #0D47A1; --card-accent-light: #1976D2; --card-bg-top: #050F25; }
+    .mm-card-epist  { --card-accent: #4E342E; --card-accent-light: #8D6E63; --card-bg-top: #1A0A08; }
+
+    .mm-card-top {
+      background: linear-gradient(135deg, var(--card-bg-top) 0%, rgba(0,0,0,0.6) 100%);
+      padding: 16px 16px 12px;
+      border-bottom: 2px solid var(--card-accent);
+      position: relative;
+      overflow: hidden;
+    }
+    .mm-card-top::before {
+      content: attr(data-emoji);
+      position: absolute; right: 12px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 52px; opacity: 0.12;
+    }
+    .mm-book-number {
+      font-family: 'Cinzel', serif; font-size: 11px;
+      color: var(--card-accent-light); letter-spacing: 2px;
+      opacity: 0.8; margin-bottom: 4px;
+    }
+    .mm-book-name {
+      font-family: 'Cinzel', serif; font-size: 24px;
+      font-weight: 700; color: var(--card-accent-light);
+      line-height: 1.1; text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+    }
+    .mm-book-subtitle {
+      font-size: 11px; color: rgba(255,255,255,0.5);
+      letter-spacing: 1px; text-transform: uppercase;
+      font-family: 'Inter', sans-serif; margin-top: 4px;
+    }
+    .mm-chapters-badge {
+      display: inline-block; margin-top: 8px;
+      background: rgba(255,255,255,0.08); padding: 2px 10px;
+      border-radius: 20px; font-family: 'Cinzel', serif; font-size: 11px;
+      color: var(--card-accent-light); border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .mm-card-body {
+      background: #18100A;
+      padding: 14px 16px;
+    }
+    .mm-section-title {
+      font-family: 'Cinzel', serif; font-size: 10px;
+      color: var(--card-accent-light); letter-spacing: 2px;
+      text-transform: uppercase; margin-bottom: 8px;
+      padding-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.06);
+      opacity: 0.9;
+    }
+
+    /* TEMA PRINCIPAL */
+    .mm-tema-box {
+      background: linear-gradient(135deg, var(--card-bg-top), rgba(0,0,0,0.5));
+      border-left: 3px solid var(--card-accent);
+      padding: 8px 12px; border-radius: 0 6px 6px 0;
+      margin-bottom: 12px; font-size: 13px; line-height: 1.5;
+      color: var(--brown); font-family: 'Lora', serif;
+    }
+
+    /* PERSONAGENS */
+    .mm-persons-grid {
+      display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px;
+    }
+    .mm-person-tag {
+      padding: 3px 10px; background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;
+      font-family: 'Inter', sans-serif; font-size: 12px; color: var(--brown2);
+    }
+
+    /* TEMAS ABORDADOS */
+    .mm-topics-list { margin-bottom: 12px; }
+    .mm-topic-item {
+      display: flex; align-items: flex-start; gap: 7px;
+      padding: 5px 0; font-size: 13px; color: var(--brown2);
+      font-family: 'Lora', serif; border-bottom: 1px solid rgba(255,255,255,0.04);
+      line-height: 1.4;
+    }
+    .mm-topic-item:last-child { border-bottom: none; }
+    .mm-topic-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--card-accent-light); flex-shrink: 0; margin-top: 6px;
+    }
+
+    /* RESUMO COM VERSÍCULOS */
+    .mm-summary-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px;
+    }
+    .mm-summary-item {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 6px; padding: 7px 9px;
+    }
+    .mm-summary-ref {
+      font-family: 'Cinzel', serif; font-size: 9px;
+      color: var(--card-accent-light); letter-spacing: 0.5px;
+      margin-bottom: 3px;
+    }
+    .mm-summary-text {
+      font-size: 11px; color: var(--brown2);
+      font-family: 'Inter', sans-serif; line-height: 1.4;
+    }
+
+    /* VERSÍCULO CHAVE */
+    .mm-key-verse {
+      background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.03));
+      border: 1px solid rgba(201,168,76,0.25); border-radius: 8px;
+      padding: 10px 12px; margin-bottom: 10px;
+    }
+    .mm-key-verse-ref {
+      font-family: 'Cinzel', serif; font-size: 10px; color: var(--gold);
+      margin-bottom: 5px; display: flex; align-items: center; gap: 6px;
+    }
+    .mm-key-verse-ref::before { content: '✦'; font-size: 9px; }
+    .mm-key-verse-text {
+      font-size: 13px; color: var(--brown); font-style: italic;
+      font-family: 'Lora', serif; line-height: 1.6;
+    }
+
+    /* FATOS ESPECIAIS */
+    .mm-facts-row {
+      display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;
+    }
+    .mm-fact-chip {
+      padding: 4px 10px; border-radius: 20px;
+      border: 1px solid var(--card-accent);
+      background: rgba(0,0,0,0.3); font-size: 11px;
+      color: var(--card-accent-light);
+      font-family: 'Cinzel', serif; letter-spacing: 0.3px;
+    }
+
+    /* READ BOOK BTN */
+    .mm-read-btn {
+      width: 100%; padding: 9px;
+      background: linear-gradient(90deg, var(--card-bg-top), var(--card-accent));
+      border: none; border-radius: 6px;
+      font-family: 'Cinzel', serif; font-size: 12px;
+      color: white; cursor: pointer;
+      letter-spacing: 0.5px; margin-top: 10px;
+      transition: opacity 0.2s; opacity: 0.85;
+    }
+    .mm-read-btn:hover { opacity: 1; }
+
+    @media (max-width: 680px) {
+      .mm-grid { grid-template-columns: 1fr; padding: 14px 10px 30px; }
+      .mm-summary-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -558,6 +773,7 @@
   <button class="nav-tab" onclick="showPanel('busca',this)">🔍 Buscar</button>
   <button class="nav-tab" onclick="showPanel('devocional',this)">🌅 Devocional</button>
   <button class="nav-tab" onclick="showPanel('favoritos',this)" id="tab-favoritos">⭐ Favoritos</button>
+  <button class="nav-tab" onclick="showPanel('mapamental',this)">🗺️ Mapa Mental</button>
 </div>
 
 <div class="app-layout">
@@ -844,6 +1060,30 @@
     </div>
 
   </div>
+
+  <!-- MAPA MENTAL -->
+  <div class="panel hidden" id="panel-mapamental">
+    <div class="mm-header">
+      <div class="mm-header-icon">🗺️</div>
+      <div>
+        <div class="mm-header-title">Mapa Mental da Bíblia</div>
+        <div class="mm-header-sub">Visão completa de cada livro — autor, temas, personagens e versículos-chave</div>
+      </div>
+    </div>
+    <div class="mm-filter-bar">
+      <span class="mm-filter-label">FILTRAR:</span>
+      <button class="mm-filter-btn active" onclick="mmFilter('all',this)">Todos os Livros</button>
+      <button class="mm-filter-btn" onclick="mmFilter('pent',this)">Pentateuco</button>
+      <button class="mm-filter-btn" onclick="mmFilter('hist',this)">Históricos</button>
+      <button class="mm-filter-btn" onclick="mmFilter('poe',this)">Poéticos</button>
+      <button class="mm-filter-btn" onclick="mmFilter('prof',this)">Proféticos</button>
+      <button class="mm-filter-btn" onclick="mmFilter('evang',this)">Evangelhos</button>
+      <button class="mm-filter-btn" onclick="mmFilter('epist',this)">Epístolas</button>
+    </div>
+    <div class="mm-grid" id="mmGrid"></div>
+  </div>
+
+</div>
 </div>
 
 <script>
@@ -861,16 +1101,6 @@ function saveApiKey() {
     document.getElementById('apiStatus').style.color = 'var(--gold)';
   }
 }
-
-// Preencher campo se já houver chave salva
-window.addEventListener('DOMContentLoaded', () => {
-  if (groqKey) {
-    document.getElementById('groqApiKey').value = groqKey;
-    document.getElementById('apiStatus').textContent = '✅ Chave carregada. IA pronta!';
-    document.getElementById('apiStatus').style.color = 'var(--gold)';
-  }
-  loadDevocional('morning', null);
-});
 
 async function groqChat(prompt) {
   groqKey = localStorage.getItem('groq_api_key') || document.getElementById('groqApiKey').value.trim();
@@ -1434,11 +1664,398 @@ function renderChapterGrid() {
   }
 }
 
-// Init tab count
-window.addEventListener('DOMContentLoaded', () => {
-  updateFavTab();
-});
+// ─── MAPA MENTAL ─────────────────────────────────────────────────────────────
+const mmBooks = [
+  // PENTATEUCO
+  { id:'Genesis', cat:'pent', num:'1/39', name:'Gênesis', sub:'Pentateuco', chapters:50, emoji:'🌍',
+    tema:'A origem de todas as coisas: criação, queda do homem, promessa de redenção e os passos iniciais para a aliança divina com a raça escolhida.',
+    escritor:'Moisés (entre os séculos 15-16 a.C.)', autor:'Moisés foi chamado por Deus para libertar os filhos de Israel do cativeiro no Egito e guiá-los pelo deserto rumo à terra prometida de Canaã.',
+    personagens:['Adão','Eva','Noé','Abraão','Sara','Isaque','Rebeca','Jacó','Raquel','José'],
+    topicos:['Criação do universo e da raça humana','A queda do Homem e entrada do pecado','A aliança com Noé — o dilúvio','Vocação de Abraão — pai da fé','A vida dos patriarcas','Promessa da redenção'],
+    resumo:[
+      {ref:'Gn 1-2', txt:'A criação em 6 dias e o paraíso'},
+      {ref:'Gn 3-4', txt:'A queda e as primeiras consequências'},
+      {ref:'Gn 6-9', txt:'O dilúvio e a aliança com Noé'},
+      {ref:'Gn 12-25', txt:'A vida de Abraão, pai da fé'},
+      {ref:'Gn 25-36', txt:'Isaac e Jacó — pais de Israel'},
+      {ref:'Gn 37-50', txt:'A vida de José no Egito'},
+    ],
+    versiculoChave:{ref:'Gênesis 1:1', text:'No princípio, criou Deus os céus e a terra.'},
+    fatos:['50 capítulos','Primeiro livro da Bíblia','Base da teologia cristã']
+  },
+  { id:'Exodo', cat:'pent', num:'2/39', name:'Êxodo', sub:'Pentateuco', chapters:40, emoji:'🏔️',
+    tema:'A libertação de Israel do cativeiro egípcio e a preparação do povo para herdar a terra prometida.',
+    escritor:'Moisés (c. 1440 a.C.)', autor:'Moisés foi criado na corte real do Egito pela filha do Faraó, mas abandonou esse lugar de privilégio para "ser maltratado com o povo de Deus".',
+    personagens:['Moisés','Arão','Miriã','Faraó','Josefo','Jetro'],
+    topicos:['A escravidão de Israel no Egito','As 10 pragas sobre o Egito','A Páscoa e o Êxodo','A travessia do Mar Vermelho','Os 10 Mandamentos no Sinai','A construção do Tabernáculo'],
+    resumo:[
+      {ref:'Ex 1-11', txt:'Opressão e as 10 pragas do Egito'},
+      {ref:'Ex 12', txt:'A Páscoa — instituição da festa'},
+      {ref:'Ex 13-18', txt:'A travessia do deserto'},
+      {ref:'Ex 19-24', txt:'Os 10 Mandamentos no Sinai'},
+      {ref:'Ex 25-31', txt:'Instruções para o Tabernáculo'},
+      {ref:'Ex 32-40', txt:'O bezerro de ouro e restauração'},
+    ],
+    versiculoChave:{ref:'Êxodo 20:3', text:'Não terás outros deuses diante de mim.'},
+    fatos:['40 capítulos','As 10 pragas','Os 10 Mandamentos']
+  },
+  { id:'Levitico', cat:'pent', num:'3/39', name:'Levítico', sub:'Pentateuco', chapters:27, emoji:'🕍',
+    tema:'Manual de santidade: instruções sobre sacrifícios, sacerdócio, purificação ritual e as leis de santidade para o povo de Deus.',
+    escritor:'Moisés (c. 1440 a.C.)', autor:'Moisés recebeu estas instruções diretamente de Deus enquanto o povo estava acampado no Sinai.',
+    personagens:['Moisés','Arão','Nadabe','Abiú','Eleazar','Itamar'],
+    topicos:['Sistema de sacrifícios e oferendas','Ordenação dos sacerdotes','Leis de pureza cerimonial','As festas anuais de Israel','O Dia da Expiação — Yom Kippur','O Ano do Jubileu'],
+    resumo:[
+      {ref:'Lv 1-7', txt:'Os 5 tipos de oferendas'},
+      {ref:'Lv 8-10', txt:'Consagração dos sacerdotes'},
+      {ref:'Lv 11-15', txt:'Leis de pureza e impureza'},
+      {ref:'Lv 16', txt:'O Dia da Expiação'},
+      {ref:'Lv 17-27', txt:'O Código de Santidade'},
+      {ref:'Lv 23', txt:'As 7 festas anuais de Israel'},
+    ],
+    versiculoChave:{ref:'Levítico 19:2', text:'Santos sereis, porque eu, o Senhor vosso Deus, sou santo.'},
+    fatos:['27 capítulos','7 festas anuais','Tipo de Cristo como sumo sacerdote']
+  },
+  { id:'Numeros', cat:'pent', num:'4/39', name:'Números', sub:'Pentateuco', chapters:36, emoji:'🏕️',
+    tema:'A jornada de Israel pelo deserto durante 40 anos, com seus fracassos, disciplina divina e preparação para entrar em Canaã.',
+    escritor:'Moisés (c. 1440 a.C.)', autor:'Moisés lidera o povo por 40 anos de peregrinação no deserto após a saída do Egito.',
+    personagens:['Moisés','Arão','Miriã','Calebe','Josué','Balaão','Fineias'],
+    topicos:['Censo e organização das tribos','A rebeldia e incredulidade do povo','Os 40 anos no deserto','A serpente de bronze','As vitórias militares','Preparação para Canaã'],
+    resumo:[
+      {ref:'Nm 1-4', txt:'O censo das 12 tribos de Israel'},
+      {ref:'Nm 13-14', txt:'Espias em Canaã — rebelião e punição'},
+      {ref:'Nm 16', txt:'A rebelião de Corá contra Moisés'},
+      {ref:'Nm 21', txt:'A serpente de bronze no deserto'},
+      {ref:'Nm 22-24', txt:'Balaão e as bênçãos de Israel'},
+      {ref:'Nm 26-36', txt:'Novo censo e leis para Canaã'},
+    ],
+    versiculoChave:{ref:'Números 6:24-26', text:'O Senhor te abençoe e te guarde; o Senhor faça resplandecer o seu rosto sobre ti...'},
+    fatos:['36 capítulos','40 anos no deserto','Dois recenseamentos']
+  },
+  { id:'Deuteronomio', cat:'pent', num:'5/39', name:'Deuteronômio', sub:'Pentateuco', chapters:34, emoji:'📜',
+    tema:'O discurso de despedida de Moisés: renovação da aliança, reiteração da Lei e exortações antes de entrar na Terra Prometida.',
+    escritor:'Moisés (c. 1406 a.C.)', autor:'Moisés, com 120 anos, faz seu último discurso ao povo na fronteira de Canaã, onde morre.',
+    personagens:['Moisés','Josué','as 12 tribos de Israel'],
+    topicos:['Recordação da jornada no deserto','Renovação dos 10 Mandamentos','O Grande Mandamento — amar a Deus','Bênçãos e maldições','A sucessão de Josué','Morte de Moisés no Monte Nebo'],
+    resumo:[
+      {ref:'Dt 1-4', txt:'Recordação da história do deserto'},
+      {ref:'Dt 5-11', txt:'Renovação da Lei e o Shemá'},
+      {ref:'Dt 12-26', txt:'Código deuteronômico de leis'},
+      {ref:'Dt 27-30', txt:'Bênçãos, maldições e renovação'},
+      {ref:'Dt 31-33', txt:'Discurso final e o cântico de Moisés'},
+      {ref:'Dt 34', txt:'Morte de Moisés no Monte Nebo'},
+    ],
+    versiculoChave:{ref:'Deuteronômio 6:4-5', text:'Ouve, Israel, o Senhor nosso Deus é o único Senhor. Amarás o Senhor teu Deus de todo o teu coração...'},
+    fatos:['34 capítulos','Moisés morre aos 120 anos','Jesus citou muito Deuteronômio']
+  },
 
+  // HISTÓRICOS
+  { id:'Josue', cat:'hist', num:'6/39', name:'Josué', sub:'Históricos', chapters:24, emoji:'⚔️',
+    tema:'A conquista e divisão da Terra Prometida — Canaã — pelas 12 tribos de Israel sob a liderança de Josué.',
+    escritor:'Josué (c. 1400 a.C.)', autor:'Josué, sucessor de Moisés, foi o general que liderou a conquista militar de Canaã.',
+    personagens:['Josué','Raabe','Calebe','Acã','os reis cananeus'],
+    topicos:['Travessia milagrosa do Rio Jordão','A queda de Jericó','A conquista de Canaã','A traição de Acã','Divisão da terra entre as tribos','O discurso final de Josué'],
+    resumo:[
+      {ref:'Js 1-5', txt:'Preparação e travessia do Jordão'},
+      {ref:'Js 6-8', txt:'Conquista de Jericó e Ai'},
+      {ref:'Js 9-12', txt:'As campanhas militares em Canaã'},
+      {ref:'Js 13-21', txt:'Divisão da terra entre tribos'},
+      {ref:'Js 22', txt:'As tribos do leste retornam'},
+      {ref:'Js 23-24', txt:'Discurso final e renovação da aliança'},
+    ],
+    versiculoChave:{ref:'Josué 1:9', text:'Não to mandei eu? Sê forte e corajoso; não temas, nem te espantes, porque o Senhor teu Deus é contigo.'},
+    fatos:['24 capítulos','Queda de Jericó','Cumprimento da promessa a Abraão']
+  },
+  { id:'Juizes', cat:'hist', num:'7/39', name:'Juízes', sub:'Históricos', chapters:21, emoji:'🗡️',
+    tema:'O ciclo de apostasia, opressão, clamor e libertação de Israel no período entre Josué e a monarquia — os juízes como libertadores.',
+    escritor:'Samuel (c. 1050-1000 a.C.)', autor:'Samuel, o último dos juízes, provavelmente compilou e editou estes relatos históricos.',
+    personagens:['Débora','Gideão','Sansão','Jefté','Otniel','Baraque'],
+    topicos:['O ciclo do pecado em Israel','Débora e Baraque vencem Sísara','A fuga de Gideão e os 300','A história de Sansão e Dalila','A guerra civil de Benjamim','Ausência de rei — cada um fazia o que queria'],
+    resumo:[
+      {ref:'Jz 1-3', txt:'Fracasso em completar a conquista'},
+      {ref:'Jz 4-5', txt:'Débora e Baraque vs. Sísara'},
+      {ref:'Jz 6-8', txt:'Gideão e os 300 guerreiros'},
+      {ref:'Jz 10-12', txt:'Jefté e seu voto trágico'},
+      {ref:'Jz 13-16', txt:'Sansão — força e fraqueza'},
+      {ref:'Jz 17-21', txt:'A decadência moral de Israel'},
+    ],
+    versiculoChave:{ref:'Juízes 21:25', text:'Naqueles dias não havia rei em Israel; cada um fazia o que parecia reto aos seus próprios olhos.'},
+    fatos:['21 capítulos','12 juízes de Israel','Ciclo pecado-clamor-libertação']
+  },
+  { id:'Rute', cat:'hist', num:'8/39', name:'Rute', sub:'Históricos', chapters:4, emoji:'🌾',
+    tema:'A fidelidade, redenção e providência divina na história de uma moabita que se tornou avó do rei Davi — antepassada de Jesus.',
+    escritor:'Samuel (c. 1100-1000 a.C.)', autor:'Samuel provavelmente escreveu este livro como um contraste de fidelidade no período dos Juízes.',
+    personagens:['Rute','Noemi','Boaz','Orpá'],
+    topicos:['A fidelidade de Rute a Noemi','A lei do campo e espigagem','O papel do "parente redentor"','O casamento de Rute e Boaz','A genealogia que leva a Davi e Jesus'],
+    resumo:[
+      {ref:'Rt 1', txt:'Noemi e as noras — "onde tu morreres, eu morrerei"'},
+      {ref:'Rt 2', txt:'Rute espiga no campo de Boaz'},
+      {ref:'Rt 3', txt:'Rute se apresenta ao redentor'},
+      {ref:'Rt 4', txt:'Boaz redime e casa com Rute'},
+    ],
+    versiculoChave:{ref:'Rute 1:16', text:'Onde tu morreres, morrerei eu, e ali serei sepultada. Assim me faça o Senhor.'},
+    fatos:['4 capítulos','Antepassada de Jesus','Exemplo máximo de fidelidade']
+  },
+  { id:'1Samuel', cat:'hist', num:'9/39', name:'1 Samuel', sub:'Históricos', chapters:31, emoji:'👑',
+    tema:'A transição de Israel do período dos juízes para a monarquia — Samuel, Saul e o surgimento de Davi como rei escolhido por Deus.',
+    escritor:'Samuel, Natã e Gade (c. 1050-930 a.C.)', autor:'Múltiplos profetas participaram da escrita deste registro histórico e profético.',
+    personagens:['Samuel','Saul','Davi','Jônatas','Ana','Golias','Mical'],
+    topicos:['O nascimento e chamado de Samuel','Israel pede um rei — rejeição de Deus','O reinado de Saul e seus fracassos','A unção de Davi como rei','Davi e Golias','A amizade de Davi e Jônatas','A perseguição de Saul a Davi'],
+    resumo:[
+      {ref:'1Sm 1-3', txt:'Nascimento e chamado de Samuel'},
+      {ref:'1Sm 8-12', txt:'Israel pede um rei — Saul é ungido'},
+      {ref:'1Sm 13-15', txt:'Os fracassos e rejeição de Saul'},
+      {ref:'1Sm 16-17', txt:'Davi é ungido e mata Golias'},
+      {ref:'1Sm 18-27', txt:'Saul persegue Davi no deserto'},
+      {ref:'1Sm 28-31', txt:'Morte de Saul e Jônatas'},
+    ],
+    versiculoChave:{ref:'1 Samuel 16:7', text:'O homem vê o que está diante dos olhos, porém o Senhor vê o coração.'},
+    fatos:['31 capítulos','Primeiro rei de Israel: Saul','Davi mata Golias com uma pedra']
+  },
+  { id:'2Samuel', cat:'hist', num:'10/39', name:'2 Samuel', sub:'Históricos', chapters:24, emoji:'🌟',
+    tema:'O reinado de Davi sobre Israel — suas conquistas, a aliança davídica, seu pecado com Bate-Seba e as consequências.',
+    escritor:'Natã e Gade (c. 930 a.C.)', autor:'Os profetas Natã e Gade foram responsáveis pelos registros do reinado de Davi.',
+    personagens:['Davi','Bate-Seba','Urias','Natã','Absalão','Joabe','Salomão'],
+    topicos:['Davi se torna rei de Judá e Israel','A conquista de Jerusalém','A aliança davídica — promessa eterna','O pecado de Davi com Bate-Seba','A rebelião de Absalão','A fidelidade de Davi a Deus'],
+    resumo:[
+      {ref:'2Sm 1-5', txt:'Davi se torna rei — conquista Jerusalém'},
+      {ref:'2Sm 6-7', txt:'A arca em Jerusalém — aliança davídica'},
+      {ref:'2Sm 11-12', txt:'Pecado com Bate-Seba — julgamento de Natã'},
+      {ref:'2Sm 13-18', txt:'A rebelião de Absalão'},
+      {ref:'2Sm 21-24', txt:'Feitos finais e cantos de Davi'},
+    ],
+    versiculoChave:{ref:'2 Samuel 7:16', text:'Tua casa e teu reino serão estabelecidos para sempre diante de ti; teu trono será firmado para sempre.'},
+    fatos:['24 capítulos','Reinado de 40 anos','Aliança messiânica com Davi']
+  },
+
+  // POÉTICOS
+  { id:'Jo', cat:'poe', num:'18/39', name:'Jó', sub:'Poéticos e Sapienciais', chapters:42, emoji:'🌪️',
+    tema:'O sofrimento do justo e a soberania de Deus — a batalha espiritual, a fidelidade de Jó nas tribulações e a restauração final.',
+    escritor:'Desconhecido (possivelmente Moisés ou Salomão)', autor:'A autoria é incerta, mas o livro pode ser um dos mais antigos da Bíblia.',
+    personagens:['Jó','Satanás','Elifaz','Bildade','Zofar','Eliú','a esposa de Jó'],
+    topicos:['O teste divino e a perda de tudo','O debate com os três amigos','A "teologia da prosperidade" refutada','A resposta de Deus do meio do redemoinho','A soberania de Deus sobre o sofrimento','A restauração de Jó'],
+    resumo:[
+      {ref:'Jó 1-2', txt:'O desafio de Satanás — Jó perde tudo'},
+      {ref:'Jó 3-31', txt:'Os debates com os três amigos'},
+      {ref:'Jó 32-37', txt:'Eliú apresenta sua perspectiva'},
+      {ref:'Jó 38-41', txt:'Deus responde do meio do redemoinho'},
+      {ref:'Jó 42', txt:'Arrependimento de Jó e restauração'},
+    ],
+    versiculoChave:{ref:'Jó 19:25', text:'Eu sei que o meu Redentor vive, e que por fim se levantará sobre a terra.'},
+    fatos:['42 capítulos','Um dos livros mais antigos','O grande debate sobre o sofrimento']
+  },
+  { id:'Salmos', cat:'poe', num:'19/39', name:'Salmos', sub:'Poéticos e Sapienciais', chapters:150, emoji:'🎵',
+    tema:'O livro de louvor, lamento, fé e adoração de Israel — 150 cânticos que expressam toda a gama de experiências espirituais humanas.',
+    escritor:'Davi (73), Asafe (12), Coré (11), Salomão (2), Moisés (1), outros', autor:'Davi foi o principal autor, escrevendo salmos em todas as fases de sua vida — de perseguido a rei.',
+    personagens:['Davi','Moisés','Asafe','os filhos de Coré','Salomão','Etã'],
+    topicos:['Louvor e adoração a Deus','Lamento e clamor em aflição','Confiança e refúgio no Senhor','Salmos messiânicos sobre Cristo','Meditação na Lei de Deus','Ação de graças e celebração'],
+    resumo:[
+      {ref:'Sl 1', txt:'O homem feliz que medita na Lei'},
+      {ref:'Sl 22', txt:'Salmo messiânico — "Deus meu, Deus meu"'},
+      {ref:'Sl 23', txt:'O Senhor é o meu pastor'},
+      {ref:'Sl 51', txt:'O salmo de arrependimento de Davi'},
+      {ref:'Sl 91', txt:'O abrigo do Altíssimo'},
+      {ref:'Sl 119', txt:'A perfeição e amor pela Lei de Deus'},
+    ],
+    versiculoChave:{ref:'Salmos 23:1', text:'O Senhor é o meu pastor; nada me faltará.'},
+    fatos:['150 salmos','Livro mais longo da Bíblia','5 divisões (como Pentateuco)']
+  },
+  { id:'Proverbios', cat:'poe', num:'20/39', name:'Provérbios', sub:'Poéticos e Sapienciais', chapters:31, emoji:'💡',
+    tema:'A sabedoria prática para a vida — como viver de forma sábia, temente a Deus, em todas as áreas: família, trabalho, amizades e conduta.',
+    escritor:'Salomão (principalmente), Agur, Lemuel (c. 950 a.C.)', autor:'Salomão escreveu cerca de 3.000 provérbios durante seu reinado, sendo reconhecido como o homem mais sábio do mundo.',
+    personagens:['Salomão','Agur','Lemuel','a mulher virtuosa','a mulher insensata'],
+    topicos:['O temor ao Senhor como início da sabedoria','Sabedoria vs insensatez','Disciplina e educação dos filhos','A língua e o poder das palavras','A mulher virtuosa','Integridade no trabalho e negócios'],
+    resumo:[
+      {ref:'Pv 1-9', txt:'Discursos de Salomão ao filho — a sabedoria personificada'},
+      {ref:'Pv 10-22', txt:'Os provérbios salomonicos — 375 ditos'},
+      {ref:'Pv 23-29', txt:'Mais coleções de provérbios'},
+      {ref:'Pv 30', txt:'As palavras de Agur'},
+      {ref:'Pv 31', txt:'A mulher virtuosa'},
+    ],
+    versiculoChave:{ref:'Provérbios 3:5-6', text:'Confia no Senhor de todo o teu coração e não te estribes no teu próprio entendimento.'},
+    fatos:['31 capítulos','Salomão escreveu 3.000 provérbios','Manual de sabedoria prática']
+  },
+
+  // EVANGELHOS
+  { id:'Mateus', cat:'evang', num:'1/27', name:'Mateus', sub:'Evangelhos', chapters:28, emoji:'✡️',
+    tema:'Jesus como o Messias prometido de Israel — cumprindo as profecias do Antigo Testamento e inaugurando o Reino dos Céus.',
+    escritor:'Mateus (Levi), o apóstolo (c. 60-65 d.C.)', autor:'Mateus era cobrador de impostos que Deus chamou para ser apóstolo e testemunha ocular da vida de Jesus.',
+    personagens:['Jesus','Maria','José','João Batista','Pedro','os 12 apóstolos','Herodes','Pilatos'],
+    topicos:['A genealogia e nascimento do Messias','O Sermão da Montanha — as Bem-aventuranças','As parábolas do Reino dos Céus','Os milagres de Jesus','A última semana em Jerusalém','A Grande Comissão'],
+    resumo:[
+      {ref:'Mt 1-4', txt:'Nascimento, batismo e tentações de Jesus'},
+      {ref:'Mt 5-7', txt:'O Sermão da Montanha'},
+      {ref:'Mt 8-12', txt:'Milagres e crescente oposição'},
+      {ref:'Mt 13', txt:'As 7 parábolas do Reino'},
+      {ref:'Mt 21-27', txt:'A última semana — crucificação'},
+      {ref:'Mt 28', txt:'Ressurreição e Grande Comissão'},
+    ],
+    versiculoChave:{ref:'Mateus 28:19-20', text:'Portanto, ide e fazei discípulos de todas as nações, batizando-os em nome do Pai, do Filho e do Espírito Santo.'},
+    fatos:['28 capítulos','Escrito para judeus','Mais citações do AT que qualquer evangelho']
+  },
+  { id:'Marcos', cat:'evang', num:'2/27', name:'Marcos', sub:'Evangelhos', chapters:16, emoji:'🦁',
+    tema:'Jesus como o Servo sofredor e o Filho de Deus em ação — o evangelho mais rápido, focado nos milagres e atos de Jesus.',
+    escritor:'Marcos (João Marcos), discípulo de Pedro (c. 55-65 d.C.)', autor:'Marcos escreveu baseado no testemunho de Pedro, com quem ministrou em Roma.',
+    personagens:['Jesus','Pedro','Tiago','João','os 12 apóstolos','Herodes Antipas','Pilatos'],
+    topicos:['A autoridade de Jesus sobre demônios e doenças','Os milagres narrados com urgência ("imediatamente")','A confissão de Pedro — "Tu és o Cristo"','A semana da Paixão em Jerusalém','A ressurreição e aparições de Jesus'],
+    resumo:[
+      {ref:'Mc 1-3', txt:'Início do ministério — curas e chamado'},
+      {ref:'Mc 4-8', txt:'Milagres e parábolas na Galileia'},
+      {ref:'Mc 8-10', txt:'O caminho para Jerusalém'},
+      {ref:'Mc 11-13', txt:'Entrada triunfal e discurso profético'},
+      {ref:'Mc 14-15', txt:'Traição, julgamento e crucificação'},
+      {ref:'Mc 16', txt:'A ressurreição e Grande Comissão'},
+    ],
+    versiculoChave:{ref:'Marcos 10:45', text:'Porque o Filho do Homem também não veio para ser servido, mas para servir e dar a sua vida em resgate de muitos.'},
+    fatos:['16 capítulos','Evangelho mais curto','Palavra "imediatamente" aparece 41 vezes']
+  },
+  { id:'Lucas', cat:'evang', num:'3/27', name:'Lucas', sub:'Evangelhos', chapters:24, emoji:'🏥',
+    tema:'Jesus como o Salvador da humanidade — o evangelho do amor universal de Deus pelos pobres, pecadores, mulheres e gentios.',
+    escritor:'Lucas, médico e companheiro de Paulo (c. 60-63 d.C.)', autor:'Lucas foi um médico gentio que pesquisou cuidadosamente o relato de Jesus com testemunhas oculares.',
+    personagens:['Jesus','Maria','Elisabeth','Zacarias','João Batista','os 12 apóstolos','Zaqueu'],
+    topicos:['O nascimento de Jesus — hino de Maria','Jesus entre os doutores no templo com 12 anos','As parábolas do Filho Pródigo e do Bom Samaritano','A misericórdia de Jesus para com os excluídos','A oração de Jesus ao Pai','A Pentecostes e o Espírito Santo'],
+    resumo:[
+      {ref:'Lc 1-2', txt:'Nascimento de João e Jesus — hinos'},
+      {ref:'Lc 3-4', txt:'Batismo, genealogia e tentações'},
+      {ref:'Lc 10-16', txt:'As grandes parábolas do perdão'},
+      {ref:'Lc 15', txt:'O Filho Pródigo — parábola da graça'},
+      {ref:'Lc 19-22', txt:'Jericó, entrada em Jerusalém'},
+      {ref:'Lc 23-24', txt:'Crucificação, ressurreição, ascensão'},
+    ],
+    versiculoChave:{ref:'Lucas 19:10', text:'Porque o Filho do Homem veio buscar e salvar o que estava perdido.'},
+    fatos:['24 capítulos','Lucas também escreveu Atos','Mais detalhes sobre o nascimento de Jesus']
+  },
+  { id:'Joao', cat:'evang', num:'4/27', name:'João', sub:'Evangelhos', chapters:21, emoji:'✝️',
+    tema:'Jesus como o eterno Filho de Deus — o evangelho da vida eterna, da fé e do amor revelados através dos "Eu Sou" de Jesus.',
+    escritor:'João, o apóstolo amado (c. 85-95 d.C.)', autor:'João foi o discípulo mais próximo de Jesus, o único que permaneceu na Cruz e cuidou de Maria.',
+    personagens:['Jesus','João Batista','Maria','os 12','Nicodemos','a samaritana','Lázaro','Maria Madalena','Pilatos'],
+    topicos:['O prólogo: "No princípio era o Verbo"','Os 7 sinais — milagres únicos de João','Os 7 "Eu Sou" — declarações de divindade','Nicodemos — o novo nascimento','O Espírito Santo — o Consolador','João 17 — oração sacerdotal de Jesus'],
+    resumo:[
+      {ref:'Jo 1', txt:'O prólogo — o Verbo se fez carne'},
+      {ref:'Jo 2-12', txt:'Os 7 sinais e os discursos de Jesus'},
+      {ref:'Jo 13-17', txt:'O Cenáculo — nova aliança e oração'},
+      {ref:'Jo 18-19', txt:'Traição, julgamento e crucificação'},
+      {ref:'Jo 20-21', txt:'Ressurreição e aparições de Jesus'},
+    ],
+    versiculoChave:{ref:'João 3:16', text:'Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.'},
+    fatos:['21 capítulos','7 "Eu Sou" de Jesus','O evangelho da vida eterna']
+  },
+
+  // EPÍSTOLAS
+  { id:'Romanos', cat:'epist', num:'6/27', name:'Romanos', sub:'Epístolas de Paulo', chapters:16, emoji:'📖',
+    tema:'A exposição mais sistemática do evangelho da graça: a salvação por fé em Jesus Cristo, a justificação e a vida nova no Espírito.',
+    escritor:'Paulo (c. 57 d.C.)', autor:'Paulo escreveu esta carta à Igreja de Roma enquanto estava em Corinto, antes de sua visita à capital do Império.',
+    personagens:['Paulo','Febe','Prisca','Áquila','Tício Justo'],
+    topicos:['A condenação universal — todos pecaram','A justificação pela fé em Cristo','A vida nova no Espírito Santo','A predestinação e eleição divina','Israel e a salvação dos gentios','A vida cristã prática em Roma'],
+    resumo:[
+      {ref:'Rm 1-3', txt:'Todos pecaram — judeus e gentios'},
+      {ref:'Rm 3-5', txt:'Justificação pela fé — não por obras'},
+      {ref:'Rm 6-8', txt:'Morte ao pecado e vida no Espírito'},
+      {ref:'Rm 9-11', txt:'Israel, soberania e misericórdia de Deus'},
+      {ref:'Rm 12-16', txt:'A vida cristã prática e exortações'},
+    ],
+    versiculoChave:{ref:'Romanos 8:28', text:'E sabemos que todas as coisas contribuem juntamente para o bem daqueles que amam a Deus.'},
+    fatos:['16 capítulos','A "catedral do evangelho"','Base da Reforma Protestante']
+  },
+  { id:'Apocalipse', cat:'epist', num:'27/27', name:'Apocalipse', sub:'Profecia', chapters:22, emoji:'🔥',
+    tema:'A revelação de Jesus Cristo sobre o fim dos tempos — o triunfo final de Deus, a queda do mal e a Nova Jerusalém.',
+    escritor:'João, o apóstolo (c. 95-96 d.C.)', autor:'João recebeu estas visões enquanto exilado na Ilha de Patmos pelo Imperador Domiciano.',
+    personagens:['Jesus Cristo','João','os 7 anjos','os 4 seres viventes','os 24 anciãos','as 2 testemunhas','a Besta','o Cordeiro'],
+    topicos:['As 7 cartas às 7 igrejas da Ásia','Os 7 selos, 7 trombetas, 7 taças','A grande tribulação','O milênio — reinado de Cristo','O juízo do grande trono branco','A Nova Jerusalém descendo dos céus'],
+    resumo:[
+      {ref:'Ap 1-3', txt:'Visão de Cristo e cartas às 7 igrejas'},
+      {ref:'Ap 4-5', txt:'O trono celestial e o Cordeiro'},
+      {ref:'Ap 6-11', txt:'Os 7 selos e as 7 trombetas'},
+      {ref:'Ap 12-19', txt:'A grande tribulação e julgamentos'},
+      {ref:'Ap 20', txt:'O milênio e o juízo final'},
+      {ref:'Ap 21-22', txt:'A Nova Jerusalém e o paraíso restaurado'},
+    ],
+    versiculoChave:{ref:'Apocalipse 21:4', text:'E Deus limpará de seus olhos toda lágrima, e não haverá mais morte, nem pranto, nem clamor, nem dor.'},
+    fatos:['22 capítulos','Último livro da Bíblia','Único livro com promessa de bênção ao leitor']
+  },
+];
+
+function renderMMGrid(filter) {
+  const grid = document.getElementById('mmGrid');
+  if (!grid) return;
+  const books = filter === 'all' ? mmBooks : mmBooks.filter(b => b.cat === filter);
+
+  const catClass = {
+    pent:'mm-card-pent', hist:'mm-card-hist', poe:'mm-card-poe',
+    prof:'mm-card-prof', evang:'mm-card-evang', epist:'mm-card-epist'
+  };
+
+  grid.innerHTML = books.map(b => {
+    const cc = catClass[b.cat] || 'mm-card-epist';
+    const summaryHtml = b.resumo.map(s => `
+      <div class="mm-summary-item">
+        <div class="mm-summary-ref">${s.ref}</div>
+        <div class="mm-summary-text">${s.txt}</div>
+      </div>`).join('');
+    const topicsHtml = b.topicos.map(t => `
+      <div class="mm-topic-item"><div class="mm-topic-dot"></div>${t}</div>`).join('');
+    const personsHtml = b.personagens.map(p => `<span class="mm-person-tag">${p}</span>`).join('');
+    const factsHtml = b.fatos.map(f => `<span class="mm-fact-chip">${f}</span>`).join('');
+
+    return `
+    <div class="mm-book-card ${cc}" onclick="mmCardClick('${b.id}',${b.chapters})">
+      <div class="mm-card-top" data-emoji="${b.emoji}">
+        <div class="mm-book-number">${b.num} · ${b.sub.toUpperCase()}</div>
+        <div class="mm-book-name">${b.name}</div>
+        <div class="mm-book-subtitle">${b.escritor}</div>
+        <div class="mm-chapters-badge">${b.chapters} Capítulos</div>
+      </div>
+      <div class="mm-card-body">
+        <div class="mm-key-verse">
+          <div class="mm-key-verse-ref">${b.versiculoChave.ref}</div>
+          <div class="mm-key-verse-text">"${b.versiculoChave.text}"</div>
+        </div>
+
+        <div class="mm-section-title">Tema Principal</div>
+        <div class="mm-tema-box">${b.tema}</div>
+
+        <div class="mm-section-title">Personagens Principais</div>
+        <div class="mm-persons-grid">${personsHtml}</div>
+
+        <div class="mm-section-title">Temas Abordados</div>
+        <div class="mm-topics-list">${topicsHtml}</div>
+
+        <div class="mm-section-title">Resumo do Livro por Seção</div>
+        <div class="mm-summary-grid">${summaryHtml}</div>
+
+        <div class="mm-facts-row">${factsHtml}</div>
+
+        <button class="mm-read-btn" onclick="mmCardClick('${b.id}',${b.chapters});event.stopPropagation()">
+          📖 Ler ${b.name} na Bíblia
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function mmFilter(cat, btn) {
+  document.querySelectorAll('.mm-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMMGrid(cat);
+}
+
+function mmCardClick(bookId, chapters) {
+  loadBook(bookId, chapters);
+  const bibleTab = document.querySelector('.nav-tab');
+  showPanel('biblia', bibleTab);
+}
+
+// Render on first load
+window.addEventListener('DOMContentLoaded', () => {
+  renderMMGrid('all');
+  updateFavTab();
+  if (groqKey) {
+    document.getElementById('groqApiKey').value = groqKey;
+    document.getElementById('apiStatus').textContent = '✅ Chave carregada. IA pronta!';
+    document.getElementById('apiStatus').style.color = 'var(--gold)';
+  }
+  loadDevocional('morning', null);
+});
+</script>
 // ─── PAINEL LATERAL DE ESTUDO ─────────────────────────────────────────────────
 let sideStudyMode = 'contextual';
 let sideStudyLoaded = false;
