@@ -1176,7 +1176,7 @@
 <script>
 // ─── CONFIGURAÇÃO API GROQ ────────────────────────────────────────────────────
 const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
-const GROQ_MODEL = 'llama-3.1-8b-instant';
+const GROQ_MODEL = 'llama3-8b-8192';
 
 let groqKey = localStorage.getItem('groq_api_key') || '';
 
@@ -1189,29 +1189,38 @@ function saveApiKey() {
   }
 }
 
-async function groqChat(prompt) {
+async function groqChat(prompt, retries = 2) {
   groqKey = localStorage.getItem('groq_api_key') || document.getElementById('groqApiKey').value.trim();
   if (!groqKey) {
     return '⚠️ Insira sua chave Groq na barra acima para usar a IA. Obtenha gratuitamente em console.groq.com/keys';
   }
-  const resp = await fetch(GROQ_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + groqKey
-    },
-    body: JSON.stringify({
-      model: GROQ_MODEL,
-      max_tokens: 1024,
-      messages: [{ role: 'user', content: prompt }]
-    })
-  });
-  if (!resp.ok) {
-    const err = await resp.json().catch(() => ({}));
-    throw new Error(err.error?.message || `HTTP ${resp.status}`);
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const resp = await fetch(GROQ_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + groqKey
+      },
+      body: JSON.stringify({
+        model: GROQ_MODEL,
+        max_tokens: 1200,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    if (resp.status === 429) {
+      // Rate limit — espera e tenta de novo
+      const wait = (attempt + 1) * 15000;
+      await new Promise(r => setTimeout(r, wait));
+      continue;
+    }
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err.error?.message || `HTTP ${resp.status}`);
+    }
+    const data = await resp.json();
+    return data.choices?.[0]?.message?.content || '';
   }
-  const data = await resp.json();
-  return data.choices?.[0]?.message?.content || '';
+  throw new Error('Rate limit atingido. Aguarde 30 segundos e tente novamente.');
 }
 
 // ─── MAPEAMENTO DE LIVROS ─────────────────────────────────────────────────────
@@ -1340,7 +1349,7 @@ async function loadChapter(chNum) {
           <div class="infog-chapter-sub">Infográfico de Estudo · Almeida Revista e Corrigida (ARC)</div>
         </div>
       </div>
-      <div class="infog-loading"><div class="spinner"></div>Buscando versículos e gerando infográfico com IA...<br><small style="font-size:12px;opacity:0.6;margin-top:8px;display:block">Isso pode levar alguns segundos</small></div>
+      <div class="infog-loading"><div class="spinner"></div>Gerando infográfico com IA...<br><small style="font-size:12px;opacity:0.6;margin-top:8px;display:block">Se demorar, a IA está aguardando o limite de tokens resetar (até 15s)</small></div>
     </div>`;
 
   // 1. Buscar versículos reais da API
@@ -1362,37 +1371,28 @@ async function loadChapter(chNum) {
 async function renderInfographic(bookName, chNum, verses, area) {
   const ref = `${bookName} ${chNum}`;
 
-  // Montar resumo dos versículos para o prompt
-  const verseSummary = verses.length > 0
-    ? verses.map(v => `v.${v.verse}: ${v.text}`).join('\n')
-    : `Capítulo ${chNum} de ${bookName}`;
+  // Prompt enxuto: só lista versículos com primeiras palavras para economizar tokens
+  const verseList = verses.length > 0
+    ? verses.map(v => `${v.verse}: ${v.text.substring(0, 60).trim()}…`).join('\n')
+    : `Capítulo ${chNum} de ${bookName} (use seu conhecimento bíblico)`;
 
-  const prompt = `Você é um pastor evangélico e teólogo especialista na Bíblia ARC (Almeida Revista e Corrigida).
+  const totalVerses = verses.length || 30;
+  const blocks = totalVerses <= 15 ? 4 : totalVerses <= 30 ? 5 : 6;
 
-Analise ${ref} com os seguintes versículos:
-${verseSummary}
+  const prompt = `Teólogo evangélico especialista em Bíblia ARC. Analise ${ref} (${totalVerses} versículos).
 
-Crie um infográfico de estudo agrupando os versículos em 5 a 8 BLOCOS temáticos. Cada bloco deve cobrir versículos consecutivos que compartilham o mesmo tema.
+Versículos (resumo):
+${verseList}
 
-Para cada bloco, retorne um JSON exato (sem markdown):
-[
-  {
-    "ref": "v. X-Y",
-    "emoji": "🌍",
-    "emojiCaption": "palavra curta",
-    "contexto_titulo": "Título do contexto",
-    "contexto": "Análise histórica e teológica do bloco (2-3 frases).",
-    "tag": "Revelação",
-    "pregacao": "Aplicação profética, revelação ou pregação (2-3 frases)."
-  }
-]
+Agrupe em ${blocks} blocos temáticos. Retorne APENAS array JSON:
+[{"ref":"v.1-5","emoji":"🌍","emojiCaption":"Criação","contexto_titulo":"Título","contexto":"2 frases de análise teológica.","tag":"Revelação","pregacao":"2 frases de aplicação/pregação."}]
 
-Regras:
-- "tag" deve ser exatamente uma dessas três opções: "Revelação", "Profecia" ou "Pregação"
-- "emoji" deve representar visualmente o tema do bloco
-- Use apenas o array JSON, sem texto antes ou depois`;
+tag: "Revelação", "Profecia" ou "Pregação". Sem markdown, só JSON.`;
 
   let rows = [];
+  // Mostrar mensagem de espera se necessário
+  const loadEl = area.querySelector('.infog-loading');
+
   try {
     let text = await groqChat(prompt);
     text = text.replace(/```json|```/g, '').trim();
@@ -1400,9 +1400,9 @@ Regras:
     if (s !== -1 && e !== -1) text = text.slice(s, e + 1);
     rows = JSON.parse(text);
   } catch(err) {
-    area.innerHTML = `<div style="padding:40px;color:var(--red-accent);text-align:center">
-      ⚠️ Erro ao gerar infográfico: ${err.message}<br>
-      <small>Verifique sua chave Groq na barra acima.</small>
+    area.innerHTML = `<div style="padding:40px;color:var(--red-accent);text-align:center;font-family:'Lora',serif">
+      ⚠️ ${err.message}<br><br>
+      <small style="color:var(--brown2)">Dica: aguarde 30 segundos e selecione o capítulo novamente.<br>O plano gratuito do Groq tem limite de tokens por minuto.</small>
     </div>`;
     return;
   }
