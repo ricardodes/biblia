@@ -884,6 +884,20 @@
       font-family: 'Lora', serif; font-size: 16px;
       line-height: 2; color: var(--brown); font-weight: 500;
     }
+    .prem-ctx-body {
+      font-family: 'Lora', serif; font-size: 13.5px;
+      line-height: 1.85; color: var(--brown2);
+    }
+    .prem-skeleton {
+      background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.04) 75%);
+      background-size: 200% 100%;
+      animation: skeleton-shine 1.6s infinite;
+      border-radius: 4px;
+    }
+    @keyframes skeleton-shine {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
     .infog-loading {
       padding: 60px 24px; text-align: center;
       color: var(--gold); font-style: italic; font-size: 15px;
@@ -1395,35 +1409,228 @@ async function loadChapter(chNum) {
     if (wb) wb.style.display = 'none';
 
     const area = document.getElementById('infogArea');
-    if (!area) { console.error('infogArea not found'); return; }
+    if (!area) return;
 
     const bookName = getDisplayName(currentBook);
-    area.innerHTML = `
-      <div style="padding:60px 24px;text-align:center;color:var(--gold);font-style:italic;font-size:15px;font-family:'Lora',serif">
-        <div class="spinner" style="margin:0 auto 16px"></div>
-        Carregando <strong>${bookName} ${chNum}</strong>...<br>
-        <small style="font-size:12px;opacity:0.6;margin-top:8px;display:block">Buscando versículos e gerando infográfico</small>
-      </div>`;
 
-    // Buscar versículos da API
+    // ── PASSO 1: buscar versículos imediatamente ───────────────────────────
+    area.innerHTML = `<div style="padding:50px 24px;text-align:center;color:var(--gold);font-family:'Lora',serif;font-size:15px">
+      <div class="spinner" style="margin:0 auto 14px"></div>
+      Carregando <strong>${bookName} ${chNum}</strong>...
+    </div>`;
+
     const abbrev = bookApiMap[currentBook] || currentBook.toLowerCase();
-    const url = `https://bible-api.com/${abbrev}+${chNum}?translation=almeida`;
     let verses = [];
     try {
-      const resp = await fetch(url);
+      const resp = await fetch(`https://bible-api.com/${abbrev}+${chNum}?translation=almeida`);
       if (resp.ok) {
         const data = await resp.json();
-        if (data.verses && data.verses.length > 0) verses = data.verses;
+        if (data.verses?.length) verses = data.verses;
       }
-    } catch(e) { /* continua sem versículos */ }
+    } catch(e) {}
 
-    await renderInfographic(bookName, chNum, verses, area);
+    // ── PASSO 2: montar página com versículos já visíveis + skeleton de IA ──
+    renderChapterPage(bookName, chNum, verses, area);
+
+    // ── PASSO 3: pedir IA só o contexto + pregação (prompt mínimo) ──────────
+    await loadAIContent(bookName, chNum, verses, area);
+
   } catch(err) {
     const area = document.getElementById('infogArea');
-    if (area) area.innerHTML = `<div style="padding:40px;color:var(--red-accent);text-align:center;font-family:'Lora',serif;font-size:15px">
-      ⚠️ Erro: ${err.message}</div>`;
-    console.error('loadChapter error:', err);
+    if (area) area.innerHTML = `<div style="padding:40px;color:var(--red-accent);text-align:center;font-family:'Lora',serif">⚠️ Erro: ${err.message}</div>`;
   }
+}
+
+function renderChapterPage(bookName, chNum, verses, area) {
+  const bookData = mmBooks.find(b => b.name === bookName || b.id === currentBook);
+  const cat = bookData?.cat || 'hist';
+  const catStyles = {
+    pent:  { accent:'#2E7D32', light:'#4CAF50', bg:'#0A2E0C', dark:'#051805' },
+    hist:  { accent:'#8B4513', light:'#D2691E', bg:'#2A1005', dark:'#150802' },
+    poe:   { accent:'#4A0080', light:'#9C27B0', bg:'#1A0030', dark:'#0d0018' },
+    prof:  { accent:'#B71C1C', light:'#EF5350', bg:'#2A0505', dark:'#150202' },
+    evang: { accent:'#0D47A1', light:'#1976D2', bg:'#050F25', dark:'#020810' },
+    epist: { accent:'#4E342E', light:'#8D6E63', bg:'#1A0A08', dark:'#0d0504' },
+  };
+  const cs = catStyles[cat] || catStyles.hist;
+
+  // Agrupar versículos em blocos de ~6
+  const blocks = [];
+  const blockSize = Math.ceil(verses.length / Math.min(6, Math.max(4, Math.ceil(verses.length / 6))));
+  for (let i = 0; i < verses.length; i += blockSize) {
+    blocks.push(verses.slice(i, i + blockSize));
+  }
+  if (blocks.length === 0) blocks.push([]);
+
+  const verseHTML = (block) => block.map(v =>
+    `<sup class="prem-vnum">${v.verse}</sup>${v.text} `
+  ).join('');
+
+  const refLabel = (block) => {
+    if (!block.length) return '—';
+    const f = block[0].verse, l = block[block.length-1].verse;
+    return f === l ? `v. ${f}` : `v. ${f}–${l}`;
+  };
+
+  const cards = blocks.map((block, i) => `
+    <div class="prem-card" id="prem-card-${i}">
+      <div class="prem-card-top" style="background:linear-gradient(135deg,${cs.bg} 0%,rgba(0,0,0,0.75) 100%);border-bottom:2px solid ${cs.accent}">
+        <div class="prem-top-ref" style="color:${cs.light}">${refLabel(block)}</div>
+        <div class="prem-top-title prem-ai-title" id="ai-title-${i}" style="color:${cs.light}">
+          <span class="prem-skeleton" style="width:200px;height:22px;display:inline-block"></span>
+        </div>
+        <div class="prem-top-sub">${bookName} ${chNum} · ARC</div>
+      </div>
+      <div class="prem-card-body">
+
+        <!-- COL 1: VERSÍCULOS FIXOS DA ARC -->
+        <div class="prem-col prem-col-verse" style="border-right:1px solid rgba(255,255,255,0.06)">
+          <div class="prem-col-header" style="color:${cs.light};border-bottom-color:${cs.accent}30">📜 VERSÍCULOS — ARC</div>
+          <div class="prem-tema-box prem-ai-tema" id="ai-tema-${i}" style="border-left-color:${cs.accent};background:linear-gradient(135deg,${cs.bg},rgba(0,0,0,0.4))">
+            <span class="prem-skeleton" style="width:90%;height:14px;display:block"></span>
+          </div>
+          <div class="prem-verse-text">${block.length ? verseHTML(block) : '<em style="opacity:.5">Versículos não disponíveis</em>'}</div>
+        </div>
+
+        <!-- COL 2: CONTEXTO — gerado pela IA -->
+        <div class="prem-col prem-col-ctx" style="border-right:1px solid rgba(255,255,255,0.06)">
+          <div class="prem-col-header" style="color:${cs.light};border-bottom-color:${cs.accent}30">✝ CONTEXTO TEOLÓGICO</div>
+          <div class="prem-ai-ctx" id="ai-ctx-${i}">
+            <div class="prem-skeleton" style="width:100%;height:14px;margin-bottom:8px"></div>
+            <div class="prem-skeleton" style="width:90%;height:14px;margin-bottom:8px"></div>
+            <div class="prem-skeleton" style="width:80%;height:14px;margin-bottom:16px"></div>
+            <div class="prem-skeleton" style="width:95%;height:14px;margin-bottom:8px"></div>
+            <div class="prem-skeleton" style="width:85%;height:14px"></div>
+          </div>
+        </div>
+
+        <!-- COL 3: PREGAÇÃO — gerada pela IA -->
+        <div class="prem-col prem-col-rev" style="background:linear-gradient(135deg,${cs.dark},rgba(0,0,0,0.7));border-left:3px solid ${cs.accent}">
+          <div class="prem-col-header" style="color:${cs.light};border-bottom-color:${cs.accent}30">🔥 PREGAÇÃO</div>
+          <div class="prem-ai-preg" id="ai-preg-${i}">
+            <div class="prem-skeleton" style="width:70px;height:26px;border-radius:4px;margin-bottom:14px"></div>
+            <div class="prem-skeleton" style="width:100%;height:14px;margin-bottom:8px"></div>
+            <div class="prem-skeleton" style="width:95%;height:14px;margin-bottom:8px"></div>
+            <div class="prem-skeleton" style="width:90%;height:14px;margin-bottom:8px"></div>
+            <div class="prem-skeleton" style="width:85%;height:14px"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>`).join('');
+
+  area.innerHTML = `
+  <div class="prem-wrap">
+    <div class="prem-banner" style="background:linear-gradient(135deg,${cs.bg} 0%,#1a0a00 50%,${cs.bg} 100%);border-bottom:3px solid ${cs.accent}">
+      <div class="prem-banner-emoji">${bookData?.emoji || '✝'}</div>
+      <div>
+        <div class="prem-banner-title" style="color:${cs.light}">✝ ${bookName} — Capítulo ${chNum}</div>
+        <div class="prem-banner-sub">Infográfico de Estudo · Almeida Revista e Corrigida (ARC)</div>
+      </div>
+    </div>
+    <div class="prem-grid">${cards}</div>
+  </div>`;
+
+  // Salvar blocos para a IA usar
+  area._blocks = blocks;
+  area._cs = cs;
+  area._bookName = bookName;
+  area._chNum = chNum;
+}
+
+async function loadAIContent(bookName, chNum, verses, area) {
+  if (!area._blocks) return;
+  const blocks = area._blocks;
+  const cs = area._cs;
+
+  const refLabel = (block) => {
+    if (!block.length) return '—';
+    const f = block[0].verse, l = block[block.length-1].verse;
+    return f === l ? `v.${f}` : `v.${f}-${l}`;
+  };
+
+  // Resumo compacto para o prompt
+  const blockSummaries = blocks.map((b, i) =>
+    `Bloco ${i+1} (${refLabel(b)}): ${b.slice(0,3).map(v => v.text.substring(0,50)).join(' / ')}`
+  ).join('\n');
+
+  const prompt = `Você é um pastor evangélico e teólogo. Analise ${bookName} capítulo ${chNum}.
+
+Blocos de versículos:
+${blockSummaries}
+
+Para cada bloco retorne JSON (sem markdown):
+[{
+  "titulo": "Título impactante do bloco (máx 5 palavras)",
+  "tema": "Uma frase teológica que resume o bloco.",
+  "contexto": "2-3 frases: contexto histórico, quem escreveu, para quem, significado teológico profundo.",
+  "topicos": ["tópico 1", "tópico 2", "tópico 3"],
+  "tag": "Revelação",
+  "pregacao": "Uma pregação de 4-5 frases poderosas e aplicadas para o crente hoje. Use linguagem de púlpito: convicta, profética, que toque o coração. Termine com uma exortação ou promessa bíblica."
+}]
+
+tag deve ser: "Revelação", "Profecia" ou "Pregação". Apenas o array JSON.`;
+
+  let rows = [];
+  try {
+    let text = await groqChat(prompt);
+    text = text.replace(/```json|```/g, '').trim();
+    const s = text.indexOf('['), e = text.lastIndexOf(']');
+    if (s !== -1 && e !== -1) text = text.slice(s, e + 1);
+    rows = JSON.parse(text);
+  } catch(err) {
+    // Preencher com erro nos skeletons
+    blocks.forEach((_, i) => {
+      const ctx = document.getElementById(`ai-ctx-${i}`);
+      const preg = document.getElementById(`ai-preg-${i}`);
+      if (ctx) ctx.innerHTML = `<span style="color:var(--red-accent);font-size:13px">⚠️ ${err.message}</span>`;
+      if (preg) preg.innerHTML = `<span style="color:var(--brown2);font-size:13px">Verifique sua chave Groq.</span>`;
+    });
+    return;
+  }
+
+  const tagColors = {
+    'Revelação': { bg:'rgba(239,83,80,0.15)', color:'#ef5350', border:'rgba(239,83,80,0.35)' },
+    'Profecia':  { bg:'rgba(25,118,210,0.15)', color:'#64b5f6', border:'rgba(25,118,210,0.35)' },
+    'Pregação':  { bg:'rgba(201,168,76,0.15)', color:'#C9A84C', border:'rgba(201,168,76,0.35)' },
+  };
+
+  // Injetar conteúdo da IA bloco a bloco
+  rows.forEach((row, i) => {
+    const tc = tagColors[row.tag] || tagColors['Revelação'];
+
+    const titleEl = document.getElementById(`ai-title-${i}`);
+    if (titleEl) titleEl.innerHTML = row.titulo || '';
+
+    const temaEl = document.getElementById(`ai-tema-${i}`);
+    if (temaEl) temaEl.innerHTML = `<span style="font-size:12px;color:${cs.light};font-family:'Cinzel',serif;letter-spacing:0.5px">${row.tema || ''}</span>`;
+
+    const ctxEl = document.getElementById(`ai-ctx-${i}`);
+    if (ctxEl) {
+      const topicos = (row.topicos || []).map(t => `
+        <div class="prem-topic">
+          <div class="prem-topic-dot" style="background:${cs.light}"></div>
+          <span>${t}</span>
+        </div>`).join('');
+      ctxEl.innerHTML = `<div class="prem-topics" style="margin-bottom:12px">${topicos}</div>
+        <div class="prem-ctx-body">${row.contexto || ''}</div>`;
+    }
+
+    const pregEl = document.getElementById(`ai-preg-${i}`);
+    if (pregEl) {
+      pregEl.innerHTML = `
+        <div class="prem-rev-tag" style="background:${tc.bg};color:${tc.color};border:1px solid ${tc.border};margin-bottom:14px">${row.tag}</div>
+        <div class="prem-rev-text">${row.pregacao || ''}</div>`;
+    }
+  });
+
+  window._ttsVerses = verses;
+}
+
+async function renderInfographic(bookName, chNum, verses, area) {
+  // Legado — redireciona para o novo fluxo
+  renderChapterPage(bookName, chNum, verses, area);
+  await loadAIContent(bookName, chNum, verses, area);
 }
 
 async function renderInfographic(bookName, chNum, verses, area) {
