@@ -1949,16 +1949,25 @@ function startTTS() {
   if (!window.speechSynthesis) { alert('Seu navegador não suporta leitura em voz.'); return; }
   if (!window._ttsVerses || window._ttsVerses.length === 0) return;
   stopTTS();
-  const fullText = window._ttsVerses.map(v => `Versículo ${v.verse}. ${v.text}`).join(' ');
-  ttsUtterance = new SpeechSynthesisUtterance(fullText);
-  ttsUtterance.lang = 'pt-BR';
-  ttsUtterance.rate = 0.92;
-  ttsUtterance.pitch = 1;
-  ttsUtterance.onend = () => { ttsPlaying = false; updateTTSBtn(); };
-  ttsUtterance.onerror = () => { ttsPlaying = false; updateTTSBtn(); };
-  speechSynthesis.speak(ttsUtterance);
+  // Ler versículo por versículo para poder detectar ambiente em cada um
+  let idx = 0;
+  const readNext = () => {
+    if (idx >= window._ttsVerses.length || !ttsPlaying) { ttsPlaying = false; updateTTSBtn(); stopAmbient(); return; }
+    const v = window._ttsVerses[idx++];
+    // Som ambiente baseado no versículo atual
+    const ambType = (typeof detectAmbient !== 'undefined') ? detectAmbient(v.text) : 'gentle';
+    if (typeof playAmbient !== 'undefined') playAmbient(ambType);
+    const utt = new SpeechSynthesisUtterance(`${v.text}`);
+    if (typeof applyVoiceSettings !== 'undefined') applyVoiceSettings(utt);
+    else { utt.lang = 'pt-BR'; utt.rate = 0.82; utt.pitch = 0.75; }
+    utt.onend = readNext;
+    utt.onerror = () => { ttsPlaying = false; updateTTSBtn(); stopAmbient(); };
+    ttsUtterance = utt;
+    speechSynthesis.speak(utt);
+  };
   ttsPlaying = true;
   updateTTSBtn();
+  readNext();
 }
 
 function stopTTS() {
@@ -1983,8 +1992,8 @@ function readVerseAloud(num, text) {
   if (!window.speechSynthesis) { alert('Seu navegador não suporta leitura em voz.'); return; }
   stopTTS();
   const utt = new SpeechSynthesisUtterance(`Versículo ${num}. ${text}`);
-  utt.lang = 'pt-BR';
-  utt.rate = 0.92;
+  if (typeof applyVoiceSettings !== 'undefined') applyVoiceSettings(utt);
+  else { utt.lang = 'pt-BR'; utt.rate = 0.82; utt.pitch = 0.75; }
   speechSynthesis.speak(utt);
 }
 
@@ -2752,9 +2761,31 @@ function playAmbient(type) {
   try {
     _ambientCtx = new (window.AudioContext || window.webkitAudioContext)();
     const ctx = _ambientCtx;
+    // Bass boost + volume mais presente
     const master = ctx.createGain();
-    master.gain.value = 0.12;
-    master.connect(ctx.destination);
+    master.gain.value = 0.22;
+    const bassBoost = ctx.createBiquadFilter();
+    bassBoost.type = 'lowshelf';
+    bassBoost.frequency.value = 200;
+    bassBoost.gain.value = 8;
+    const reverb = ctx.createConvolver();
+    // Reverb simples via impulse response sintético
+    try {
+      const irLen = ctx.sampleRate * 1.5;
+      const irBuf = ctx.createBuffer(2, irLen, ctx.sampleRate);
+      for (let c = 0; c < 2; c++) {
+        const ch = irBuf.getChannelData(c);
+        for (let i = 0; i < irLen; i++) ch[i] = (Math.random()*2-1) * Math.pow(1 - i/irLen, 2.5);
+      }
+      reverb.buffer = irBuf;
+      const dryGain = ctx.createGain(); dryGain.gain.value = 0.75;
+      const wetGain = ctx.createGain(); wetGain.gain.value = 0.35;
+      master.connect(bassBoost);
+      bassBoost.connect(dryGain); dryGain.connect(ctx.destination);
+      bassBoost.connect(reverb); reverb.connect(wetGain); wetGain.connect(ctx.destination);
+    } catch(e) {
+      master.connect(bassBoost); bassBoost.connect(ctx.destination);
+    }
 
     const makeNoise = (freq, detune, vol, fadeIn, dur) => {
       const osc = ctx.createOscillator();
@@ -2888,6 +2919,39 @@ function playAmbient(type) {
   } catch(e) { console.warn('Ambient audio error:', e); }
 }
 
+// ── Escolher melhor voz grave PT-BR disponível ───────────────────────────────
+function pickBestVoice() {
+  const voices = speechSynthesis.getVoices();
+  // Preferência: voz masculina local PT-BR
+  const priorities = [
+    v => v.lang === 'pt-BR' && /daniel|antonio|brasil|male|masc/i.test(v.name) && v.localService,
+    v => v.lang === 'pt-BR' && v.localService,
+    v => v.lang === 'pt-BR',
+    v => v.lang.startsWith('pt') && v.localService,
+    v => v.lang.startsWith('pt'),
+    v => /daniel|thomas|jorge|carlos|paulo|pedro|male|masc/i.test(v.name),
+  ];
+  for (const test of priorities) {
+    const found = voices.find(test);
+    if (found) return found;
+  }
+  return null;
+}
+
+// ── Processar áudio do SpeechSynthesis para deixar mais grave via AudioContext ─
+// Técnica: capturar o áudio do elemento de media gerado internamente não é
+// possível via API, então controlamos pitch/rate diretamente na Utterance
+// e usamos um BiquadFilter de "bass boost" no som ambiente para enriquecer.
+function applyVoiceSettings(utter) {
+  utter.lang   = 'pt-BR';
+  utter.rate   = 0.82;   // mais lento = mais solene
+  utter.pitch  = 0.75;   // mais grave (0 = mínimo, 2 = máximo)
+  utter.volume = 1.0;
+  const voice = pickBestVoice();
+  if (voice) utter.voice = voice;
+  return utter;
+}
+
 function stopVerseAudio() {
   if (_currentUtterance) { speechSynthesis.cancel(); _currentUtterance = null; }
   stopAmbient();
@@ -2898,45 +2962,46 @@ function stopVerseAudio() {
   }
 }
 
-function playVerseAudio(key, text, event) {
+async function playVerseAudio(key, text, event) {
   event.stopPropagation();
   const cleanText = text.replace(/&quot;/g, '"');
 
-  // Se já está tocando este versículo, para
+  // Toggle: se já está tocando, para
   if (_currentAudioKey === key) { stopVerseAudio(); return; }
-
-  // Para qualquer áudio anterior
   stopVerseAudio();
 
   const btn = document.getElementById('aud-' + key);
   if (!btn) return;
 
+  // Marcar botão como tocando
   _currentAudioKey = key;
   btn.textContent = '■'; btn.classList.add('playing');
 
-  // Detecta e inicia som ambiente
+  // Detecta e inicia som ambiente com volume baixo
   const ambientType = detectAmbient(cleanText);
   playAmbient(ambientType);
 
-  // TTS em PT-BR
   if (!('speechSynthesis' in window)) { stopVerseAudio(); return; }
 
-  const utter = new SpeechSynthesisUtterance(cleanText);
-  utter.lang = 'pt-BR';
-  utter.rate = 0.88;
-  utter.pitch = 1.0;
-  utter.volume = 1.0;
+  // Garantir vozes carregadas (Chrome pode demorar)
+  const speak = () => {
+    const utter = new SpeechSynthesisUtterance(cleanText);
+    applyVoiceSettings(utter);
+    utter.onend   = () => stopVerseAudio();
+    utter.onerror = () => stopVerseAudio();
+    _currentUtterance = utter;
+    speechSynthesis.speak(utter);
+  };
 
-  // Tentar pegar melhor voz PT-BR disponível
   const voices = speechSynthesis.getVoices();
-  const ptVoice = voices.find(v => v.lang === 'pt-BR' && v.localService) ||
-                  voices.find(v => v.lang === 'pt-BR') ||
-                  voices.find(v => v.lang.startsWith('pt'));
-  if (ptVoice) utter.voice = ptVoice;
-
-  utter.onend = utter.onerror = () => stopVerseAudio();
-  _currentUtterance = utter;
-  speechSynthesis.speak(utter);
+  if (voices.length === 0) {
+    // Chrome: esperar vozes carregarem
+    speechSynthesis.onvoiceschanged = () => { speak(); speechSynthesis.onvoiceschanged = null; };
+    // Fallback se evento não disparar
+    setTimeout(() => { if (_currentAudioKey === key && !_currentUtterance) speak(); }, 400);
+  } else {
+    speak();
+  }
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
