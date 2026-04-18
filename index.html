@@ -756,6 +756,104 @@
       .mm-grid { grid-template-columns: 1fr; padding: 14px 10px 30px; }
       .mm-summary-grid { grid-template-columns: 1fr; }
     }
+
+    /* ═══════════════ INFOGRÁFICO 4 COLUNAS (PRINCIPAL) ═══════════════ */
+    .infog-wrap { padding: 0 0 50px; }
+    .infog-chapter-banner {
+      background: linear-gradient(135deg, #1A0A00 0%, #3B2507 60%, #1A0A00 100%);
+      padding: 18px 28px 16px;
+      border-bottom: 3px solid var(--gold);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px;
+    }
+    .infog-chapter-title {
+      font-family: 'Cinzel', serif; font-size: 20px;
+      color: var(--gold-light); font-weight: 700; letter-spacing: 1px;
+    }
+    .infog-chapter-sub {
+      font-size: 12px; color: rgba(201,168,76,0.6);
+      font-family: 'Inter', sans-serif; margin-top: 3px;
+    }
+    .infog-loading {
+      padding: 60px 24px; text-align: center;
+      color: var(--gold); font-style: italic; font-size: 15px;
+    }
+    .infog-table-outer { overflow-x: auto; }
+    .infog-table {
+      width: 100%; border-collapse: collapse;
+      font-family: 'Lora', Georgia, serif;
+      min-width: 800px;
+    }
+    .infog-thead tr {
+      background: linear-gradient(90deg, #120800, #2D1800, #120800);
+      border-bottom: 2px solid var(--gold);
+    }
+    .infog-thead th {
+      padding: 11px 16px;
+      font-family: 'Cinzel', serif; font-size: 10px;
+      letter-spacing: 2px; color: var(--gold-light);
+      text-transform: uppercase; font-weight: 600; text-align: left;
+    }
+    .infog-thead th:nth-child(2) { text-align: center; }
+    .infog-tbody tr {
+      border-bottom: 1px solid rgba(201,168,76,0.12);
+      transition: background 0.15s;
+    }
+    .infog-tbody tr:hover { background: rgba(201,168,76,0.045); }
+    .infog-tbody tr:nth-child(odd) { background: rgba(0,0,0,0.14); }
+    .infog-tbody tr:nth-child(odd):hover { background: rgba(201,168,76,0.05); }
+    .infog-td { padding: 16px 16px; vertical-align: top; }
+    .infog-td-verse { width: 34%; border-right: 1px solid rgba(201,168,76,0.1); }
+    .infog-vref {
+      font-family: 'Cinzel', serif; font-size: 11px;
+      color: var(--gold); font-weight: 600; margin-bottom: 7px;
+      display: block; letter-spacing: 0.3px;
+    }
+    .infog-vtext {
+      font-size: 14.5px; line-height: 1.85;
+      color: var(--brown); font-style: italic;
+    }
+    .infog-td-visual {
+      width: 6%; text-align: center; vertical-align: middle;
+      border-right: 1px solid rgba(201,168,76,0.1); padding: 16px 8px;
+    }
+    .infog-emoji { font-size: 34px; line-height: 1; display: block; margin-bottom: 6px; }
+    .infog-visual-caption {
+      font-size: 10px; color: rgba(201,168,76,0.4);
+      font-family: 'Cinzel', serif; letter-spacing: 0.5px; line-height: 1.3;
+    }
+    .infog-td-context { width: 28%; border-right: 1px solid rgba(201,168,76,0.1); }
+    .infog-col-label {
+      font-family: 'Cinzel', serif; font-size: 10px;
+      color: var(--gold-dark); font-weight: 600; margin-bottom: 6px;
+      letter-spacing: 1px; text-transform: uppercase; display: block;
+    }
+    .infog-col-body { font-size: 13.5px; line-height: 1.8; color: var(--brown2); }
+    .infog-td-preg { width: 32%; }
+    .infog-preg-tag {
+      display: inline-block; padding: 2px 8px; border-radius: 3px;
+      font-size: 10px; font-family: 'Cinzel', serif;
+      letter-spacing: 0.5px; margin-bottom: 6px;
+    }
+    .tag-revelacao { background: rgba(224,112,112,0.13); color: var(--red-accent); }
+    .tag-profecia  { background: rgba(100,160,255,0.12); color: #82b4f5; }
+    .tag-pregacao  { background: rgba(201,168,76,0.13); color: var(--gold-light); }
+    .infog-preg-body { font-size: 13.5px; line-height: 1.8; color: var(--brown); }
+    .infog-divider-row td {
+      background: rgba(201,168,76,0.06) !important;
+      padding: 5px 16px !important;
+      border-top: 1px solid rgba(201,168,76,0.18) !important;
+      border-bottom: 1px solid rgba(201,168,76,0.18) !important;
+    }
+    .infog-divider-text {
+      font-family: 'Cinzel', serif; font-size: 10px;
+      color: rgba(201,168,76,0.4); letter-spacing: 3px; text-transform: uppercase;
+    }
+    @media (max-width: 700px) {
+      .infog-table { min-width: 600px; }
+      .infog-td { padding: 12px 8px; }
+      .infog-vtext, .infog-col-body, .infog-preg-body { font-size: 13px; }
+    }
   </style>
 </head>
 <body>
@@ -912,12 +1010,12 @@
   <!-- MAIN -->
   <div class="main-content">
 
-    <!-- BÍBLIA -->
+    <!-- BÍBLIA — TABELA VISUAL 4 COLUNAS -->
     <div class="panel" id="panel-biblia">
-      <div class="devo-banner">
-        <div class="devo-label">Versículo do Dia</div>
-        <div class="devo-verse">"Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna."</div>
-        <div class="devo-ref">João 3:16 — ARC</div>
+      <div id="welcomeBanner" class="devo-banner">
+        <div class="devo-label">✝ Palavra Sagrada · Estudo Visual por Capítulo</div>
+        <div class="devo-verse">"Selecione um livro na barra lateral. A IA vai gerar o infográfico do capítulo com versículos integrais, contexto teológico, representação visual e pregação."</div>
+        <div class="devo-ref">Almeida Revista e Corrigida — ARC</div>
       </div>
 
       <div class="chapter-nav" id="chapterNav" style="display:none">
@@ -941,37 +1039,9 @@
 
       <div class="chapter-grid" id="chapterGrid" style="display:none"></div>
 
-      <div class="bible-split">
-        <!-- VERSÍCULOS -->
-        <div class="bible-split-left">
-          <div class="verses-area" id="versesArea">
-            <div style="text-align:center;padding:60px 0;color:var(--gold-dark);font-style:italic;font-size:17px">
-              ✝ Selecione um livro na barra lateral para começar a leitura
-              <br><br>
-              <span style="font-size:13px;color:var(--brown2)">Toda a Bíblia em Almeida Revista e Corrigida (ARC)</span>
-            </div>
-          </div>
-        </div>
-        <!-- PAINEL LATERAL DE ESTUDO -->
-        <div class="bible-split-right" id="sideStudyPanel">
-          <div class="side-study-header">
-            <div class="side-study-title">📖 Estudo do Capítulo</div>
-            <div class="side-study-subtitle" id="sideStudyRef">Selecione um capítulo para ver o estudo</div>
-          </div>
-          <div class="side-study-tabs">
-            <button class="side-tab-btn active" onclick="setSideMode('contextual',this)">📜 Contexto</button>
-            <button class="side-tab-btn" onclick="setSideMode('theological',this)">✝ Teologia</button>
-            <button class="side-tab-btn" onclick="setSideMode('devotional',this)">🌅 Devocional</button>
-            <button class="side-tab-btn" onclick="setSideMode('prophetic',this)">🔥 Profético</button>
-            <button class="side-tab-btn" onclick="setSideMode('practical',this)">💡 Prático</button>
-          </div>
-          <div class="side-study-content" id="sideStudyContent">
-            <div style="text-align:center;padding:30px 0;color:var(--gold-dark);font-style:italic;font-size:13px">
-              ✦ Carregue um capítulo para ver o estudo aqui
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- ÁREA PRINCIPAL: INFOGRÁFICO VISUAL DO CAPÍTULO -->
+      <div id="infogArea"></div>
+
     </div>
 
     <!-- ESTUDO COM IA -->
@@ -1255,55 +1325,163 @@ async function loadChapter(chNum) {
   renderChapterGrid();
   updateReadButton();
   updateProgressBar();
-  const area = document.getElementById('versesArea');
-  area.innerHTML = '<div class="loading-verses"><div class="spinner"></div>Carregando capítulo...</div>';
 
+  // Esconde o banner de boas-vindas
+  const wb = document.getElementById('welcomeBanner');
+  if (wb) wb.style.display = 'none';
+
+  const area = document.getElementById('infogArea');
+  const bookName = getDisplayName(currentBook);
+  area.innerHTML = `
+    <div class="infog-wrap">
+      <div class="infog-chapter-banner">
+        <div>
+          <div class="infog-chapter-title">✝ ${bookName} — Capítulo ${chNum}</div>
+          <div class="infog-chapter-sub">Infográfico de Estudo · Almeida Revista e Corrigida (ARC)</div>
+        </div>
+      </div>
+      <div class="infog-loading"><div class="spinner"></div>Buscando versículos e gerando infográfico com IA...<br><small style="font-size:12px;opacity:0.6;margin-top:8px;display:block">Isso pode levar alguns segundos</small></div>
+    </div>`;
+
+  // 1. Buscar versículos reais da API
   const abbrev = bookApiMap[currentBook] || currentBook.toLowerCase();
   const url = `https://bible-api.com/${abbrev}+${chNum}?translation=almeida`;
-
+  let verses = [];
   try {
     const resp = await fetch(url);
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    const data = await resp.json();
-    if (data.verses && data.verses.length > 0) {
-      renderVerses(data.verses, data.reference || `${getDisplayName(currentBook)} ${chNum}`);
-    } else if (data.error) {
-      area.innerHTML = `<div class="loading-verses" style="color:var(--red-accent)">⚠️ ${data.error}<br><small>Tente outro capítulo ou verifique a referência.</small></div>`;
-    } else {
-      area.innerHTML = '<div class="loading-verses" style="color:var(--red-accent)">Versículos não encontrados neste capítulo.</div>';
+    if (resp.ok) {
+      const data = await resp.json();
+      if (data.verses && data.verses.length > 0) verses = data.verses;
     }
-  } catch (e) {
-    area.innerHTML = `<div class="loading-verses" style="color:var(--red-accent)">Erro ao carregar. Verifique sua conexão.<br><small>${e.message}</small></div>`;
+  } catch(e) {}
+
+  // 2. Gerar infográfico com IA (Groq)
+  await renderInfographic(bookName, chNum, verses, area);
+}
+
+async function renderInfographic(bookName, chNum, verses, area) {
+  const ref = `${bookName} ${chNum}`;
+
+  // Montar resumo dos versículos para o prompt
+  const verseSummary = verses.length > 0
+    ? verses.map(v => `v.${v.verse}: ${v.text}`).join('\n')
+    : `Capítulo ${chNum} de ${bookName}`;
+
+  const prompt = `Você é um pastor evangélico e teólogo especialista na Bíblia ARC (Almeida Revista e Corrigida).
+
+Analise ${ref} com os seguintes versículos:
+${verseSummary}
+
+Crie um infográfico de estudo agrupando os versículos em 5 a 8 BLOCOS temáticos. Cada bloco deve cobrir versículos consecutivos que compartilham o mesmo tema.
+
+Para cada bloco, retorne um JSON exato (sem markdown):
+[
+  {
+    "ref": "v. X-Y",
+    "emoji": "🌍",
+    "emojiCaption": "palavra curta",
+    "contexto_titulo": "Título do contexto",
+    "contexto": "Análise histórica e teológica do bloco (2-3 frases).",
+    "tag": "Revelação",
+    "pregacao": "Aplicação profética, revelação ou pregação (2-3 frases)."
   }
+]
+
+Regras:
+- "tag" deve ser exatamente uma dessas três opções: "Revelação", "Profecia" ou "Pregação"
+- "emoji" deve representar visualmente o tema do bloco
+- Use apenas o array JSON, sem texto antes ou depois`;
+
+  let rows = [];
+  try {
+    let text = await groqChat(prompt);
+    text = text.replace(/```json|```/g, '').trim();
+    const s = text.indexOf('['), e = text.lastIndexOf(']');
+    if (s !== -1 && e !== -1) text = text.slice(s, e + 1);
+    rows = JSON.parse(text);
+  } catch(err) {
+    area.innerHTML = `<div style="padding:40px;color:var(--red-accent);text-align:center">
+      ⚠️ Erro ao gerar infográfico: ${err.message}<br>
+      <small>Verifique sua chave Groq na barra acima.</small>
+    </div>`;
+    return;
+  }
+
+  // Mapear versículos reais para os blocos
+  const verseMap = {};
+  verses.forEach(v => { verseMap[v.verse] = v.text; });
+
+  // Montar a tabela
+  let tbody = '';
+  rows.forEach((row, i) => {
+    // Extrair versículos reais do bloco
+    let verseText = '';
+    if (verses.length > 0) {
+      const match = row.ref.match(/(\d+)[–\-](\d+)/);
+      if (match) {
+        const from = parseInt(match[1]), to = parseInt(match[2]);
+        for (let n = from; n <= to && n <= from + 8; n++) {
+          if (verseMap[n]) verseText += `<span style="color:var(--gold);font-size:11px;font-family:'Cinzel',serif">${n}</span> ${verseMap[n]} `;
+        }
+      } else {
+        const single = parseInt(row.ref.replace(/\D/g,''));
+        if (verseMap[single]) verseText = `<span style="color:var(--gold);font-size:11px;font-family:'Cinzel',serif">${single}</span> ${verseMap[single]}`;
+      }
+    }
+    if (!verseText) verseText = `<em style="color:var(--gold-dark)">${row.ref}</em>`;
+
+    const tagClass = row.tag === 'Profecia' ? 'tag-profecia' : row.tag === 'Pregação' ? 'tag-pregacao' : 'tag-revelacao';
+
+    tbody += `
+    <tr>
+      <td class="infog-td infog-td-verse">
+        <span class="infog-vref">${row.ref}</span>
+        <span class="infog-vtext">${verseText}</span>
+      </td>
+      <td class="infog-td infog-td-visual">
+        <span class="infog-emoji">${row.emoji}</span>
+        <span class="infog-visual-caption">${row.emojiCaption || ''}</span>
+      </td>
+      <td class="infog-td infog-td-context">
+        <span class="infog-col-label">${row.contexto_titulo || 'Contexto Teológico'}</span>
+        <span class="infog-col-body">${row.contexto}</span>
+      </td>
+      <td class="infog-td infog-td-preg">
+        <span class="infog-preg-tag ${tagClass}">${row.tag}</span>
+        <div class="infog-preg-body">${row.pregacao}</div>
+      </td>
+    </tr>`;
+  });
+
+  area.innerHTML = `
+  <div class="infog-wrap">
+    <div class="infog-chapter-banner">
+      <div>
+        <div class="infog-chapter-title">✝ ${bookName} — Capítulo ${chNum}</div>
+        <div class="infog-chapter-sub">Infográfico de Estudo · Almeida Revista e Corrigida (ARC)</div>
+      </div>
+    </div>
+    <div class="infog-table-outer">
+      <table class="infog-table">
+        <thead class="infog-thead">
+          <tr>
+            <th>📜 Versículos Integrais — ARC</th>
+            <th>Visual</th>
+            <th>✝ Entendimento e Contexto Teológico</th>
+            <th>🔥 Pregação · Revelação · Profecia</th>
+          </tr>
+        </thead>
+        <tbody class="infog-tbody">${tbody}</tbody>
+      </table>
+    </div>
+  </div>`;
+
+  window._ttsVerses = verses;
 }
 
 function renderVerses(verses, reference) {
-  const area = document.getElementById('versesArea');
-  let html = `<div class="chapter-heading">
-    <span>✝ ${reference}</span>
-    <button class="tts-btn" id="ttsBtn" onclick="toggleTTS()">🔊 Ouvir capítulo</button>
-  </div>`;
-  verses.forEach(v => {
-    const safeText = (v.text || '').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
-    const favKey = `${currentBook}_${currentChapter}_${v.verse}`;
-    const isFav = favorites[favKey] ? 'fav' : '';
-    html += `
-      <div class="verse-line" id="vl-${v.verse}">
-        <button class="star-btn ${isFav}" onclick="toggleFavorite('${favKey}',${v.verse},'${safeText}',event)" title="Favoritar">★</button>
-        <span class="verse-num" onclick="toggleVerseActions(document.getElementById('vl-${v.verse}'),${v.verse},'${safeText}')">${v.verse}</span>
-        <span class="verse-text" onclick="toggleVerseActions(document.getElementById('vl-${v.verse}'),${v.verse},'${safeText}')">${v.text}</span>
-      </div>
-      <div class="verse-actions" id="va-${v.verse}">
-        <button class="va-btn" onclick="copyVerse(${v.verse},'${safeText}')">📋 Copiar</button>
-        <button class="va-btn" onclick="studyVerse(${v.verse},'${safeText}')">📖 Estudar versículo</button>
-        <button class="va-btn" onclick="readVerseAloud(${v.verse},'${safeText}')">🔊 Ouvir versículo</button>
-        <button class="va-btn" onclick="shareVerse(${v.verse})">🔗 Compartilhar</button>
-      </div>`;
-  });
-  area.innerHTML = html;
+  // Mantido para compatibilidade — a exibição agora é feita pelo renderInfographic
   window._ttsVerses = verses;
-  // Auto-load side study for the chapter
-  setTimeout(() => { if (typeof loadSideStudy === 'function') loadSideStudy(); }, 0);
 }
 
 function toggleVerseActions(el, num) {
@@ -1389,7 +1567,8 @@ function nextChapter() { stopTTS(); if (currentChapter < currentMaxChapters) loa
 // ─── ESTUDO COM IA (GROQ) ─────────────────────────────────────────────────────
 function openStudy() {
   if (!currentBook) return;
-  document.getElementById('studySubtitle').textContent = `${getDisplayName(currentBook)} — Capítulo ${currentChapter}`;
+  const sub = document.getElementById('studySubtitle');
+  if (sub) sub.textContent = `${getDisplayName(currentBook)} — Capítulo ${currentChapter}`;
   showPanel('estudo', document.querySelector('.nav-tab:nth-child(2)'));
   generateStudy(`${getDisplayName(currentBook)} capítulo ${currentChapter} da Bíblia Almeida Revista e Corrigida`);
 }
@@ -2073,48 +2252,10 @@ window.addEventListener('DOMContentLoaded', () => {
   loadDevocional('morning', null);
 });
 
-// ─── PAINEL LATERAL DE ESTUDO ─────────────────────────────────────────────────
+// ─── PAINEL LATERAL DE ESTUDO (removido — substituído pelo infográfico) ───────
 let sideStudyMode = 'contextual';
-let sideStudyLoaded = false;
-
-function setSideMode(mode, btn) {
-  sideStudyMode = mode;
-  document.querySelectorAll('.side-tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  if (currentBook) loadSideStudy();
-}
-
-async function loadSideStudy() {
-  if (!currentBook) return;
-  const content = document.getElementById('sideStudyContent');
-  const refEl = document.getElementById('sideStudyRef');
-  const ref = `${getDisplayName(currentBook)} — Capítulo ${currentChapter}`;
-  if (refEl) refEl.textContent = ref;
-  content.innerHTML = '<div class="loading-verses" style="padding:20px 0"><div class="spinner"></div>Gerando estudo...</div>';
-
-  const modePrompts = {
-    contextual: 'Analise brevemente o contexto histórico e literário deste capítulo. Quem escreveu, para quem e em que contexto. Seja conciso e direto.',
-    theological: 'Faça uma análise teológica deste capítulo. Principais temas doutrinários e como se encaixam na revelação bíblica.',
-    devotional: 'Escreva uma reflexão devocional sobre este capítulo. Mensagem central para o coração do crente hoje.',
-    prophetic: 'Analise a dimensão profética deste capítulo. Profecias cumpridas ou a cumprir. Relação com o plano redentor de Deus.',
-    practical: 'Quais aplicações práticas este capítulo tem para a vida cristã hoje? Seja concreto e aplicável.'
-  };
-
-  const prompt = `Você é um pastor e teólogo evangélico especialista na Bíblia ARC.
-
-Capítulo: ${getDisplayName(currentBook)} ${currentChapter} (Bíblia Almeida Revista e Corrigida)
-
-${modePrompts[sideStudyMode]}
-
-Responda em português do Brasil. Use ### para subtítulos. Máximo 250 palavras. Seja profundo mas acessível. Inclua 1-2 referências bíblicas relacionadas.`;
-
-  try {
-    const text = await groqChat(prompt);
-    content.innerHTML = formatStudyText(text);
-  } catch (e) {
-    content.innerHTML = `<p style="color:var(--red-accent);padding:10px">Erro: ${e.message}<br><small>Verifique sua chave Groq.</small></p>`;
-  }
-}
+function setSideMode(mode, btn) { sideStudyMode = mode; }
+async function loadSideStudy() { /* substituído pelo renderInfographic */ }
 </script>
 </body>
 </html>
