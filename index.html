@@ -1544,49 +1544,30 @@ async function loadChapter(chNum) {
     const abbrev = bookApiMap[currentBook] || currentBook.toLowerCase();
     let verses = [];
 
-    // ── Tentar múltiplas APIs em cascata ─────────────────────────────────────
-    const fetchAPIs = [
-      // API 1: bible-api.com — formato principal
-      async () => {
-        const r = await fetch(`https://bible-api.com/${abbrev}+${chNum}?translation=almeida`);
-        if (!r.ok) throw new Error('api1 fail');
-        const d = await r.json(); if (!d.verses?.length) throw new Error('no verses');
-        return d.verses;
-      },
-      // API 2: bible-api.com — singular (psalm ao invés de psalms, etc.)
-      async () => {
-        const abbrevAlt = abbrev.endsWith('s') ? abbrev.slice(0,-1) : abbrev + 's';
-        const r = await fetch(`https://bible-api.com/${abbrevAlt}+${chNum}?translation=almeida`);
-        if (!r.ok) throw new Error('api2 fail');
-        const d = await r.json(); if (!d.verses?.length) throw new Error('no verses');
-        return d.verses;
-      },
-      // API 3: bible-api.com — sem tradução
-      async () => {
-        const r = await fetch(`https://bible-api.com/${abbrev}+${chNum}`);
-        if (!r.ok) throw new Error('api3 fail');
-        const d = await r.json(); if (!d.verses?.length) throw new Error('no verses');
-        return d.verses;
-      },
-      // API 4: bible-api.com — nome do livro direto em inglês sem abreviação
-      async () => {
-        const altNames = {
-          'psalms':'psalm','psalm':'psalms','job':'job','proverbs':'proverb',
-          'song+of+solomon':'songs','songs of solomon':'song of solomon',
-        };
-        const alt = altNames[abbrev] || abbrev;
-        const r = await fetch(`https://bible-api.com/${alt}+${chNum}?translation=almeida`);
-        if (!r.ok) throw new Error('api4 fail');
-        const d = await r.json(); if (!d.verses?.length) throw new Error('no verses');
-        return d.verses;
-      },
-    ];
+    // ── Tentar API bible-api.com com tradução almeida (PT-BR) ─────────────────
+    // Variantes do nome do livro para a API
+    const abbrevVariants = [abbrev];
+    if (abbrev.endsWith('s')) abbrevVariants.push(abbrev.slice(0,-1)); // psalms→psalm
+    else abbrevVariants.push(abbrev + 's');
 
-    for (const tryFetch of fetchAPIs) {
-      try { verses = await tryFetch(); if (verses.length) break; } catch(e) {}
+    for (const ab of abbrevVariants) {
+      if (verses.length) break;
+      try {
+        const r = await fetch(`https://bible-api.com/${ab}+${chNum}?translation=almeida`);
+        if (!r.ok) continue;
+        const d = await r.json();
+        // Verificar se a resposta está em português (contém caracteres PT ou palavras comuns)
+        if (d.verses?.length) {
+          const sample = (d.verses[0]?.text || '').toLowerCase();
+          const isPT = /[áéíóúãõâêîôûàèìòùç]/.test(sample) ||
+                       /(o|a|os|as|e|de|do|da|em|no|na|que|um|uma|deus|senhor)/.test(sample);
+          if (isPT) { verses = d.verses; break; }
+          // Se vier em inglês, ignora — vai cair no fallback da IA
+        }
+      } catch(e) {}
     }
 
-    // Se nenhuma API funcionou, gerar versículos via IA
+    // Se não achou em português, buscar via IA (Groq escreve os versículos em PT-BR ARC)
     if (!verses.length) {
       verses = await fetchVersesFromAI(currentBook, chNum);
     }
@@ -1629,7 +1610,7 @@ function renderChapterPage(bookName, chNum, verses, area) {
     const isFav = !!favorites[key];
     const escapedText = v.text.replace(/'/g, "\'").replace(/"/g, '&quot;');
     const ref = `${bookName} ${chNum}:${v.verse}`;
-    return `<span class="prem-verse-item${isFav ? ' is-fav' : ''}" id="vi-${key}"><sup class="prem-vnum">${v.verse}</sup><span class="prem-verse-span">${v.text}</span><span class="prem-verse-btns"><button class="prem-audio-btn" id="aud-${key}" onclick="playVerseAudio('${key}','${escapedText}',event)" title="Ouvir versículo">▶</button><button class="prem-info-btn" id="inf-${key}" onclick="showVerseInfo('${key}',${v.verse},'${escapedText}','${ref}',event)" title="Explicação do versículo">!</button><button class="prem-fav-btn${isFav ? ' fav' : ''}" onclick="togglePremFav('${key}',${v.verse},'${escapedText}',event)" title="Favoritar versículo">★</button></span> </span>`;
+    return `<span class="prem-verse-item${isFav ? ' is-fav' : ''}" id="vi-${key}"><sup class="prem-vnum">${v.verse}</sup><span class="prem-verse-span">${v.text}</span><span class="prem-verse-btns"><button class="prem-info-btn" id="inf-${key}" onclick="showVerseInfo('${key}',${v.verse},'${escapedText}','${ref}',event)" title="Explicação do versículo">!</button><button class="prem-fav-btn${isFav ? ' fav' : ''}" onclick="togglePremFav('${key}',${v.verse},'${escapedText}',event)" title="Favoritar versículo">★</button></span> </span>`;
   }).join('');
 
   const refLabel = (block) => {
@@ -2027,25 +2008,38 @@ function startTTS() {
   if (!window.speechSynthesis) { alert('Seu navegador não suporta leitura em voz.'); return; }
   if (!window._ttsVerses || window._ttsVerses.length === 0) return;
   stopTTS();
-  // Ler versículo por versículo para poder detectar ambiente em cada um
-  let idx = 0;
-  const readNext = () => {
-    if (idx >= window._ttsVerses.length || !ttsPlaying) { ttsPlaying = false; updateTTSBtn(); stopAmbient(); return; }
-    const v = window._ttsVerses[idx++];
-    // Som ambiente baseado no versículo atual
-    const ambType = (typeof detectAmbient !== 'undefined') ? detectAmbient(v.text) : 'gentle';
-    if (typeof playAmbient !== 'undefined') playAmbient(ambType);
-    const utt = new SpeechSynthesisUtterance(`${v.text}`);
-    if (typeof applyVoiceSettings !== 'undefined') applyVoiceSettings(utt);
-    else { utt.lang = 'pt-BR'; utt.rate = 0.82; utt.pitch = 0.75; }
-    utt.onend = readNext;
-    utt.onerror = () => { ttsPlaying = false; updateTTSBtn(); stopAmbient(); };
-    ttsUtterance = utt;
-    speechSynthesis.speak(utt);
+
+  // Juntar todos os versículos em um único texto corrido
+  const fullText = window._ttsVerses.map(v => v.text).join(' ');
+
+  // Detectar ambiente mais frequente no capítulo inteiro
+  const ambientCounts = {};
+  window._ttsVerses.forEach(v => {
+    const t = (typeof detectAmbient !== 'undefined') ? detectAmbient(v.text) : 'gentle';
+    ambientCounts[t] = (ambientCounts[t] || 0) + 1;
+  });
+  const dominantAmbient = Object.entries(ambientCounts).sort((a,b) => b[1]-a[1])[0]?.[0] || 'gentle';
+  if (typeof playAmbient !== 'undefined') playAmbient(dominantAmbient);
+
+  const speak = () => {
+    ttsUtterance = new SpeechSynthesisUtterance(fullText);
+    if (typeof applyVoiceSettings !== 'undefined') applyVoiceSettings(ttsUtterance);
+    else { ttsUtterance.lang = 'pt-BR'; ttsUtterance.rate = 0.82; ttsUtterance.pitch = 0.75; }
+    ttsUtterance.onend   = () => { ttsPlaying = false; updateTTSBtn(); stopAmbient(); };
+    ttsUtterance.onerror = () => { ttsPlaying = false; updateTTSBtn(); stopAmbient(); };
+    speechSynthesis.speak(ttsUtterance);
   };
+
   ttsPlaying = true;
   updateTTSBtn();
-  readNext();
+
+  const voices = speechSynthesis.getVoices();
+  if (voices.length === 0) {
+    speechSynthesis.onvoiceschanged = () => { speak(); speechSynthesis.onvoiceschanged = null; };
+    setTimeout(() => { if (ttsPlaying && !ttsUtterance) speak(); }, 400);
+  } else {
+    speak();
+  }
 }
 
 function stopTTS() {
