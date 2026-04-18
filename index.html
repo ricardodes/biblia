@@ -757,102 +757,136 @@
       .mm-summary-grid { grid-template-columns: 1fr; }
     }
 
-    /* ═══════════════ INFOGRÁFICO 4 COLUNAS (PRINCIPAL) ═══════════════ */
-    .infog-wrap { padding: 0 0 50px; }
-    .infog-chapter-banner {
+    /* ═══════════════ INFOGRÁFICO VISUAL — CARDS ═══════════════ */
+    .iv-wrap { padding: 0 0 60px; }
+    .iv-banner {
       background: linear-gradient(135deg, #1A0A00 0%, #3B2507 60%, #1A0A00 100%);
-      padding: 18px 28px 16px;
-      border-bottom: 3px solid var(--gold);
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 10px;
+      padding: 20px 28px; border-bottom: 3px solid var(--gold);
     }
-    .infog-chapter-title {
-      font-family: 'Cinzel', serif; font-size: 20px;
+    .iv-banner-title {
+      font-family: 'Cinzel', serif; font-size: 22px;
       color: var(--gold-light); font-weight: 700; letter-spacing: 1px;
     }
-    .infog-chapter-sub {
-      font-size: 12px; color: rgba(201,168,76,0.6);
-      font-family: 'Inter', sans-serif; margin-top: 3px;
+    .iv-banner-sub {
+      font-size: 12px; color: rgba(201,168,76,0.55);
+      font-family: 'Inter', sans-serif; margin-top: 4px;
+    }
+    .iv-header-row {
+      display: flex; align-items: center;
+      background: linear-gradient(90deg, #120800, #2D1800, #120800);
+      border-bottom: 2px solid var(--gold); padding: 10px 0;
+    }
+    .iv-hcol {
+      flex: 1; padding: 0 18px;
+      font-family: 'Cinzel', serif; font-size: 10px;
+      letter-spacing: 2px; color: var(--gold-light);
+      text-transform: uppercase; font-weight: 600;
+    }
+    .iv-hcol-rev { color: #ff8a65; }
+    .iv-row {
+      display: flex; align-items: stretch;
+      border-bottom: 1px solid rgba(201,168,76,0.12);
+      transition: background 0.15s;
+      min-height: 220px;
+    }
+    .iv-row:hover { background: rgba(201,168,76,0.03); }
+    .iv-row-alt { background: rgba(0,0,0,0.18); }
+    .iv-row-alt:hover { background: rgba(201,168,76,0.04); }
+    .iv-col {
+      padding: 20px 18px;
+      border-right: 1px solid rgba(201,168,76,0.1);
+    }
+    .iv-col:last-child { border-right: none; }
+    /* COL 1 — versículos */
+    .iv-col-verse { flex: 1.1; }
+    .iv-verse-ref {
+      font-family: 'Cinzel', serif; font-size: 12px;
+      color: var(--gold); font-weight: 700; margin-bottom: 10px;
+      letter-spacing: 1px; display: block;
+      border-bottom: 1px solid rgba(201,168,76,0.2); padding-bottom: 6px;
+    }
+    .iv-verse-text {
+      font-family: 'Lora', serif; font-size: 15px;
+      line-height: 1.95; color: var(--brown); font-style: italic;
+    }
+    .iv-num {
+      font-family: 'Cinzel', serif; font-size: 10px;
+      color: var(--gold); font-weight: 700; font-style: normal;
+      vertical-align: super; margin-right: 2px;
+    }
+    /* COL 2 — imagem SVG */
+    .iv-col-img {
+      flex: 0 0 160px; display: flex;
+      align-items: center; justify-content: center;
+      padding: 14px 10px;
+    }
+    .iv-svg-wrap {
+      width: 130px; height: 130px;
+      border-radius: 12px; overflow: hidden;
+      border: 1px solid rgba(201,168,76,0.25);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(201,168,76,0.1);
+    }
+    .iv-svg-wrap svg { width: 100%; height: 100%; display: block; }
+    /* COL 3 — contexto */
+    .iv-col-ctx { flex: 1; }
+    .iv-ctx-title {
+      font-family: 'Cinzel', serif; font-size: 11px;
+      color: var(--gold-dark); font-weight: 700; margin-bottom: 10px;
+      letter-spacing: 1.5px; text-transform: uppercase; display: block;
+      border-bottom: 1px solid rgba(201,168,76,0.15); padding-bottom: 6px;
+    }
+    .iv-ctx-body {
+      font-family: 'Lora', serif; font-size: 14px;
+      line-height: 1.85; color: var(--brown2);
+    }
+    /* COL 4 — revelação/pregação — MAIOR */
+    .iv-col-rev {
+      flex: 1.3;
+      background: rgba(0,0,0,0.25);
+      position: relative; overflow: hidden;
+    }
+    .iv-col-rev::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: linear-gradient(180deg, var(--gold), #ff8a65, var(--gold));
+    }
+    .iv-rev-tag {
+      display: inline-block; padding: 4px 12px;
+      border-radius: 4px; font-size: 11px;
+      font-family: 'Cinzel', serif; letter-spacing: 1px;
+      margin-bottom: 12px; font-weight: 600;
+    }
+    .tag-revelacao {
+      background: rgba(224,112,112,0.18); color: #ff8a80;
+      border: 1px solid rgba(224,112,112,0.3);
+    }
+    .tag-profecia {
+      background: rgba(100,160,255,0.15); color: #90caf9;
+      border: 1px solid rgba(100,160,255,0.3);
+    }
+    .tag-pregacao {
+      background: rgba(201,168,76,0.15); color: var(--gold-light);
+      border: 1px solid rgba(201,168,76,0.3);
+    }
+    .iv-rev-body {
+      font-family: 'Lora', serif; font-size: 15.5px;
+      line-height: 1.95; color: var(--brown);
+      font-weight: 500;
     }
     .infog-loading {
       padding: 60px 24px; text-align: center;
       color: var(--gold); font-style: italic; font-size: 15px;
     }
-    .infog-table-outer { overflow-x: auto; }
-    .infog-table {
-      width: 100%; border-collapse: collapse;
-      font-family: 'Lora', Georgia, serif;
-      min-width: 800px;
+    @media (max-width: 900px) {
+      .iv-row { flex-wrap: wrap; }
+      .iv-col-verse { flex: 1 1 100%; border-right: none; border-bottom: 1px solid rgba(201,168,76,0.1); }
+      .iv-col-img { flex: 0 0 100%; justify-content: flex-start; padding: 10px 18px; border-right: none; }
+      .iv-col-ctx { flex: 1 1 50%; }
+      .iv-col-rev { flex: 1 1 50%; border-right: none; }
+      .iv-header-row { display: none; }
     }
-    .infog-thead tr {
-      background: linear-gradient(90deg, #120800, #2D1800, #120800);
-      border-bottom: 2px solid var(--gold);
-    }
-    .infog-thead th {
-      padding: 11px 16px;
-      font-family: 'Cinzel', serif; font-size: 10px;
-      letter-spacing: 2px; color: var(--gold-light);
-      text-transform: uppercase; font-weight: 600; text-align: left;
-    }
-    .infog-thead th:nth-child(2) { text-align: center; }
-    .infog-tbody tr {
-      border-bottom: 1px solid rgba(201,168,76,0.12);
-      transition: background 0.15s;
-    }
-    .infog-tbody tr:hover { background: rgba(201,168,76,0.045); }
-    .infog-tbody tr:nth-child(odd) { background: rgba(0,0,0,0.14); }
-    .infog-tbody tr:nth-child(odd):hover { background: rgba(201,168,76,0.05); }
-    .infog-td { padding: 16px 16px; vertical-align: top; }
-    .infog-td-verse { width: 34%; border-right: 1px solid rgba(201,168,76,0.1); }
-    .infog-vref {
-      font-family: 'Cinzel', serif; font-size: 11px;
-      color: var(--gold); font-weight: 600; margin-bottom: 7px;
-      display: block; letter-spacing: 0.3px;
-    }
-    .infog-vtext {
-      font-size: 14.5px; line-height: 1.85;
-      color: var(--brown); font-style: italic;
-    }
-    .infog-td-visual {
-      width: 6%; text-align: center; vertical-align: middle;
-      border-right: 1px solid rgba(201,168,76,0.1); padding: 16px 8px;
-    }
-    .infog-emoji { font-size: 34px; line-height: 1; display: block; margin-bottom: 6px; }
-    .infog-visual-caption {
-      font-size: 10px; color: rgba(201,168,76,0.4);
-      font-family: 'Cinzel', serif; letter-spacing: 0.5px; line-height: 1.3;
-    }
-    .infog-td-context { width: 28%; border-right: 1px solid rgba(201,168,76,0.1); }
-    .infog-col-label {
-      font-family: 'Cinzel', serif; font-size: 10px;
-      color: var(--gold-dark); font-weight: 600; margin-bottom: 6px;
-      letter-spacing: 1px; text-transform: uppercase; display: block;
-    }
-    .infog-col-body { font-size: 13.5px; line-height: 1.8; color: var(--brown2); }
-    .infog-td-preg { width: 32%; }
-    .infog-preg-tag {
-      display: inline-block; padding: 2px 8px; border-radius: 3px;
-      font-size: 10px; font-family: 'Cinzel', serif;
-      letter-spacing: 0.5px; margin-bottom: 6px;
-    }
-    .tag-revelacao { background: rgba(224,112,112,0.13); color: var(--red-accent); }
-    .tag-profecia  { background: rgba(100,160,255,0.12); color: #82b4f5; }
-    .tag-pregacao  { background: rgba(201,168,76,0.13); color: var(--gold-light); }
-    .infog-preg-body { font-size: 13.5px; line-height: 1.8; color: var(--brown); }
-    .infog-divider-row td {
-      background: rgba(201,168,76,0.06) !important;
-      padding: 5px 16px !important;
-      border-top: 1px solid rgba(201,168,76,0.18) !important;
-      border-bottom: 1px solid rgba(201,168,76,0.18) !important;
-    }
-    .infog-divider-text {
-      font-family: 'Cinzel', serif; font-size: 10px;
-      color: rgba(201,168,76,0.4); letter-spacing: 3px; text-transform: uppercase;
-    }
-    @media (max-width: 700px) {
-      .infog-table { min-width: 600px; }
-      .infog-td { padding: 12px 8px; }
-      .infog-vtext, .infog-col-body, .infog-preg-body { font-size: 13px; }
+    @media (max-width: 600px) {
+      .iv-col-ctx, .iv-col-rev { flex: 1 1 100%; border-right: none; }
     }
   </style>
 </head>
@@ -1411,8 +1445,296 @@ tag: "Revelação", "Profecia" ou "Pregação". Sem markdown, só JSON.`;
   const verseMap = {};
   verses.forEach(v => { verseMap[v.verse] = v.text; });
 
-  // Montar a tabela
-  let tbody = '';
+  // ── SVG ILUSTRATIVO por tema ──────────────────────────────────────────────
+  function getThemeSVG(emoji, caption) {
+    const themes = {
+      '🌍':'earth','🌎':'earth','🌏':'earth','🌱':'plant','🌿':'plant','🍃':'plant',
+      '🌊':'water','💧':'water','🌧':'water','⛅':'sky','☁':'sky','🌤':'sky',
+      '☀':'sun','🌞':'sun','✨':'light','💡':'light','🕯':'light','⚡':'light',
+      '🌙':'moon','🌛':'moon','⭐':'star','🌟':'star','✦':'star',
+      '🔥':'fire','⚡':'fire','💥':'fire',
+      '✝':'cross','🙏':'cross','⛪':'cross','🕊':'dove','☮':'dove',
+      '👤':'person','👥':'person','🧑':'person','👨':'person','👩':'person','🫂':'person',
+      '🗡':'sword','⚔':'sword','🛡':'sword','👑':'crown','🏆':'crown',
+      '📜':'scroll','📖':'scroll','📝':'scroll','🗺':'scroll',
+      '🌄':'mountain','⛰':'mountain','🏔':'mountain','🌋':'mountain',
+      '🐑':'lamb','🐏':'lamb','🐑':'lamb','🦁':'lion','🐦':'bird',
+      '🍞':'bread','🥖':'bread','🍷':'wine','🫙':'oil',
+      '💎':'gem','🏺':'gem','🪙':'gem','⚖':'scale',
+      '❤':'heart','💛':'heart','💙':'heart','🤍':'heart',
+      '🏡':'house','🏠':'house','🏛':'temple','⛩':'temple',
+      '🌾':'harvest','🌻':'harvest','🍇':'harvest',
+      '🌈':'rainbow','🎺':'trumpet','🎵':'music',
+      '⚓':'anchor','🚢':'boat','🛶':'boat',
+      '🔑':'key','🗝':'key','🚪':'door',
+      '💫':'spirit','🌀':'spirit','🔮':'spirit',
+    };
+    const key = Object.keys(themes).find(k => emoji.includes(k)) || '';
+    const type = themes[key] || 'default';
+
+    const svgMap = {
+      earth: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="eg" cx="40%" cy="35%"><stop offset="0%" stop-color="#4a9e6b"/><stop offset="100%" stop-color="#1a5c3a"/></radialGradient>
+        <radialGradient id="eg2" cx="60%" cy="60%"><stop offset="0%" stop-color="#1a6faa"/><stop offset="100%" stop-color="#0a3a5c"/></radialGradient></defs>
+        <circle cx="60" cy="60" r="50" fill="url(#eg2)" opacity="0.9"/>
+        <ellipse cx="45" cy="48" rx="18" ry="22" fill="url(#eg)" opacity="0.9"/>
+        <ellipse cx="75" cy="65" rx="14" ry="16" fill="url(#eg)" opacity="0.8"/>
+        <ellipse cx="55" cy="75" rx="8" ry="10" fill="url(#eg)" opacity="0.7"/>
+        <circle cx="60" cy="60" r="50" fill="none" stroke="#C9A84C" stroke-width="1.5" opacity="0.5"/>
+        <text x="60" y="112" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia" opacity="0.8">${caption}</text></svg>`,
+
+      light: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="lg" cx="50%" cy="50%"><stop offset="0%" stop-color="#ffe87c"/><stop offset="40%" stop-color="#C9A84C" stop-opacity="0.7"/><stop offset="100%" stop-color="#1A1410" stop-opacity="0"/></radialGradient></defs>
+        <rect width="120" height="120" fill="#0a0600"/>
+        <circle cx="60" cy="55" r="45" fill="url(#lg)"/>
+        <circle cx="60" cy="55" r="16" fill="#ffe87c"/>
+        <line x1="60" y1="10" x2="60" y2="24" stroke="#ffe87c" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="60" y1="86" x2="60" y2="100" stroke="#ffe87c" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="15" y1="55" x2="29" y2="55" stroke="#ffe87c" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="91" y1="55" x2="105" y2="55" stroke="#ffe87c" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="26" y1="21" x2="36" y2="31" stroke="#ffe87c" stroke-width="2" stroke-linecap="round"/>
+        <line x1="84" y1="79" x2="94" y2="89" stroke="#ffe87c" stroke-width="2" stroke-linecap="round"/>
+        <line x1="94" y1="21" x2="84" y2="31" stroke="#ffe87c" stroke-width="2" stroke-linecap="round"/>
+        <line x1="36" y1="79" x2="26" y2="89" stroke="#ffe87c" stroke-width="2" stroke-linecap="round"/>
+        <text x="60" y="114" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia">${caption}</text></svg>`,
+
+      water: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="wg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#1a6faa"/><stop offset="100%" stop-color="#0a2a4a"/></linearGradient></defs>
+        <rect width="120" height="120" fill="#080e18"/>
+        <rect y="55" width="120" height="65" fill="url(#wg)" rx="4"/>
+        <path d="M0,55 Q15,45 30,55 Q45,65 60,55 Q75,45 90,55 Q105,65 120,55" fill="none" stroke="#82c4f5" stroke-width="2"/>
+        <path d="M0,68 Q15,58 30,68 Q45,78 60,68 Q75,58 90,68 Q105,78 120,68" fill="none" stroke="#82c4f5" stroke-width="1.5" opacity="0.6"/>
+        <ellipse cx="60" cy="35" rx="12" ry="18" fill="#82c4f5" opacity="0.8"/>
+        <ellipse cx="60" cy="30" rx="8" ry="6" fill="#c5e8ff" opacity="0.6"/>
+        <text x="60" y="114" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia">${caption}</text></svg>`,
+
+      sky: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="skg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#1a2a6c"/><stop offset="100%" stop-color="#6a9fd8"/></linearGradient></defs>
+        <rect width="120" height="120" fill="url(#skg)" rx="6"/>
+        <ellipse cx="40" cy="45" rx="28" ry="14" fill="white" opacity="0.85"/>
+        <ellipse cx="55" cy="40" rx="22" ry="16" fill="white" opacity="0.9"/>
+        <ellipse cx="75" cy="50" rx="20" ry="12" fill="white" opacity="0.8"/>
+        <circle cx="22" cy="30" r="3" fill="#ffe87c" opacity="0.9"/>
+        <circle cx="90" cy="22" r="2" fill="#ffe87c" opacity="0.7"/>
+        <circle cx="105" cy="35" r="2" fill="#ffe87c" opacity="0.6"/>
+        <text x="60" y="114" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia">${caption}</text></svg>`,
+
+      sun: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="sug" cx="50%" cy="50%"><stop offset="0%" stop-color="#fff176"/><stop offset="60%" stop-color="#ffb300"/><stop offset="100%" stop-color="#e65100" stop-opacity="0"/></radialGradient></defs>
+        <rect width="120" height="120" fill="#1a0800"/>
+        <circle cx="60" cy="58" r="48" fill="url(#sug)" opacity="0.35"/>
+        <circle cx="60" cy="58" r="22" fill="#ffcc02"/>
+        <circle cx="60" cy="58" r="16" fill="#ffe57f"/>
+        ${[0,45,90,135,180,225,270,315].map(a=>`<line x1="${60+28*Math.cos(a*Math.PI/180)}" y1="${58+28*Math.sin(a*Math.PI/180)}" x2="${60+38*Math.cos(a*Math.PI/180)}" y2="${58+38*Math.sin(a*Math.PI/180)}" stroke="#ffcc02" stroke-width="3" stroke-linecap="round"/>`).join('')}
+        <text x="60" y="114" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia">${caption}</text></svg>`,
+
+      fire: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="fg" cx="50%" cy="80%"><stop offset="0%" stop-color="#fff176"/><stop offset="40%" stop-color="#ff6d00"/><stop offset="100%" stop-color="#b71c1c" stop-opacity="0"/></radialGradient></defs>
+        <rect width="120" height="120" fill="#0a0200"/>
+        <ellipse cx="60" cy="80" rx="30" ry="10" fill="#ff6d00" opacity="0.3"/>
+        <path d="M60,15 C55,35 35,40 38,65 C40,78 50,88 60,90 C70,88 80,78 82,65 C85,40 65,35 60,15Z" fill="url(#fg)"/>
+        <path d="M60,40 C57,52 47,55 49,68 C50,75 55,82 60,83 C65,82 70,75 71,68 C73,55 63,52 60,40Z" fill="#ffe57f" opacity="0.8"/>
+        <path d="M60,58 C58,64 54,66 55,72 C56,76 58,79 60,80 C62,79 64,76 65,72 C66,66 62,64 60,58Z" fill="white" opacity="0.6"/>
+        <text x="60" y="114" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia">${caption}</text></svg>`,
+
+      cross: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="cg" cx="50%" cy="40%"><stop offset="0%" stop-color="#ffe87c" stop-opacity="0.4"/><stop offset="100%" stop-color="#1A1410" stop-opacity="0"/></radialGradient></defs>
+        <rect width="120" height="120" fill="#0d0800"/>
+        <circle cx="60" cy="50" r="45" fill="url(#cg)"/>
+        <rect x="53" y="18" width="14" height="72" rx="3" fill="#C9A84C"/>
+        <rect x="28" y="38" width="64" height="14" rx="3" fill="#C9A84C"/>
+        <rect x="55" y="20" width="10" height="68" rx="2" fill="#E8CC7A" opacity="0.4"/>
+        <rect x="30" y="40" width="60" height="10" rx="2" fill="#E8CC7A" opacity="0.4"/>
+        <text x="60" y="114" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia">${caption}</text></svg>`,
+
+      dove: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="dvg" cx="50%" cy="50%"><stop offset="0%" stop-color="#e8f4ff"/><stop offset="100%" stop-color="#1a2a4a"/></radialGradient></defs>
+        <rect width="120" height="120" fill="#080e18"/>
+        <circle cx="60" cy="55" r="40" fill="url(#dvg)" opacity="0.15"/>
+        <path d="M60,65 C45,60 30,50 35,38 C40,26 55,30 60,40 C65,30 80,26 85,38 C90,50 75,60 60,65Z" fill="white" opacity="0.9"/>
+        <ellipse cx="50" cy="55" rx="18" ry="8" fill="white" opacity="0.7" transform="rotate(-20,50,55)"/>
+        <ellipse cx="70" cy="55" rx="18" ry="8" fill="white" opacity="0.7" transform="rotate(20,70,55)"/>
+        <circle cx="55" cy="42" r="4" fill="white"/>
+        <circle cx="53" cy="41" r="1.5" fill="#1a2a4a"/>
+        <path d="M55,46 L50,52" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        <text x="60" y="114" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia">${caption}</text></svg>`,
+
+      person: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="pg" cx="50%" cy="30%"><stop offset="0%" stop-color="#C9A84C" stop-opacity="0.3"/><stop offset="100%" stop-color="#1A1410" stop-opacity="0"/></radialGradient></defs>
+        <rect width="120" height="120" fill="#100a04"/>
+        <circle cx="60" cy="45" r="45" fill="url(#pg)"/>
+        <circle cx="60" cy="34" r="14" fill="#C9A84C" opacity="0.9"/>
+        <path d="M32,95 C32,72 88,72 88,95" fill="#8B6914" opacity="0.9"/>
+        <circle cx="60" cy="34" r="11" fill="#E8CC7A" opacity="0.6"/>
+        <text x="60" y="114" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia">${caption}</text></svg>`,
+
+      scroll: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="scg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8B6914"/><stop offset="100%" stop-color="#C9A84C"/></linearGradient></defs>
+        <rect width="120" height="120" fill="#0d0800"/>
+        <rect x="22" y="30" width="76" height="60" rx="4" fill="url(#scg)" opacity="0.9"/>
+        <rect x="26" y="34" width="68" height="52" rx="2" fill="#f5e8c0" opacity="0.95"/>
+        <ellipse cx="22" cy="60" rx="7" ry="30" fill="url(#scg)"/>
+        <ellipse cx="98" cy="60" rx="7" ry="30" fill="url(#scg)"/>
+        <line x1="35" y1="46" x2="85" y2="46" stroke="#8B6914" stroke-width="1.5" opacity="0.7"/>
+        <line x1="35" y1="54" x2="85" y2="54" stroke="#8B6914" stroke-width="1.5" opacity="0.7"/>
+        <line x1="35" y1="62" x2="85" y2="62" stroke="#8B6914" stroke-width="1.5" opacity="0.7"/>
+        <line x1="35" y1="70" x2="72" y2="70" stroke="#8B6914" stroke-width="1.5" opacity="0.7"/>
+        <text x="60" y="114" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia">${caption}</text></svg>`,
+
+      mountain: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="mg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#1a3a6c"/><stop offset="100%" stop-color="#0a0e18"/></linearGradient></defs>
+        <rect width="120" height="120" fill="url(#mg)"/>
+        <polygon points="60,15 15,85 105,85" fill="#4a5568" opacity="0.9"/>
+        <polygon points="60,15 35,85 85,85" fill="#6b7280"/>
+        <polygon points="60,15 50,45 70,45" fill="white" opacity="0.7"/>
+        <line x1="0" y1="85" x2="120" y2="85" stroke="#2d3a55" stroke-width="1"/>
+        <circle cx="20" cy="30" r="2" fill="#ffe87c" opacity="0.8"/>
+        <circle cx="95" cy="22" r="1.5" fill="#ffe87c" opacity="0.6"/>
+        <circle cx="108" cy="40" r="1" fill="#ffe87c" opacity="0.5"/>
+        <text x="60" y="114" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia">${caption}</text></svg>`,
+
+      lamb: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <rect width="120" height="120" fill="#100a04"/>
+        <ellipse cx="60" cy="65" rx="28" ry="20" fill="white" opacity="0.92"/>
+        <circle cx="60" cy="65" r="18" fill="white"/>
+        <circle cx="45" cy="58" r="8" fill="white"/><circle cx="55" cy="52" r="9" fill="white"/>
+        <circle cx="65" cy="52" r="9" fill="white"/><circle cx="75" cy="58" r="8" fill="white"/>
+        <circle cx="60" cy="48" r="10" fill="white"/>
+        <ellipse cx="52" cy="44" rx="6" ry="8" fill="#f5e6d0"/>
+        <circle cx="50" cy="42" r="2" fill="#2a1a0a"/><circle cx="54" cy="42" r="2" fill="#2a1a0a"/>
+        <ellipse cx="52" cy="47" rx="3" ry="2" fill="#e8c8a0"/>
+        <line x1="46" y1="83" x2="43" y2="98" stroke="#C9A84C" stroke-width="3" stroke-linecap="round"/>
+        <line x1="54" y1="83" x2="52" y2="98" stroke="#C9A84C" stroke-width="3" stroke-linecap="round"/>
+        <line x1="66" y1="83" x2="68" y2="98" stroke="#C9A84C" stroke-width="3" stroke-linecap="round"/>
+        <line x1="74" y1="83" x2="77" y2="98" stroke="#C9A84C" stroke-width="3" stroke-linecap="round"/>
+        <text x="60" y="115" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia">${caption}</text></svg>`,
+
+      heart: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="hg" cx="50%" cy="40%"><stop offset="0%" stop-color="#ef5350"/><stop offset="100%" stop-color="#7f0000"/></radialGradient></defs>
+        <rect width="120" height="120" fill="#0d0206"/>
+        <path d="M60,85 C60,85 20,62 20,40 C20,26 30,18 40,18 C50,18 56,25 60,32 C64,25 70,18 80,18 C90,18 100,26 100,40 C100,62 60,85 60,85Z" fill="url(#hg)"/>
+        <path d="M60,78 C60,78 26,57 26,40 C26,30 33,24 40,24 C50,24 56,32 60,38" fill="#ef9a9a" opacity="0.3"/>
+        <text x="60" y="114" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia">${caption}</text></svg>`,
+
+      temple: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="tg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#C9A84C"/><stop offset="100%" stop-color="#8B6914"/></linearGradient></defs>
+        <rect width="120" height="120" fill="#0d0800"/>
+        <polygon points="60,15 18,42 102,42" fill="url(#tg)"/>
+        <rect x="22" y="42" width="76" height="48" fill="#8B6914" opacity="0.9"/>
+        <rect x="26" y="44" width="68" height="44" fill="#C9A84C" opacity="0.2"/>
+        <rect x="50" y="62" width="20" height="28" rx="10" fill="#1A0A00"/>
+        <rect x="30" y="50" width="12" height="20" fill="#1A0A00" opacity="0.8"/>
+        <rect x="78" y="50" width="12" height="20" fill="#1A0A00" opacity="0.8"/>
+        <line x1="18" y1="90" x2="102" y2="90" stroke="url(#tg)" stroke-width="4"/>
+        <text x="60" y="114" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia">${caption}</text></svg>`,
+
+      rainbow: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <rect width="120" height="120" fill="#080e20"/>
+        <path d="M10,90 A52,52 0 0,1 110,90" fill="none" stroke="#ef5350" stroke-width="6" opacity="0.9"/>
+        <path d="M16,90 A46,46 0 0,1 104,90" fill="none" stroke="#ff9800" stroke-width="6" opacity="0.9"/>
+        <path d="M22,90 A40,40 0 0,1 98,90" fill="none" stroke="#ffeb3b" stroke-width="6" opacity="0.9"/>
+        <path d="M28,90 A34,34 0 0,1 92,90" fill="none" stroke="#66bb6a" stroke-width="6" opacity="0.9"/>
+        <path d="M34,90 A28,28 0 0,1 86,90" fill="none" stroke="#42a5f5" stroke-width="6" opacity="0.9"/>
+        <path d="M40,90 A22,22 0 0,1 80,90" fill="none" stroke="#7e57c2" stroke-width="6" opacity="0.9"/>
+        <text x="60" y="114" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia">${caption}</text></svg>`,
+
+      star: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <rect width="120" height="120" fill="#040814"/>
+        ${Array.from({length:18},(_,i)=>`<circle cx="${10+Math.floor(Math.random()*100)}" cy="${10+Math.floor(Math.random()*80)}" r="${0.8+Math.random()*1.8}" fill="#ffe87c" opacity="${0.4+Math.random()*0.6}"/>`).join('')}
+        <polygon points="60,18 66,42 90,42 71,57 78,80 60,66 42,80 49,57 30,42 54,42" fill="#ffe87c" opacity="0.95"/>
+        <polygon points="60,28 64,40 76,40 67,48 70,60 60,53 50,60 53,48 44,40 56,40" fill="#fff9c4"/>
+        <text x="60" y="114" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia">${caption}</text></svg>`,
+
+      harvest: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="hvg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#1a4a10"/><stop offset="100%" stop-color="#0a1a06"/></linearGradient></defs>
+        <rect width="120" height="120" fill="url(#hvg)"/>
+        <line x1="30" y1="95" x2="30" y2="55" stroke="#8B6914" stroke-width="3"/>
+        <ellipse cx="30" cy="45" rx="8" ry="14" fill="#f9a825" opacity="0.9"/>
+        <ellipse cx="28" cy="44" rx="5" ry="10" fill="#ffcc02" opacity="0.6"/>
+        <line x1="60" y1="95" x2="60" y2="45" stroke="#8B6914" stroke-width="3"/>
+        <ellipse cx="60" cy="33" rx="8" ry="14" fill="#f9a825" opacity="0.9"/>
+        <ellipse cx="58" cy="32" rx="5" ry="10" fill="#ffcc02" opacity="0.6"/>
+        <line x1="90" y1="95" x2="90" y2="55" stroke="#8B6914" stroke-width="3"/>
+        <ellipse cx="90" cy="45" rx="8" ry="14" fill="#f9a825" opacity="0.9"/>
+        <ellipse cx="88" cy="44" rx="5" ry="10" fill="#ffcc02" opacity="0.6"/>
+        <text x="60" y="114" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia">${caption}</text></svg>`,
+
+      crown: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="crg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ffe87c"/><stop offset="100%" stop-color="#8B6914"/></linearGradient></defs>
+        <rect width="120" height="120" fill="#0d0800"/>
+        <path d="M15,80 L15,45 L35,62 L60,28 L85,62 L105,45 L105,80 Z" fill="url(#crg)" opacity="0.95"/>
+        <rect x="15" y="78" width="90" height="12" rx="3" fill="#C9A84C"/>
+        <circle cx="60" cy="28" r="7" fill="#ef5350"/><circle cx="35" cy="62" r="5" fill="#42a5f5"/>
+        <circle cx="85" cy="62" r="5" fill="#66bb6a"/>
+        <text x="60" y="114" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia">${caption}</text></svg>`,
+
+      sword: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="swg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e0e0e0"/><stop offset="100%" stop-color="#9e9e9e"/></linearGradient></defs>
+        <rect width="120" height="120" fill="#0a0a14"/>
+        <rect x="57" y="18" width="6" height="68" rx="2" fill="url(#swg)" transform="rotate(-8,60,60)"/>
+        <rect x="55" y="18" width="3" height="68" rx="1" fill="white" opacity="0.4" transform="rotate(-8,60,60)"/>
+        <rect x="35" y="78" width="50" height="10" rx="3" fill="#8B6914" transform="rotate(-8,60,60)"/>
+        <rect x="52" y="86" width="16" height="16" rx="3" fill="#C9A84C" transform="rotate(-8,60,60)"/>
+        <text x="60" y="114" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia">${caption}</text></svg>`,
+
+      plant: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="plg" cx="50%" cy="80%"><stop offset="0%" stop-color="#2e7d32"/><stop offset="100%" stop-color="#0a1a06" stop-opacity="0"/></radialGradient></defs>
+        <rect width="120" height="120" fill="#060e06"/>
+        <circle cx="60" cy="70" r="45" fill="url(#plg)" opacity="0.4"/>
+        <line x1="60" y1="95" x2="60" y2="40" stroke="#4a7c3f" stroke-width="3" stroke-linecap="round"/>
+        <ellipse cx="40" cy="60" rx="22" ry="12" fill="#388e3c" opacity="0.9" transform="rotate(-30,40,60)"/>
+        <ellipse cx="80" cy="55" rx="22" ry="12" fill="#388e3c" opacity="0.9" transform="rotate(30,80,55)"/>
+        <ellipse cx="60" cy="40" rx="18" ry="10" fill="#4caf50" opacity="0.9" transform="rotate(-10,60,40)"/>
+        <ellipse cx="38" cy="60" rx="18" ry="8" fill="#66bb6a" opacity="0.5" transform="rotate(-30,38,60)"/>
+        <ellipse cx="78" cy="55" rx="18" ry="8" fill="#66bb6a" opacity="0.5" transform="rotate(30,78,55)"/>
+        <text x="60" y="114" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia">${caption}</text></svg>`,
+
+      key: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="kg" cx="35%" cy="35%"><stop offset="0%" stop-color="#ffe87c"/><stop offset="100%" stop-color="#8B6914"/></radialGradient></defs>
+        <rect width="120" height="120" fill="#0d0800"/>
+        <circle cx="42" cy="48" r="22" fill="none" stroke="url(#kg)" stroke-width="8"/>
+        <circle cx="42" cy="48" r="10" fill="none" stroke="url(#kg)" stroke-width="4"/>
+        <line x1="60" y1="55" x2="100" y2="72" stroke="url(#kg)" stroke-width="8" stroke-linecap="round"/>
+        <line x1="88" y1="68" x2="88" y2="82" stroke="url(#kg)" stroke-width="6" stroke-linecap="round"/>
+        <line x1="76" y1="63" x2="76" y2="76" stroke="url(#kg)" stroke-width="6" stroke-linecap="round"/>
+        <text x="60" y="114" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia">${caption}</text></svg>`,
+
+      spirit: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="spg" cx="50%" cy="50%"><stop offset="0%" stop-color="#82b4f5" stop-opacity="0.8"/><stop offset="100%" stop-color="#1a2a6c" stop-opacity="0"/></radialGradient>
+          <radialGradient id="spg2" cx="50%" cy="50%"><stop offset="0%" stop-color="#e1bee7"/><stop offset="100%" stop-color="#4a148c" stop-opacity="0"/></radialGradient>
+        </defs>
+        <rect width="120" height="120" fill="#05040e"/>
+        <circle cx="60" cy="55" r="42" fill="url(#spg)" opacity="0.5"/>
+        <circle cx="60" cy="55" r="28" fill="url(#spg2)" opacity="0.5"/>
+        <path d="M60,20 Q75,40 60,55 Q45,40 60,20" fill="#e1bee7" opacity="0.8"/>
+        <path d="M60,55 Q80,45 90,60 Q80,75 60,55" fill="#82b4f5" opacity="0.7"/>
+        <path d="M60,55 Q40,45 30,60 Q40,75 60,55" fill="#82b4f5" opacity="0.7"/>
+        <circle cx="60" cy="55" r="6" fill="white" opacity="0.9"/>
+        <text x="60" y="114" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia">${caption}</text></svg>`,
+
+      moon: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <rect width="120" height="120" fill="#04080f"/>
+        ${Array.from({length:22},(_,i)=>`<circle cx="${5+Math.floor(Math.random()*110)}" cy="${5+Math.floor(Math.random()*90)}" r="${0.6+Math.random()*1.5}" fill="#ffe87c" opacity="${0.3+Math.random()*0.7}"/>`).join('')}
+        <circle cx="65" cy="50" r="30" fill="#e8e0c0" opacity="0.92"/>
+        <circle cx="50" cy="38" r="30" fill="#04080f"/>
+        <circle cx="72" cy="42" r="4" fill="#c8c0a0" opacity="0.4"/>
+        <circle cx="60" cy="58" r="3" fill="#c8c0a0" opacity="0.3"/>
+        <circle cx="78" cy="56" r="2" fill="#c8c0a0" opacity="0.35"/>
+        <text x="60" y="114" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia">${caption}</text></svg>`,
+
+      default: `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="dfg" cx="50%" cy="50%"><stop offset="0%" stop-color="#C9A84C" stop-opacity="0.5"/><stop offset="100%" stop-color="#1A1410" stop-opacity="0"/></radialGradient></defs>
+        <rect width="120" height="120" fill="#0d0800"/>
+        <circle cx="60" cy="55" r="42" fill="url(#dfg)"/>
+        <text x="60" y="68" text-anchor="middle" font-size="42">${emoji}</text>
+        <text x="60" y="114" text-anchor="middle" font-size="10" fill="#C9A84C" font-family="Georgia">${caption}</text></svg>`
+    };
+    return svgMap[type] || svgMap.default;
+  }
+
+  // Montar os blocos como cards empilhados (não tabela simples)
+  let cards = '';
   rows.forEach((row, i) => {
     // Extrair versículos reais do bloco
     let verseText = '';
@@ -1420,60 +1742,55 @@ tag: "Revelação", "Profecia" ou "Pregação". Sem markdown, só JSON.`;
       const match = row.ref.match(/(\d+)[–\-](\d+)/);
       if (match) {
         const from = parseInt(match[1]), to = parseInt(match[2]);
-        for (let n = from; n <= to && n <= from + 8; n++) {
-          if (verseMap[n]) verseText += `<span style="color:var(--gold);font-size:11px;font-family:'Cinzel',serif">${n}</span> ${verseMap[n]} `;
+        for (let n = from; n <= to && n <= from + 10; n++) {
+          if (verseMap[n]) verseText += `<span class="iv-num">${n}</span>${verseMap[n]} `;
         }
       } else {
         const single = parseInt(row.ref.replace(/\D/g,''));
-        if (verseMap[single]) verseText = `<span style="color:var(--gold);font-size:11px;font-family:'Cinzel',serif">${single}</span> ${verseMap[single]}`;
+        if (verseMap[single]) verseText = `<span class="iv-num">${single}</span>${verseMap[single]}`;
       }
     }
     if (!verseText) verseText = `<em style="color:var(--gold-dark)">${row.ref}</em>`;
 
     const tagClass = row.tag === 'Profecia' ? 'tag-profecia' : row.tag === 'Pregação' ? 'tag-pregacao' : 'tag-revelacao';
+    const svgContent = getThemeSVG(row.emoji || '✦', row.emojiCaption || '');
+    const altColor = i % 2 === 1 ? 'iv-row-alt' : '';
 
-    tbody += `
-    <tr>
-      <td class="infog-td infog-td-verse">
-        <span class="infog-vref">${row.ref}</span>
-        <span class="infog-vtext">${verseText}</span>
-      </td>
-      <td class="infog-td infog-td-visual">
-        <span class="infog-emoji">${row.emoji}</span>
-        <span class="infog-visual-caption">${row.emojiCaption || ''}</span>
-      </td>
-      <td class="infog-td infog-td-context">
-        <span class="infog-col-label">${row.contexto_titulo || 'Contexto Teológico'}</span>
-        <span class="infog-col-body">${row.contexto}</span>
-      </td>
-      <td class="infog-td infog-td-preg">
-        <span class="infog-preg-tag ${tagClass}">${row.tag}</span>
-        <div class="infog-preg-body">${row.pregacao}</div>
-      </td>
-    </tr>`;
+    cards += `
+    <div class="iv-row ${altColor}">
+      <div class="iv-col iv-col-verse">
+        <div class="iv-verse-ref">${row.ref}</div>
+        <div class="iv-verse-text">${verseText}</div>
+      </div>
+      <div class="iv-col iv-col-img">
+        <div class="iv-svg-wrap">${svgContent}</div>
+      </div>
+      <div class="iv-col iv-col-ctx">
+        <div class="iv-ctx-title">${row.contexto_titulo || 'Contexto Teológico'}</div>
+        <div class="iv-ctx-body">${row.contexto}</div>
+      </div>
+      <div class="iv-col iv-col-rev">
+        <div class="iv-rev-tag ${tagClass}">${row.tag}</div>
+        <div class="iv-rev-body">${row.pregacao}</div>
+      </div>
+    </div>`;
   });
 
   area.innerHTML = `
-  <div class="infog-wrap">
-    <div class="infog-chapter-banner">
-      <div>
-        <div class="infog-chapter-title">✝ ${bookName} — Capítulo ${chNum}</div>
-        <div class="infog-chapter-sub">Infográfico de Estudo · Almeida Revista e Corrigida (ARC)</div>
+  <div class="iv-wrap">
+    <div class="iv-banner">
+      <div class="iv-banner-inner">
+        <div class="iv-banner-title">✝ ${bookName} — Capítulo ${chNum}</div>
+        <div class="iv-banner-sub">Infográfico de Estudo · Almeida Revista e Corrigida (ARC)</div>
       </div>
     </div>
-    <div class="infog-table-outer">
-      <table class="infog-table">
-        <thead class="infog-thead">
-          <tr>
-            <th>📜 Versículos Integrais — ARC</th>
-            <th>Visual</th>
-            <th>✝ Entendimento e Contexto Teológico</th>
-            <th>🔥 Pregação · Revelação · Profecia</th>
-          </tr>
-        </thead>
-        <tbody class="infog-tbody">${tbody}</tbody>
-      </table>
+    <div class="iv-header-row">
+      <div class="iv-hcol">📜 Versículos — ARC</div>
+      <div class="iv-hcol" style="flex:0 0 160px;text-align:center">🎨 Visual</div>
+      <div class="iv-hcol">✝ Contexto Teológico</div>
+      <div class="iv-hcol iv-hcol-rev">🔥 Revelação · Pregação · Profecia</div>
     </div>
+    ${cards}
   </div>`;
 
   window._ttsVerses = verses;
