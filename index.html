@@ -1566,7 +1566,7 @@ Para cada bloco retorne JSON (sem markdown):
   "contexto": "2-3 frases: contexto histórico, quem escreveu, para quem, significado teológico profundo.",
   "topicos": ["tópico 1", "tópico 2", "tópico 3"],
   "tag": "Revelação",
-  "pregacao": "Uma pregação de 4-5 frases poderosas e aplicadas para o crente hoje. Use linguagem de púlpito: convicta, profética, que toque o coração. Termine com uma exortação ou promessa bíblica."
+  "pregacao": "Escreva aqui uma pregação de 4-5 frases poderosas e aplicadas para o crente hoje. Use linguagem de púlpito: convicta, profética, que toque o coração. Termine com exortação ou promessa bíblica. OBRIGATÓRIO preencher este campo."
 }]
 
 tag deve ser: "Revelação", "Profecia" ou "Pregação". Apenas o array JSON.`;
@@ -1595,6 +1595,16 @@ tag deve ser: "Revelação", "Profecia" ou "Pregação". Apenas o array JSON.`;
       if (openArr > 0) repaired += ']';
       rows = JSON.parse(repaired);
     }
+    // Normalizar campos — a IA pode retornar nomes levemente diferentes
+    rows = rows.map(r => ({
+      ...r,
+      pregacao: r.pregacao || r.revelacao || r.pregação || r.preaching || r.sermon || '',
+      titulo:   r.titulo   || r.title    || r.título   || '',
+      tema:     r.tema     || r.theme    || '',
+      contexto: r.contexto || r.context  || r.contexto_teologico || '',
+      topicos:  r.topicos  || r.topics   || r.tópicos  || [],
+      tag:      r.tag      || 'Pregação',
+    }));
   } catch(err) {
     // Preencher com erro nos skeletons
     blocks.forEach((_, i) => {
@@ -1637,7 +1647,7 @@ tag deve ser: "Revelação", "Profecia" ou "Pregação". Apenas o array JSON.`;
     if (pregEl) {
       pregEl.innerHTML = `
         <div class="prem-rev-tag" style="background:${tc.bg};color:${tc.color};border:1px solid ${tc.border};margin-bottom:14px">${row.tag}</div>
-        <div class="prem-rev-text">${row.pregacao || ''}</div>`;
+        <div class="prem-rev-text">${row.pregacao || row.revelacao || ''}</div>`;
     }
   });
 
@@ -1784,7 +1794,7 @@ tag: "Revelação", "Profecia" ou "Pregação". Apenas JSON, sem markdown.`;
         <div class="prem-col prem-col-rev" style="background:linear-gradient(135deg,${cs.dark},rgba(0,0,0,0.6));border-left:3px solid ${cs.accent}">
           <div class="prem-col-header" style="color:${cs.light};border-bottom-color:${cs.accent}20">🔥 REVELAÇÃO · PROFECIA</div>
           <div class="prem-rev-tag" style="background:${tc.bg};color:${tc.color};border:1px solid ${tc.border}">${row.tag}</div>
-          <div class="prem-rev-text">${row.revelacao}</div>
+          <div class="prem-rev-text">${row.revelacao || row.pregacao || ''}</div>
         </div>
 
       </div>
