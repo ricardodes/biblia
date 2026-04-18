@@ -1559,17 +1559,17 @@ async function loadAIContent(bookName, chNum, verses, area) {
 Blocos de versículos:
 ${blockSummaries}
 
-Para cada bloco retorne JSON (sem markdown):
+Retorne APENAS um array JSON, sem markdown, sem explicação. Um objeto por bloco:
 [{
-  "titulo": "Título impactante do bloco (máx 5 palavras)",
-  "tema": "Uma frase teológica que resume o bloco.",
-  "contexto": "2-3 frases: contexto histórico, quem escreveu, para quem, significado teológico profundo.",
+  "pregacao": "3-4 frases de pregação poderosa e aplicada para o crente hoje. Linguagem de púlpito, profética, que toque o coração.",
+  "titulo": "Título do bloco (máx 5 palavras)",
+  "tema": "Uma frase teológica resumindo o bloco.",
   "topicos": ["tópico 1", "tópico 2", "tópico 3"],
-  "tag": "Revelação",
-  "pregacao": "Escreva aqui uma pregação de 4-5 frases poderosas e aplicadas para o crente hoje. Use linguagem de púlpito: convicta, profética, que toque o coração. Termine com exortação ou promessa bíblica. OBRIGATÓRIO preencher este campo."
+  "contexto": "2 frases de contexto histórico e teológico.",
+  "tag": "Revelação"
 }]
 
-tag deve ser: "Revelação", "Profecia" ou "Pregação". Apenas o array JSON.`;
+tag: "Revelação", "Profecia" ou "Pregação". SEM markdown. APENAS o array JSON.`;
 
   let rows = [];
   try {
@@ -1595,6 +1595,8 @@ tag deve ser: "Revelação", "Profecia" ou "Pregação". Apenas o array JSON.`;
       if (openArr > 0) repaired += ']';
       rows = JSON.parse(repaired);
     }
+    // Debug: ver o que a IA retornou
+    console.log('[IA DEBUG] raw rows:', JSON.stringify(rows.slice(0,1)));
     // Normalizar campos — a IA pode retornar nomes levemente diferentes
     rows = rows.map(r => ({
       ...r,
