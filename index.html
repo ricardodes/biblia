@@ -332,6 +332,58 @@
     }
     .fav-remove:hover { opacity: 0.7; }
 
+    /* ── Botões de versículo: áudio + info ── */
+    .prem-verse-btns {
+      display: inline-flex; align-items: center; gap: 3px;
+      vertical-align: middle; margin-left: 3px;
+    }
+    .prem-audio-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 50%; width: 20px; height: 20px;
+      cursor: pointer; font-size: 10px; color: var(--gold);
+      transition: all 0.2s; flex-shrink: 0;
+    }
+    .prem-audio-btn:hover { background: rgba(201,168,76,0.3); transform: scale(1.15); }
+    .prem-audio-btn.playing { background: var(--gold-dark); color: white; animation: pulse-audio 1s ease-in-out infinite; }
+    @keyframes pulse-audio { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
+
+    .prem-info-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: rgba(100,160,255,0.12); border: 1px solid rgba(100,160,255,0.25);
+      border-radius: 50%; width: 20px; height: 20px;
+      cursor: pointer; font-size: 11px; font-weight: 700; color: #64b5f6;
+      font-family: 'Cinzel', serif; line-height: 1;
+      transition: all 0.2s; flex-shrink: 0;
+    }
+    .prem-info-btn:hover { background: rgba(100,160,255,0.28); transform: scale(1.15); }
+    .prem-info-btn.loading { animation: pulse-audio 0.8s ease-in-out infinite; }
+
+    /* Tooltip de explicação IA */
+    .verse-tooltip {
+      display: none; position: fixed; z-index: 9999;
+      max-width: 340px; min-width: 220px;
+      background: linear-gradient(135deg, #1A0A00, #2D1800);
+      border: 1px solid rgba(201,168,76,0.4);
+      border-radius: 10px; padding: 14px 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+      font-family: 'Lora', serif; font-size: 14px;
+      line-height: 1.7; color: var(--brown);
+      pointer-events: none;
+    }
+    .verse-tooltip.show { display: block; }
+    .verse-tooltip-ref {
+      font-family: 'Cinzel', serif; font-size: 11px;
+      color: var(--gold); margin-bottom: 8px; letter-spacing: 0.5px;
+    }
+    .verse-tooltip-body { color: var(--brown); }
+    .verse-tooltip-ambient {
+      margin-top: 10px; padding-top: 8px;
+      border-top: 1px solid rgba(201,168,76,0.2);
+      font-size: 12px; color: var(--gold-dark);
+      font-family: 'Inter', sans-serif; font-style: italic;
+    }
+
     /* Versículo favoritado — destaque dourado */
     .prem-verse-item {
       display: inline;
@@ -1498,7 +1550,8 @@ function renderChapterPage(bookName, chNum, verses, area) {
     const key = `${currentBook}_${currentChapter}_${v.verse}`;
     const isFav = !!favorites[key];
     const escapedText = v.text.replace(/'/g, "\'").replace(/"/g, '&quot;');
-    return `<span class="prem-verse-item${isFav ? ' is-fav' : ''}" id="vi-${key}"><sup class="prem-vnum">${v.verse}</sup><span class="prem-verse-span">${v.text}</span><button class="prem-fav-btn${isFav ? ' fav' : ''}" onclick="togglePremFav('${key}',${v.verse},'${escapedText}',event)" title="Favoritar versículo">★</button> </span>`;
+    const ref = `${bookName} ${chNum}:${v.verse}`;
+    return `<span class="prem-verse-item${isFav ? ' is-fav' : ''}" id="vi-${key}"><sup class="prem-vnum">${v.verse}</sup><span class="prem-verse-span">${v.text}</span><span class="prem-verse-btns"><button class="prem-audio-btn" id="aud-${key}" onclick="playVerseAudio('${key}','${escapedText}',event)" title="Ouvir versículo">▶</button><button class="prem-info-btn" id="inf-${key}" onclick="showVerseInfo('${key}',${v.verse},'${escapedText}','${ref}',event)" title="Explicação do versículo">!</button><button class="prem-fav-btn${isFav ? ' fav' : ''}" onclick="togglePremFav('${key}',${v.verse},'${escapedText}',event)" title="Favoritar versículo">★</button></span> </span>`;
   }).join('');
 
   const refLabel = (block) => {
@@ -2643,12 +2696,349 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('apiStatus').style.color = 'var(--gold)';
   }
   loadDevocional('morning', null);
+  // Pré-carregar vozes TTS (Chrome precisa disto)
+  if ('speechSynthesis' in window) {
+    speechSynthesis.getVoices();
+    speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+  }
 });
 
 // ─── PAINEL LATERAL DE ESTUDO (removido — substituído pelo infográfico) ───────
 let sideStudyMode = 'contextual';
 function setSideMode(mode, btn) { sideStudyMode = mode; }
 async function loadSideStudy() { /* substituído pelo renderInfographic */ }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ÁUDIO POR VERSÍCULO — TTS (Web Speech) + Som ambiente contextual
+// ══════════════════════════════════════════════════════════════════════════════
+
+let _currentAudioKey = null;
+let _currentUtterance = null;
+let _ambientCtx = null;
+let _ambientNodes = [];
+
+// Mapa de palavras-chave → tipo de som ambiente
+const AMBIENT_MAP = [
+  { words: ['pássaro','pombas','pomba','ave','aves','águia','andorinha','corvo','pombo','pombinhos','andor'], type: 'birds' },
+  { words: ['água','rio','mar','chuva','dilúvio','torrente','fontes','fonte','oceano','ondas','onda','lago','córrego','riachos','nascente'], type: 'water' },
+  { words: ['vento','sopro','tempestade','tufão','furacão','vendaval','brisa','soprou'], type: 'wind' },
+  { words: ['fogo','chamas','chama','flamejante','brasa','fogueira','queima','ardeu','arde','labaredas'], type: 'fire' },
+  { words: ['trovão','trovões','relâmpago','relâmpagos','tempestade','raios','raio'], type: 'thunder' },
+  { words: ['floresta','árvore','árvores','bosque','campo','jardim','prado','erva','folhas','folha'], type: 'forest' },
+  { words: ['noite','estrelas','estrela','lua','silêncio','trevas','escuridão'], type: 'night' },
+  { words: ['multidão','povo','nações','aclamação','aleluia','louvor','cantando','cantai','música'], type: 'crowd' },
+];
+
+function detectAmbient(text) {
+  const lower = text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  for (const entry of AMBIENT_MAP) {
+    for (const w of entry.words) {
+      const wn = w.normalize('NFD').replace(/[̀-ͯ]/g, '');
+      if (lower.includes(wn)) return entry.type;
+    }
+  }
+  return 'gentle'; // padrão suave
+}
+
+function stopAmbient() {
+  _ambientNodes.forEach(n => { try { n.stop(); } catch(e){} });
+  _ambientNodes = [];
+  if (_ambientCtx) { try { _ambientCtx.close(); } catch(e){} }
+  _ambientCtx = null;
+}
+
+function playAmbient(type) {
+  stopAmbient();
+  try {
+    _ambientCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = _ambientCtx;
+    const master = ctx.createGain();
+    master.gain.value = 0.12;
+    master.connect(ctx.destination);
+
+    const makeNoise = (freq, detune, vol, fadeIn, dur) => {
+      const osc = ctx.createOscillator();
+      const g   = ctx.createGain();
+      osc.connect(g); g.connect(master);
+      osc.frequency.value = freq;
+      osc.detune.value = detune;
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(vol, ctx.currentTime + fadeIn);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + dur);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + dur + 0.5);
+      _ambientNodes.push(osc);
+    };
+
+    const makeNoiseBuf = (dur, vol) => {
+      const buf = ctx.createBuffer(1, ctx.sampleRate * dur, ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      const filter = ctx.createBiquadFilter();
+      const g = ctx.createGain();
+      src.connect(filter); filter.connect(g); g.connect(master);
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(vol, ctx.currentTime + 0.4);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + dur);
+      src.start(ctx.currentTime);
+      _ambientNodes.push(src);
+      return { filter };
+    };
+
+    const dur = 28; // duração do ambiente
+
+    if (type === 'birds') {
+      // Pássaros: série de trilos curtos em frequências de pássaro
+      const chirp = (t, freq) => {
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.type = 'sine'; osc.frequency.setValueAtTime(freq, t);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.5, t + 0.08);
+        osc.frequency.exponentialRampToValueAtTime(freq, t + 0.16);
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(0.4, t + 0.04);
+        g.gain.linearRampToValueAtTime(0, t + 0.2);
+        osc.connect(g); g.connect(master);
+        osc.start(t); osc.stop(t + 0.3);
+        _ambientNodes.push(osc);
+      };
+      for (let t = 0.5; t < dur; t += 1.2 + Math.random() * 2) {
+        chirp(ctx.currentTime + t, 2400 + Math.random() * 800);
+        if (Math.random() > 0.5) chirp(ctx.currentTime + t + 0.25, 3000 + Math.random() * 600);
+      }
+      // Brisa suave de fundo
+      const { filter } = makeNoiseBuf(dur, 0.15);
+      filter.type = 'bandpass'; filter.frequency.value = 800; filter.Q.value = 0.3;
+    }
+    else if (type === 'water') {
+      const { filter } = makeNoiseBuf(dur, 0.5);
+      filter.type = 'bandpass'; filter.frequency.value = 1200; filter.Q.value = 0.8;
+      // Borbulhar extra
+      for (let t = 0.3; t < dur; t += 0.4 + Math.random() * 0.6) {
+        makeNoise(300 + Math.random() * 200, 0, 0.05, 0.01, 0.15);
+      }
+    }
+    else if (type === 'wind') {
+      const { filter } = makeNoiseBuf(dur, 0.4);
+      filter.type = 'bandpass'; filter.frequency.value = 600; filter.Q.value = 0.4;
+      // Modulação do vento
+      const lfo = ctx.createOscillator();
+      const lfoG = ctx.createGain();
+      lfo.frequency.value = 0.15; lfoG.gain.value = 200;
+      lfo.connect(lfoG); lfoG.connect(filter.frequency);
+      lfo.start(ctx.currentTime); lfo.stop(ctx.currentTime + dur);
+      _ambientNodes.push(lfo);
+    }
+    else if (type === 'fire') {
+      const { filter } = makeNoiseBuf(dur, 0.35);
+      filter.type = 'lowpass'; filter.frequency.value = 700;
+      // Crepitar
+      for (let t = 0.2; t < dur; t += 0.15 + Math.random() * 0.3) {
+        makeNoise(80 + Math.random() * 120, 0, 0.08, 0.005, 0.08);
+      }
+    }
+    else if (type === 'thunder') {
+      // Trovão
+      for (let t = 2; t < dur; t += 6 + Math.random() * 5) {
+        const { filter } = makeNoiseBuf(2.5, 0.6);
+        filter.type = 'lowpass'; filter.frequency.value = 300;
+      }
+      // Chuva de fundo
+      const { filter } = makeNoiseBuf(dur, 0.25);
+      filter.type = 'bandpass'; filter.frequency.value = 2000; filter.Q.value = 0.5;
+    }
+    else if (type === 'forest') {
+      // Folhas + pássaros distantes
+      const { filter } = makeNoiseBuf(dur, 0.2);
+      filter.type = 'bandpass'; filter.frequency.value = 1000; filter.Q.value = 0.5;
+      const chirp = (t, freq) => {
+        const osc = ctx.createOscillator(); const g = ctx.createGain();
+        osc.type = 'sine'; osc.frequency.value = freq;
+        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.15, t+0.05); g.gain.linearRampToValueAtTime(0, t+0.18);
+        osc.connect(g); g.connect(master); osc.start(t); osc.stop(t+0.25); _ambientNodes.push(osc);
+      };
+      for (let t = 1; t < dur; t += 2.5 + Math.random() * 3) chirp(ctx.currentTime + t, 1800 + Math.random() * 600);
+    }
+    else if (type === 'night') {
+      // Grilo / ambiente noturno
+      const cricket = (t, freq) => {
+        for (let p = 0; p < 4; p++) {
+          const osc = ctx.createOscillator(); const g = ctx.createGain();
+          osc.type = 'sine'; osc.frequency.value = freq + p * 3;
+          const pt = t + p * 0.04;
+          g.gain.setValueAtTime(0, pt); g.gain.linearRampToValueAtTime(0.08, pt+0.01); g.gain.linearRampToValueAtTime(0, pt+0.03);
+          osc.connect(g); g.connect(master); osc.start(pt); osc.stop(pt+0.05); _ambientNodes.push(osc);
+        }
+      };
+      for (let t = 0.1; t < dur; t += 0.5 + Math.random() * 0.3) cricket(ctx.currentTime + t, 4000 + Math.random() * 200);
+    }
+    else if (type === 'crowd') {
+      // Murmúrio de multidão
+      const { filter } = makeNoiseBuf(dur, 0.3);
+      filter.type = 'bandpass'; filter.frequency.value = 500; filter.Q.value = 1;
+      for (let i = 0; i < 6; i++) makeNoise(100 + i * 60, i * 20, 0.04, 0.5 + i * 0.2, dur);
+    }
+    else {
+      // 'gentle' — fundo suave neutro para leitura
+      const { filter } = makeNoiseBuf(dur, 0.08);
+      filter.type = 'lowpass'; filter.frequency.value = 400;
+    }
+  } catch(e) { console.warn('Ambient audio error:', e); }
+}
+
+function stopVerseAudio() {
+  if (_currentUtterance) { speechSynthesis.cancel(); _currentUtterance = null; }
+  stopAmbient();
+  if (_currentAudioKey) {
+    const btn = document.getElementById('aud-' + _currentAudioKey);
+    if (btn) { btn.textContent = '▶'; btn.classList.remove('playing'); }
+    _currentAudioKey = null;
+  }
+}
+
+function playVerseAudio(key, text, event) {
+  event.stopPropagation();
+  const cleanText = text.replace(/&quot;/g, '"');
+
+  // Se já está tocando este versículo, para
+  if (_currentAudioKey === key) { stopVerseAudio(); return; }
+
+  // Para qualquer áudio anterior
+  stopVerseAudio();
+
+  const btn = document.getElementById('aud-' + key);
+  if (!btn) return;
+
+  _currentAudioKey = key;
+  btn.textContent = '■'; btn.classList.add('playing');
+
+  // Detecta e inicia som ambiente
+  const ambientType = detectAmbient(cleanText);
+  playAmbient(ambientType);
+
+  // TTS em PT-BR
+  if (!('speechSynthesis' in window)) { stopVerseAudio(); return; }
+
+  const utter = new SpeechSynthesisUtterance(cleanText);
+  utter.lang = 'pt-BR';
+  utter.rate = 0.88;
+  utter.pitch = 1.0;
+  utter.volume = 1.0;
+
+  // Tentar pegar melhor voz PT-BR disponível
+  const voices = speechSynthesis.getVoices();
+  const ptVoice = voices.find(v => v.lang === 'pt-BR' && v.localService) ||
+                  voices.find(v => v.lang === 'pt-BR') ||
+                  voices.find(v => v.lang.startsWith('pt'));
+  if (ptVoice) utter.voice = ptVoice;
+
+  utter.onend = utter.onerror = () => stopVerseAudio();
+  _currentUtterance = utter;
+  speechSynthesis.speak(utter);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// EXPLICAÇÃO IA POR VERSÍCULO — tooltip inteligente
+// ══════════════════════════════════════════════════════════════════════════════
+
+// Cache de explicações já geradas
+const _verseExplainCache = {};
+
+// Criar tooltip DOM uma vez
+let _tooltipEl = null;
+function getTooltip() {
+  if (!_tooltipEl) {
+    _tooltipEl = document.createElement('div');
+    _tooltipEl.className = 'verse-tooltip';
+    _tooltipEl.innerHTML = '<div class="verse-tooltip-ref"></div><div class="verse-tooltip-body"></div><div class="verse-tooltip-ambient"></div>';
+    document.body.appendChild(_tooltipEl);
+    // Fechar ao clicar fora
+    document.addEventListener('click', (e) => {
+      if (!_tooltipEl.contains(e.target) && !e.target.classList.contains('prem-info-btn')) {
+        hideTooltip();
+      }
+    });
+  }
+  return _tooltipEl;
+}
+
+function hideTooltip() {
+  const t = getTooltip();
+  t.classList.remove('show');
+  // Remover loading de todos os botões info
+  document.querySelectorAll('.prem-info-btn.loading').forEach(b => b.classList.remove('loading'));
+}
+
+function positionTooltip(btn) {
+  const t = getTooltip();
+  const rect = btn.getBoundingClientRect();
+  const tw = 340, th = 200;
+  let left = rect.right + 8;
+  let top  = rect.top - 10;
+  if (left + tw > window.innerWidth - 12) left = rect.left - tw - 8;
+  if (top + th > window.innerHeight - 12) top = window.innerHeight - th - 12;
+  if (top < 8) top = 8;
+  t.style.left = left + 'px';
+  t.style.top  = top  + 'px';
+}
+
+async function showVerseInfo(key, verseNum, text, ref, event) {
+  event.stopPropagation();
+  const cleanText = text.replace(/&quot;/g, '"');
+  const btn = document.getElementById('inf-' + key);
+  const tip = getTooltip();
+
+  // Toggle: se já está mostrando este versículo, fecha
+  if (tip.classList.contains('show') && tip.dataset.key === key) {
+    hideTooltip(); return;
+  }
+
+  tip.dataset.key = key;
+  tip.querySelector('.verse-tooltip-ref').textContent = ref;
+  tip.querySelector('.verse-tooltip-body').textContent = 'Consultando a IA...';
+  tip.querySelector('.verse-tooltip-ambient').textContent = '';
+  tip.classList.add('show');
+  positionTooltip(btn || event.currentTarget);
+  if (btn) btn.classList.add('loading');
+
+  // Cache hit
+  if (_verseExplainCache[key]) {
+    tip.querySelector('.verse-tooltip-body').innerHTML = _verseExplainCache[key].body;
+    tip.querySelector('.verse-tooltip-ambient').textContent = _verseExplainCache[key].ambient;
+    if (btn) btn.classList.remove('loading');
+    return;
+  }
+
+  // Chamar Groq
+  try {
+    const prompt = `Explique o versículo bíblico a seguir em 3-4 frases simples, como se fosse para alguém que nunca leu a Bíblia. Use linguagem acessível, direta e espiritual. Destaque o significado profundo e a aplicação para a vida hoje.
+
+Versículo: "${cleanText}" (${ref})
+
+Responda em português, somente a explicação, sem títulos nem markdown.`;
+
+    const explanation = await groqChat(prompt);
+
+    const ambientType = detectAmbient(cleanText);
+    const ambientLabels = {
+      birds:'🐦 Contexto: sons de pássaros', water:'💧 Contexto: sons de água',
+      wind:'🌬️ Contexto: sons de vento', fire:'🔥 Contexto: sons de fogo',
+      thunder:'⛈️ Contexto: sons de tempestade', forest:'🌿 Contexto: sons de floresta',
+      night:'🌙 Contexto: sons noturnos', crowd:'👥 Contexto: sons de multidão',
+      gentle:''
+    };
+
+    _verseExplainCache[key] = { body: explanation, ambient: ambientLabels[ambientType] || '' };
+    tip.querySelector('.verse-tooltip-body').innerHTML = explanation;
+    tip.querySelector('.verse-tooltip-ambient').textContent = ambientLabels[ambientType] || '';
+  } catch(err) {
+    tip.querySelector('.verse-tooltip-body').textContent = 'Insira sua chave Groq para obter explicações.';
+  }
+  if (btn) btn.classList.remove('loading');
+}
+
 </script>
 </body>
 </html>
