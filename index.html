@@ -757,136 +757,147 @@
       .mm-summary-grid { grid-template-columns: 1fr; }
     }
 
-    /* ═══════════════ INFOGRÁFICO VISUAL — CARDS ═══════════════ */
-    .iv-wrap { padding: 0 0 60px; }
-    .iv-banner {
-      background: linear-gradient(135deg, #1A0A00 0%, #3B2507 60%, #1A0A00 100%);
-      padding: 20px 28px; border-bottom: 3px solid var(--gold);
+    /* ═══════════════ INFOGRÁFICO PREMIUM — ESTILO MAPA MENTAL ═══════════════ */
+    .prem-wrap { padding: 0 0 60px; }
+    .prem-banner {
+      padding: 20px 28px; display: flex; align-items: center; gap: 18px;
     }
-    .iv-banner-title {
-      font-family: 'Cinzel', serif; font-size: 22px;
-      color: var(--gold-light); font-weight: 700; letter-spacing: 1px;
+    .prem-banner-emoji { font-size: 44px; opacity: 0.85; }
+    .prem-banner-title {
+      font-family: 'Cinzel', serif; font-size: 24px;
+      font-weight: 700; letter-spacing: 1px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.8);
     }
-    .iv-banner-sub {
-      font-size: 12px; color: rgba(201,168,76,0.55);
-      font-family: 'Inter', sans-serif; margin-top: 4px;
+    .prem-banner-sub {
+      font-size: 12px; color: rgba(255,255,255,0.4);
+      font-family: 'Inter', sans-serif; margin-top: 4px; letter-spacing: 1px;
     }
-    .iv-header-row {
-      display: flex; align-items: center;
-      background: linear-gradient(90deg, #120800, #2D1800, #120800);
-      border-bottom: 2px solid var(--gold); padding: 10px 0;
+    .prem-grid {
+      display: flex; flex-direction: column; gap: 0;
     }
-    .iv-hcol {
-      flex: 1; padding: 0 18px;
-      font-family: 'Cinzel', serif; font-size: 10px;
-      letter-spacing: 2px; color: var(--gold-light);
-      text-transform: uppercase; font-weight: 600;
-    }
-    .iv-hcol-rev { color: #ff8a65; }
-    .iv-row {
-      display: flex; align-items: stretch;
-      border-bottom: 1px solid rgba(201,168,76,0.12);
+    /* ── CARD ── */
+    .prem-card {
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      overflow: hidden;
       transition: background 0.15s;
-      min-height: 220px;
     }
-    .iv-row:hover { background: rgba(201,168,76,0.03); }
-    .iv-row-alt { background: rgba(0,0,0,0.18); }
-    .iv-row-alt:hover { background: rgba(201,168,76,0.04); }
-    .iv-col {
-      padding: 20px 18px;
-      border-right: 1px solid rgba(201,168,76,0.1);
-    }
-    .iv-col:last-child { border-right: none; }
-    /* COL 1 — versículos */
-    .iv-col-verse { flex: 1.1; }
-    .iv-verse-ref {
-      font-family: 'Cinzel', serif; font-size: 12px;
-      color: var(--gold); font-weight: 700; margin-bottom: 10px;
-      letter-spacing: 1px; display: block;
-      border-bottom: 1px solid rgba(201,168,76,0.2); padding-bottom: 6px;
-    }
-    .iv-verse-text {
-      font-family: 'Lora', serif; font-size: 15px;
-      line-height: 1.95; color: var(--brown); font-style: italic;
-    }
-    .iv-num {
-      font-family: 'Cinzel', serif; font-size: 10px;
-      color: var(--gold); font-weight: 700; font-style: normal;
-      vertical-align: super; margin-right: 2px;
-    }
-    /* COL 2 — imagem SVG */
-    .iv-col-img {
-      flex: 0 0 160px; display: flex;
-      align-items: center; justify-content: center;
-      padding: 14px 10px;
-    }
-    .iv-svg-wrap {
-      width: 130px; height: 130px;
-      border-radius: 12px; overflow: hidden;
-      border: 1px solid rgba(201,168,76,0.25);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(201,168,76,0.1);
-    }
-    .iv-svg-wrap svg { width: 100%; height: 100%; display: block; }
-    /* COL 3 — contexto */
-    .iv-col-ctx { flex: 1; }
-    .iv-ctx-title {
-      font-family: 'Cinzel', serif; font-size: 11px;
-      color: var(--gold-dark); font-weight: 700; margin-bottom: 10px;
-      letter-spacing: 1.5px; text-transform: uppercase; display: block;
-      border-bottom: 1px solid rgba(201,168,76,0.15); padding-bottom: 6px;
-    }
-    .iv-ctx-body {
-      font-family: 'Lora', serif; font-size: 14px;
-      line-height: 1.85; color: var(--brown2);
-    }
-    /* COL 4 — revelação/pregação — MAIOR */
-    .iv-col-rev {
-      flex: 1.3;
-      background: rgba(0,0,0,0.25);
+    .prem-card:hover { background: rgba(255,255,255,0.01); }
+    /* TOPO */
+    .prem-card-top {
+      padding: 14px 24px 12px;
       position: relative; overflow: hidden;
     }
-    .iv-col-rev::before {
-      content: ''; position: absolute; top: 0; left: 0;
-      width: 3px; height: 100%;
-      background: linear-gradient(180deg, var(--gold), #ff8a65, var(--gold));
+    .prem-card-top::after {
+      content: attr(data-num);
+      position: absolute; right: 20px; top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Cinzel', serif; font-size: 64px;
+      opacity: 0.06; color: white; pointer-events: none;
+      font-weight: 700;
     }
-    .iv-rev-tag {
-      display: inline-block; padding: 4px 12px;
-      border-radius: 4px; font-size: 11px;
-      font-family: 'Cinzel', serif; letter-spacing: 1px;
-      margin-bottom: 12px; font-weight: 600;
+    .prem-top-ref {
+      font-family: 'Cinzel', serif; font-size: 11px;
+      letter-spacing: 2px; opacity: 0.7; margin-bottom: 4px;
     }
-    .tag-revelacao {
-      background: rgba(224,112,112,0.18); color: #ff8a80;
-      border: 1px solid rgba(224,112,112,0.3);
+    .prem-top-title {
+      font-family: 'Cinzel', serif; font-size: 20px;
+      font-weight: 700; line-height: 1.1;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
     }
-    .tag-profecia {
-      background: rgba(100,160,255,0.15); color: #90caf9;
-      border: 1px solid rgba(100,160,255,0.3);
+    .prem-top-sub {
+      font-size: 11px; color: rgba(255,255,255,0.4);
+      font-family: 'Inter', sans-serif; margin-top: 3px; letter-spacing: 1px;
     }
-    .tag-pregacao {
-      background: rgba(201,168,76,0.15); color: var(--gold-light);
-      border: 1px solid rgba(201,168,76,0.3);
+    .prem-top-chips {
+      display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px;
     }
-    .iv-rev-body {
-      font-family: 'Lora', serif; font-size: 15.5px;
-      line-height: 1.95; color: var(--brown);
-      font-weight: 500;
+    .prem-chip {
+      padding: 3px 10px; border-radius: 20px;
+      border: 1px solid; background: rgba(0,0,0,0.3);
+      font-size: 11px; font-family: 'Cinzel', serif; letter-spacing: 0.3px;
+    }
+    /* CORPO 3 COLUNAS */
+    .prem-card-body {
+      display: flex; align-items: stretch;
+      background: #18100A; min-height: 240px;
+    }
+    .prem-col {
+      flex: 1; padding: 18px 20px; min-width: 0;
+    }
+    .prem-col-verse { flex: 1.15; }
+    .prem-col-ctx   { flex: 1; }
+    .prem-col-rev   { flex: 1.1; }
+    .prem-col-header {
+      font-family: 'Cinzel', serif; font-size: 10px;
+      letter-spacing: 2px; text-transform: uppercase;
+      opacity: 0.9; margin-bottom: 12px;
+      padding-bottom: 6px; border-bottom: 1px solid;
+    }
+    /* Versículos */
+    .prem-tema-box {
+      border-left: 3px solid; padding: 7px 11px;
+      border-radius: 0 6px 6px 0; margin-bottom: 12px;
+      font-size: 12px; line-height: 1.5;
+    }
+    .prem-verse-text {
+      font-family: 'Lora', serif; font-size: 14.5px;
+      line-height: 1.95; color: var(--brown); font-style: italic;
+    }
+    .prem-vnum {
+      font-family: 'Cinzel', serif; font-size: 10px;
+      color: var(--gold); font-weight: 700; font-style: normal;
+      vertical-align: super; margin-right: 1px;
+    }
+    /* Tópicos */
+    .prem-topics { margin-bottom: 14px; }
+    .prem-topic {
+      display: flex; align-items: flex-start; gap: 8px;
+      padding: 5px 0; font-size: 13px; color: var(--brown2);
+      font-family: 'Lora', serif;
+      border-bottom: 1px solid rgba(255,255,255,0.04); line-height: 1.4;
+    }
+    .prem-topic:last-child { border-bottom: none; }
+    .prem-topic-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      flex-shrink: 0; margin-top: 6px;
+    }
+    /* Versículo chave */
+    .prem-key-verse {
+      background: linear-gradient(135deg, rgba(201,168,76,0.07), rgba(201,168,76,0.02));
+      border: 1px solid; border-radius: 8px; padding: 10px 12px;
+    }
+    .prem-key-ref {
+      font-family: 'Cinzel', serif; font-size: 10px; color: var(--gold);
+      margin-bottom: 5px; display: flex; align-items: center; gap: 6px;
+    }
+    .prem-key-text {
+      font-size: 13px; color: var(--brown); font-style: italic;
+      font-family: 'Lora', serif; line-height: 1.6;
+    }
+    /* Revelação — destaque total */
+    .prem-rev-tag {
+      display: inline-block; padding: 5px 14px; border-radius: 5px;
+      font-size: 12px; font-family: 'Cinzel', serif;
+      letter-spacing: 1px; font-weight: 700; margin-bottom: 14px;
+    }
+    .prem-rev-text {
+      font-family: 'Lora', serif; font-size: 16px;
+      line-height: 2; color: var(--brown); font-weight: 500;
     }
     .infog-loading {
       padding: 60px 24px; text-align: center;
       color: var(--gold); font-style: italic; font-size: 15px;
     }
     @media (max-width: 900px) {
-      .iv-row { flex-wrap: wrap; }
-      .iv-col-verse { flex: 1 1 100%; border-right: none; border-bottom: 1px solid rgba(201,168,76,0.1); }
-      .iv-col-img { flex: 0 0 100%; justify-content: flex-start; padding: 10px 18px; border-right: none; }
-      .iv-col-ctx { flex: 1 1 50%; }
-      .iv-col-rev { flex: 1 1 50%; border-right: none; }
-      .iv-header-row { display: none; }
+      .prem-card-body { flex-direction: column; }
+      .prem-col { border-right: none !important; border-left: none !important; border-bottom: 1px solid rgba(255,255,255,0.05); }
+      .prem-col:last-child { border-bottom: none; }
     }
     @media (max-width: 600px) {
-      .iv-col-ctx, .iv-col-rev { flex: 1 1 100%; border-right: none; }
+      .prem-card-top { padding: 12px 16px; }
+      .prem-top-title { font-size: 16px; }
+      .prem-col { padding: 14px 16px; }
+      .prem-rev-text { font-size: 14px; }
     }
   </style>
 </head>
@@ -1405,41 +1416,149 @@ async function loadChapter(chNum) {
 async function renderInfographic(bookName, chNum, verses, area) {
   const ref = `${bookName} ${chNum}`;
 
-  // Prompt enxuto: só lista versículos com primeiras palavras para economizar tokens
   const verseList = verses.length > 0
-    ? verses.map(v => `${v.verse}: ${v.text.substring(0, 60).trim()}…`).join('\n')
-    : `Capítulo ${chNum} de ${bookName} (use seu conhecimento bíblico)`;
+    ? verses.map(v => `${v.verse}: ${v.text.substring(0, 65).trim()}…`).join('\n')
+    : `Capítulo ${chNum} de ${bookName}`;
 
   const totalVerses = verses.length || 30;
   const blocks = totalVerses <= 15 ? 4 : totalVerses <= 30 ? 5 : 6;
 
   const prompt = `Teólogo evangélico especialista em Bíblia ARC. Analise ${ref} (${totalVerses} versículos).
 
-Versículos (resumo):
+Versículos:
 ${verseList}
 
 Agrupe em ${blocks} blocos temáticos. Retorne APENAS array JSON:
-[{"ref":"v.1-5","emoji":"🌍","emojiCaption":"Criação","contexto_titulo":"Título","contexto":"2 frases de análise teológica.","tag":"Revelação","pregacao":"2 frases de aplicação/pregação."}]
+[{"ref":"v.1-5","tema_titulo":"Título curto e forte","tema_corpo":"Frase teológica de 1 linha sobre o tema.","topicos":["tópico 1","tópico 2","tópico 3"],"versiculo_chave_ref":"Livro X:Y","versiculo_chave_texto":"texto do versículo chave","tag":"Revelação","revelacao":"2-3 frases impactantes de revelação/pregação/profecia para o crente hoje.","fatos":["fato 1","fato 2"]}]
 
-tag: "Revelação", "Profecia" ou "Pregação". Sem markdown, só JSON.`;
-
-  let rows = [];
-  // Mostrar mensagem de espera se necessário
-  const loadEl = area.querySelector('.infog-loading');
+tag: "Revelação", "Profecia" ou "Pregação". Apenas JSON, sem markdown.`;
 
   try {
     let text = await groqChat(prompt);
     text = text.replace(/```json|```/g, '').trim();
     const s = text.indexOf('['), e = text.lastIndexOf(']');
     if (s !== -1 && e !== -1) text = text.slice(s, e + 1);
-    rows = JSON.parse(text);
+    var rows = JSON.parse(text);
   } catch(err) {
-    area.innerHTML = `<div style="padding:40px;color:var(--red-accent);text-align:center;font-family:'Lora',serif">
+    area.innerHTML = `<div style="padding:40px;color:var(--red-accent);text-align:center;font-family:'Lora',serif;font-size:15px">
       ⚠️ ${err.message}<br><br>
-      <small style="color:var(--brown2)">Dica: aguarde 30 segundos e selecione o capítulo novamente.<br>O plano gratuito do Groq tem limite de tokens por minuto.</small>
+      <small style="color:var(--brown2)">Aguarde 30 segundos e selecione o capítulo novamente.</small>
     </div>`;
     return;
   }
+
+  // Mapa de versículos reais
+  const verseMap = {};
+  verses.forEach(v => { verseMap[v.verse] = v.text; });
+
+  // Cor do livro (mesmo sistema do Mapa Mental)
+  const bookData = booksData.find(b => b.name === bookName || b.id === currentBook);
+  const cat = bookData ? bookData.cat : 'hist';
+  const catStyles = {
+    pent:  { accent:'#2E7D32',  light:'#4CAF50',  bg:'#0A2E0C',  dark:'#051805' },
+    hist:  { accent:'#8B4513',  light:'#D2691E',  bg:'#2A1005',  dark:'#150802' },
+    poe:   { accent:'#4A0080',  light:'#9C27B0',  bg:'#1A0030',  dark:'#0d0018' },
+    prof:  { accent:'#B71C1C',  light:'#EF5350',  bg:'#2A0505',  dark:'#150202' },
+    evang: { accent:'#0D47A1',  light:'#1976D2',  bg:'#050F25',  dark:'#020810' },
+    epist: { accent:'#4E342E',  light:'#8D6E63',  bg:'#1A0A08',  dark:'#0d0504' },
+  };
+  const cs = catStyles[cat] || catStyles.hist;
+
+  // Montar os cards no estilo do Mapa Mental
+  let cards = '';
+  rows.forEach((row, i) => {
+    // Versículos reais do bloco
+    let verseText = '';
+    if (verses.length > 0) {
+      const match = row.ref.match(/(\d+)[–\-](\d+)/);
+      if (match) {
+        const from = parseInt(match[1]), to = parseInt(match[2]);
+        for (let n = from; n <= to && n <= from + 10; n++) {
+          if (verseMap[n]) verseText += `<sup class="prem-vnum">${n}</sup>${verseMap[n]} `;
+        }
+      } else {
+        const single = parseInt(row.ref.replace(/[^\d]/g,''));
+        if (verseMap[single]) verseText = `<sup class="prem-vnum">${single}</sup>${verseMap[single]}`;
+      }
+    }
+    if (!verseText) verseText = `<em style="color:${cs.light}">${row.ref} — versículo não disponível</em>`;
+
+    const tagColors = {
+      'Revelação': { bg:'rgba(239,83,80,0.15)', color:'#ef5350', border:'rgba(239,83,80,0.35)' },
+      'Profecia':  { bg:'rgba(25,118,210,0.15)', color:'#64b5f6', border:'rgba(25,118,210,0.35)' },
+      'Pregação':  { bg:'rgba(201,168,76,0.15)', color:'#C9A84C', border:'rgba(201,168,76,0.35)' },
+    };
+    const tc = tagColors[row.tag] || tagColors['Revelação'];
+
+    const topicos = (row.topicos || []).map(t => `
+      <div class="prem-topic">
+        <div class="prem-topic-dot" style="background:${cs.light}"></div>
+        <span>${t}</span>
+      </div>`).join('');
+
+    const fatos = (row.fatos || []).map(f =>
+      `<span class="prem-chip" style="border-color:${cs.accent};color:${cs.light}">${f}</span>`
+    ).join('');
+
+    cards += `
+    <div class="prem-card" style="--c-accent:${cs.accent};--c-light:${cs.light};--c-bg:${cs.bg};--c-dark:${cs.dark}">
+
+      <!-- TOPO DO CARD — mesmo estilo mm-card-top -->
+      <div class="prem-card-top" style="background:linear-gradient(135deg,${cs.bg} 0%,rgba(0,0,0,0.7) 100%);border-bottom:2px solid ${cs.accent}">
+        <div class="prem-top-ref" style="color:${cs.light}">${row.ref}</div>
+        <div class="prem-top-title" style="color:${cs.light}">${row.tema_titulo || 'Tema'}</div>
+        <div class="prem-top-sub">${bookName} ${chNum} · ARC</div>
+        <div class="prem-top-chips">${fatos}</div>
+      </div>
+
+      <!-- CORPO 3 COLUNAS -->
+      <div class="prem-card-body">
+
+        <!-- COL 1: VERSÍCULOS INTEGRAIS -->
+        <div class="prem-col prem-col-verse" style="border-right:1px solid rgba(255,255,255,0.06)">
+          <div class="prem-col-header" style="color:${cs.light};border-bottom-color:${cs.accent}20">📜 VERSÍCULOS — ARC</div>
+          <div class="prem-tema-box" style="border-left-color:${cs.accent};background:linear-gradient(135deg,${cs.bg},rgba(0,0,0,0.4))">
+            <span style="font-size:11px;color:${cs.light};font-family:'Cinzel',serif;letter-spacing:0.5px">${row.tema_corpo || ''}</span>
+          </div>
+          <div class="prem-verse-text">${verseText}</div>
+        </div>
+
+        <!-- COL 2: CONTEXTO / TEMAS -->
+        <div class="prem-col prem-col-ctx" style="border-right:1px solid rgba(255,255,255,0.06)">
+          <div class="prem-col-header" style="color:${cs.light};border-bottom-color:${cs.accent}20">✝ CONTEXTO TEOLÓGICO</div>
+          <div class="prem-topics">${topicos}</div>
+          ${row.versiculo_chave_texto ? `
+          <div class="prem-key-verse" style="border-color:rgba(201,168,76,0.3)">
+            <div class="prem-key-ref">✦ ${row.versiculo_chave_ref || ''}</div>
+            <div class="prem-key-text">${row.versiculo_chave_texto}</div>
+          </div>` : ''}
+        </div>
+
+        <!-- COL 3: REVELAÇÃO/PREGAÇÃO — DESTAQUE MÁXIMO -->
+        <div class="prem-col prem-col-rev" style="background:linear-gradient(135deg,${cs.dark},rgba(0,0,0,0.6));border-left:3px solid ${cs.accent}">
+          <div class="prem-col-header" style="color:${cs.light};border-bottom-color:${cs.accent}20">🔥 REVELAÇÃO · PROFECIA</div>
+          <div class="prem-rev-tag" style="background:${tc.bg};color:${tc.color};border:1px solid ${tc.border}">${row.tag}</div>
+          <div class="prem-rev-text">${row.revelacao}</div>
+        </div>
+
+      </div>
+    </div>`;
+  });
+
+  area.innerHTML = `
+  <div class="prem-wrap">
+    <div class="prem-banner" style="background:linear-gradient(135deg,${cs.bg} 0%,#1a0a00 50%,${cs.bg} 100%);border-bottom:3px solid ${cs.accent}">
+      <div class="prem-banner-emoji">${bookData ? bookData.emoji : '✝'}</div>
+      <div>
+        <div class="prem-banner-title" style="color:${cs.light}">✝ ${bookName} — Capítulo ${chNum}</div>
+        <div class="prem-banner-sub">Infográfico de Estudo · Almeida Revista e Corrigida (ARC)</div>
+      </div>
+    </div>
+    <div class="prem-grid">${cards}</div>
+  </div>`;
+
+  window._ttsVerses = verses;
+}
 
   // Mapear versículos reais para os blocos
   const verseMap = {};
@@ -1732,66 +1851,6 @@ tag: "Revelação", "Profecia" ou "Pregação". Sem markdown, só JSON.`;
     };
     return svgMap[type] || svgMap.default;
   }
-
-  // Montar os blocos como cards empilhados (não tabela simples)
-  let cards = '';
-  rows.forEach((row, i) => {
-    // Extrair versículos reais do bloco
-    let verseText = '';
-    if (verses.length > 0) {
-      const match = row.ref.match(/(\d+)[–\-](\d+)/);
-      if (match) {
-        const from = parseInt(match[1]), to = parseInt(match[2]);
-        for (let n = from; n <= to && n <= from + 10; n++) {
-          if (verseMap[n]) verseText += `<span class="iv-num">${n}</span>${verseMap[n]} `;
-        }
-      } else {
-        const single = parseInt(row.ref.replace(/\D/g,''));
-        if (verseMap[single]) verseText = `<span class="iv-num">${single}</span>${verseMap[single]}`;
-      }
-    }
-    if (!verseText) verseText = `<em style="color:var(--gold-dark)">${row.ref}</em>`;
-
-    const tagClass = row.tag === 'Profecia' ? 'tag-profecia' : row.tag === 'Pregação' ? 'tag-pregacao' : 'tag-revelacao';
-    const svgContent = getThemeSVG(row.emoji || '✦', row.emojiCaption || '');
-    const altColor = i % 2 === 1 ? 'iv-row-alt' : '';
-
-    cards += `
-    <div class="iv-row ${altColor}">
-      <div class="iv-col iv-col-verse">
-        <div class="iv-verse-ref">${row.ref}</div>
-        <div class="iv-verse-text">${verseText}</div>
-      </div>
-      <div class="iv-col iv-col-img">
-        <div class="iv-svg-wrap">${svgContent}</div>
-      </div>
-      <div class="iv-col iv-col-ctx">
-        <div class="iv-ctx-title">${row.contexto_titulo || 'Contexto Teológico'}</div>
-        <div class="iv-ctx-body">${row.contexto}</div>
-      </div>
-      <div class="iv-col iv-col-rev">
-        <div class="iv-rev-tag ${tagClass}">${row.tag}</div>
-        <div class="iv-rev-body">${row.pregacao}</div>
-      </div>
-    </div>`;
-  });
-
-  area.innerHTML = `
-  <div class="iv-wrap">
-    <div class="iv-banner">
-      <div class="iv-banner-inner">
-        <div class="iv-banner-title">✝ ${bookName} — Capítulo ${chNum}</div>
-        <div class="iv-banner-sub">Infográfico de Estudo · Almeida Revista e Corrigida (ARC)</div>
-      </div>
-    </div>
-    <div class="iv-header-row">
-      <div class="iv-hcol">📜 Versículos — ARC</div>
-      <div class="iv-hcol" style="flex:0 0 160px;text-align:center">🎨 Visual</div>
-      <div class="iv-hcol">✝ Contexto Teológico</div>
-      <div class="iv-hcol iv-hcol-rev">🔥 Revelação · Pregação · Profecia</div>
-    </div>
-    ${cards}
-  </div>`;
 
   window._ttsVerses = verses;
 }
