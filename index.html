@@ -331,6 +331,38 @@
       color: var(--red-accent); font-size: 13px; padding: 2px 6px;
     }
     .fav-remove:hover { opacity: 0.7; }
+
+    /* Versículo favoritado — destaque dourado */
+    .prem-verse-item {
+      display: inline;
+    }
+    .prem-verse-item.is-fav sup.prem-vnum {
+      color: var(--gold-light);
+    }
+    .prem-verse-item.is-fav .prem-verse-span {
+      background: rgba(201,168,76,0.18);
+      border-radius: 3px;
+      padding: 1px 3px;
+      color: var(--gold-light);
+      box-shadow: inset 0 0 0 1px rgba(201,168,76,0.25);
+    }
+    .prem-fav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      line-height: 1;
+      padding: 0 2px;
+      color: rgba(201,168,76,0.25);
+      vertical-align: middle;
+      transition: color 0.2s, transform 0.15s;
+      margin-left: 1px;
+    }
+    .prem-fav-btn:hover { color: var(--gold); transform: scale(1.3); }
+    .prem-fav-btn.fav   { color: var(--gold); }
     @media (max-width: 860px) {
       .bible-split { grid-template-columns: 1fr; }
       .bible-split-right { border-left: none; border-top: 2px solid var(--border); max-height: 360px; }
@@ -1462,9 +1494,12 @@ function renderChapterPage(bookName, chNum, verses, area) {
   }
   if (blocks.length === 0) blocks.push([]);
 
-  const verseHTML = (block) => block.map(v =>
-    `<sup class="prem-vnum">${v.verse}</sup>${v.text} `
-  ).join('');
+  const verseHTML = (block) => block.map(v => {
+    const key = `${currentBook}_${currentChapter}_${v.verse}`;
+    const isFav = !!favorites[key];
+    const escapedText = v.text.replace(/'/g, "\'").replace(/"/g, '&quot;');
+    return `<span class="prem-verse-item${isFav ? ' is-fav' : ''}" id="vi-${key}"><sup class="prem-vnum">${v.verse}</sup><span class="prem-verse-span">${v.text}</span><button class="prem-fav-btn${isFav ? ' fav' : ''}" onclick="togglePremFav('${key}',${v.verse},'${escapedText}',event)" title="Favoritar versículo">★</button> </span>`;
+  }).join('');
 
   const refLabel = (block) => {
     if (!block.length) return '—';
@@ -2108,6 +2143,25 @@ function toggleFavorite(key, num, text, event) {
   // Update star button
   const starBtn = event.currentTarget;
   starBtn.classList.toggle('fav', !!favorites[key]);
+}
+
+function togglePremFav(key, num, text, event) {
+  event.stopPropagation();
+  const ref = `${getDisplayName(currentBook)} ${currentChapter}:${num}`;
+  const cleanText = text.replace(/&quot;/g, '"');
+  if (favorites[key]) {
+    delete favorites[key];
+  } else {
+    favorites[key] = { ref, text: cleanText, book: currentBook, chapter: currentChapter, verse: num };
+  }
+  saveFavorites();
+  const isFav = !!favorites[key];
+  // Atualizar botão da estrela
+  const btn = event.currentTarget;
+  btn.classList.toggle('fav', isFav);
+  // Destacar / remover destaque do versículo
+  const item = document.getElementById(`vi-${key}`);
+  if (item) item.classList.toggle('is-fav', isFav);
 }
 
 function renderFavoritos() {
