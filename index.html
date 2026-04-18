@@ -1272,7 +1272,7 @@ async function groqChat(prompt, retries = 2) {
       },
       body: JSON.stringify({
         model: GROQ_MODEL,
-        max_tokens: 1200,
+        max_tokens: 2000,
         messages: [{ role: 'user', content: prompt }]
       })
     });
@@ -1574,17 +1574,34 @@ tag deve ser: "Revelação", "Profecia" ou "Pregação". Apenas o array JSON.`;
   let rows = [];
   try {
     let text = await groqChat(prompt);
-    text = text.replace(/```json|```/g, '').trim();
+    // Limpar markdown
+    text = text.replace(/```json|```/gi, '').trim();
+    // Extrair apenas o array JSON
     const s = text.indexOf('['), e = text.lastIndexOf(']');
     if (s !== -1 && e !== -1) text = text.slice(s, e + 1);
-    rows = JSON.parse(text);
+    // Tentar parse direto; se falhar, reparar JSON truncado
+    try {
+      rows = JSON.parse(text);
+    } catch(parseErr) {
+      let repaired = text;
+      let opens = 0, openArr = 0;
+      for (const ch of repaired) {
+        if (ch === '{') opens++;
+        else if (ch === '}') opens--;
+        else if (ch === '[') openArr++;
+        else if (ch === ']') openArr--;
+      }
+      while (opens > 0) { repaired += '}'; opens--; }
+      if (openArr > 0) repaired += ']';
+      rows = JSON.parse(repaired);
+    }
   } catch(err) {
     // Preencher com erro nos skeletons
     blocks.forEach((_, i) => {
       const ctx = document.getElementById(`ai-ctx-${i}`);
       const preg = document.getElementById(`ai-preg-${i}`);
       if (ctx) ctx.innerHTML = `<span style="color:var(--red-accent);font-size:13px">⚠️ ${err.message}</span>`;
-      if (preg) preg.innerHTML = `<span style="color:var(--brown2);font-size:13px">Verifique sua chave Groq.</span>`;
+      if (preg) preg.innerHTML = `<span style="color:var(--brown2);font-size:13px">Verifique sua chave Groq ou tente novamente.</span>`;
     });
     return;
   }
@@ -1628,12 +1645,6 @@ tag deve ser: "Revelação", "Profecia" ou "Pregação". Apenas o array JSON.`;
 }
 
 async function renderInfographic(bookName, chNum, verses, area) {
-  // Legado — redireciona para o novo fluxo
-  renderChapterPage(bookName, chNum, verses, area);
-  await loadAIContent(bookName, chNum, verses, area);
-}
-
-async function renderInfographic(bookName, chNum, verses, area) {
   const ref = `${bookName} ${chNum}`;
 
   const verseList = verses.length > 0
@@ -1656,10 +1667,24 @@ tag: "Revelação", "Profecia" ou "Pregação". Apenas JSON, sem markdown.`;
   let rows = [];
   try {
     let text = await groqChat(prompt);
-    text = text.replace(/```json|```/g, '').trim();
+    text = text.replace(/```json|```/gi, '').trim();
     const s = text.indexOf('['), e = text.lastIndexOf(']');
     if (s !== -1 && e !== -1) text = text.slice(s, e + 1);
-    rows = JSON.parse(text);
+    try {
+      rows = JSON.parse(text);
+    } catch(parseErr) {
+      let repaired = text;
+      let opens = 0, openArr = 0;
+      for (const ch of repaired) {
+        if (ch === '{') opens++;
+        else if (ch === '}') opens--;
+        else if (ch === '[') openArr++;
+        else if (ch === ']') openArr--;
+      }
+      while (opens > 0) { repaired += '}'; opens--; }
+      if (openArr > 0) repaired += ']';
+      rows = JSON.parse(repaired);
+    }
   } catch(err) {
     area.innerHTML = `<div style="padding:40px;color:var(--red-accent);text-align:center;font-family:'Lora',serif;font-size:15px">
       ⚠️ ${err.message}<br><br>
